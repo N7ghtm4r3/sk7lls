@@ -1,0 +1,4 @@
+interface:
+  display_name: "Give Me Prompt"
+  short_description: "Summarize analysis and draft a continuation prompt"
+  default_prompt: "Use $give-me-prompt to recap the analysis in plain language and prepare a self-contained, copyable prompt for the requested next step."

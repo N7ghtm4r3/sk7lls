@@ -1,0 +1,4 @@
+interface:
+  display_name: "Iterative Monitoring"
+  short_description: "Add a tightly scoped monitoring harness"
+  default_prompt: "Use $iterative-monitoring to add a bounded monitoring harness around the indicated snippet."

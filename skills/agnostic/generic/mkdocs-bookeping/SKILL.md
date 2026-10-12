@@ -1,0 +1,114 @@
+---
+name: mkdocs-bookeping
+description: Maintain Material for MkDocs documentation by ingesting its organization, content, and writing style in read-only mode, proposing concrete revisions and missing content, then implementing the confirmed documentation changes. Use for documentation maintenance, content gap analysis, and additions consistent with an existing documentation set. All non-documentation files remain read-only, including after confirmation; publishing is outside this workflow.
+---
+
+# MkDocs Bookeping
+
+Begin with two phases: ingest the existing documentation, then present content revisions and additions. After the user confirms the proposal, implement the confirmed documentation changes. Work at the level of concepts, explanations, paragraphs, procedures, and examples, not just page names or navigation.
+
+Use the user's language for the analysis and proposal commentary. Draft documentation in the language and style of the relevant existing content unless the user requests a change.
+
+## Scope and confirmation boundary
+
+Ingestion and proposal are read-only: leave all project files and Git state unchanged. Present proposed text and configuration excerpts in chat; do not write drafts, patches, or reports to disk before confirmation.
+
+Before ingestion, read [the readonly skill](../readonly/SKILL.md) and apply it to the analysis portions of this workflow: inspecting documentation and code, gathering evidence, identifying content gaps, and evaluating proposed revisions. Apply the same constraints to any later re-analysis. This reference governs those analytical operations only; it does not prohibit the confirmed documentation edits or the permitted implementation validation described below. All non-documentation files remain read-only in every phase.
+
+After confirmation, edit only the documentation content, documentation assets, and configuration dedicated exclusively to the MkDocs documentation and covered by the proposal. Identify these documentation paths during ingestion and list the intended edit targets in the proposal. All other files remain read-only throughout the workflow: application and library source code, source comments, tests, runtime or shared project configuration, build scripts, CI/CD, dependencies, and lockfiles. A code example inside a documentation page is documentation content; its executable counterpart in the codebase is not. A file's location under a documentation directory does not authorize editing executable code or shared tooling stored there.
+
+Confirmation authorizes documentation edits only; it never expands the scope to the codebase, even to fix a documented defect, make an example work, or unblock a documentation build. If a proposed change requires editing a non-documentation file, leave that file untouched, explain the limitation, and complete the independent documentation changes. Do not commit, push, or publish as part of this workflow.
+
+Before confirmation, use non-mutating inspection only: no builds, previews, tests, generators, formatters, or installations. A build directed to a temporary directory can still execute hooks or plugins and write elsewhere; it does not satisfy the read-only phases. Do not execute documentation examples or import project code or configuration to discover behavior. Inspect their source instead.
+
+When static inspection cannot establish a fact, identify the missing evidence and the verification that would be needed. Do not modify implementation to make it agree with documentation. A discovered implementation defect may be reported as a separate observation; it is not authorization to fix it.
+
+## Selective subagent use
+
+Use subagents when substantial, independent documentation tasks can run alongside useful work by the lead agent. Handle small edits, a short page, or tightly coupled content directly. Parallelism is a means to improve writing and turnaround, not a required stage.
+
+Start with one helper. Add a second only when another independent batch justifies the extra context and coordination; use at most two helpers per request unless the user asks for more. Reuse those helpers for focused follow-ups instead of spawning replacements for each phase or page. Do not allow nested delegation. If subagents are unavailable, complete the same workflow locally.
+
+The lead agent establishes the scope, content map, and editorial baseline once. Share a compact brief containing the assigned topic, audience, language, terminology and style conventions, relevant file references or short excerpts, evidence already established, open questions, and expected output. Pass only the context needed for that assignment, rather than the entire conversation. Helpers inspect any additional sources needed to substantiate their own content; do not ask each helper to repeat repository-wide ingestion.
+
+Choose a bounded assignment that avoids overlapping work:
+
+- **Analysis:** verify coverage or behavior for one independent topic, returning concise findings, source references, and unresolved gaps under [readonly](../readonly/SKILL.md).
+- **Proposal writing:** draft a coherent section or related group of sections from the shared baseline, returning proposed Markdown and essential evidence without writing files before confirmation. Avoid one agent per paragraph or multiple competing drafts of the same content unless requested.
+- **Confirmed implementation:** assign disjoint documentation files from the confirmed proposal. Specify exactly which files the helper may edit; keep shared navigation, configuration, and final integration with the lead agent. When assignments would touch the same file, have helpers return text for the lead to integrate instead.
+
+Every assignment must state the current phase, confirmation status, and documentation-only boundary. Delegation does not authorize edits before confirmation or changes to any non-documentation file. Keep shared context in messages during analysis rather than creating coordination files.
+
+The lead agent remains responsible for factual consistency, a uniform editorial voice, removing duplication, and connecting sections. Inspect delegated output and its supporting evidence, integrate it, and perform the combined validation once after integration. Delegate a focused review only when a concrete uncertainty warrants it; do not add an automatic reviewer or repeated review-and-rewrite cycles. Prefer a narrow follow-up on the affected passage over regenerating a complete draft. Do not duplicate a helper's active assignment locally.
+
+## Phase 1 — Ingest the existing documentation
+
+### Establish scope and sources
+
+Identify the topic or change the user wants documented, the intended audience, and the relevant product version from the request and available project context. Inspect the documentation configuration and content before drafting. Follow the project's actual configuration paths, including inherited configuration and alternative documentation roots, rather than assuming every site uses a root-level `mkdocs.yml` and `docs/`.
+
+Read the relevant MkDocs configuration, navigation sources, Markdown, assets, and existing documentation commands as text. Identify Material settings, enabled Markdown extensions, plugins, includes, and generated content only to the extent that they affect the requested documentation. Treat generated pages and included snippets as derived content: locate their maintained source when available.
+
+If the user supplies an earlier documentation version, compare it with the current one and state which version supplies the editorial baseline and which product version is being documented. A published page may lag behind local sources; report meaningful differences rather than silently treating both as identical.
+
+### Learn organization, substance, and style
+
+Map the existing documentation at three levels:
+
+- **Organization:** audience, reading order, section hierarchy, topic grouping, page boundaries, navigation labels, and cross-links. Identify what each relevant page helps its reader understand or accomplish.
+- **Substance:** concepts explained, prerequisites, procedures, API behavior, examples, expected results, limitations, and troubleshooting where relevant. Record how deeply each topic is covered and what the reader is assumed to know.
+- **Style and form:** language, terminology, tone, level of detail, heading patterns, paragraph structure, use of lists and tables, example conventions, and Material elements such as admonitions or tabs already used in the project.
+
+Read all passages affected by the request and representative neighboring content. For a large documentation set, inventory its structure and sample distinct content types for style; state the inspected scope instead of claiming exhaustive coverage. Support the inferred conventions with a few concrete file, section, or line references. Do not mistake one inconsistent page for a universal style rule.
+
+### Establish content gaps from evidence
+
+Compare documentation with the relevant implementation, existing tests, specifications, release notes, or user-provided requirements using read-only inspection. Inspect only what is needed to substantiate the requested content. Existing prose is evidence of editorial style, not proof that the described behavior is still correct.
+
+Build a compact topic-to-content map connecting each relevant concept or reader task to its existing location, evidence, and coverage status: adequate, outdated, incomplete, absent, duplicated, or misplaced. Distinguish an absent topic from an existing explanation that lacks a prerequisite, constraint, example, or step. Treat uninspected or inaccessible material as unknown, not absent.
+
+Summarize the editorial conventions to retain and the gaps that justify changes. Preserve the established organization unless a concrete content problem warrants an adjustment; do not impose a generic documentation taxonomy or rewrite the whole site to normalize small inconsistencies.
+
+## Phase 2 — Present revisions and new content
+
+Continue directly from ingestion to the proposal unless the user requested ingestion only. Complete the concrete, reviewable proposal before asking the user to confirm its implementation. If only analysis or a proposal was requested, deliver it without pushing for implementation. Presenting a proposal does not authorize edits; a clear confirmation of that proposal does. Reuse confirmation already given in the conversation without asking again.
+
+Group the proposal into **existing content to update** and **content to add from scratch**. Additions can be paragraphs, examples, procedures, or sections within an existing page; create a proposed new page only when the content needs a distinct purpose or place in the reading flow. Recommend removing or merging content only when it resolves an evidenced problem.
+
+For each proposed change, provide enough detail to review it:
+
+- **Location:** existing file and heading or line reference, or a clearly labeled proposed path and insertion point. Mention navigation changes only when needed.
+- **Reason and evidence:** the precise omission, obsolete statement, unclear explanation, or duplicate content, and the inspected source supporting the correction. Distinguish confirmed facts from assumptions and unresolved questions.
+- **Concrete content:** for a revision, identify the passage to replace or extend and provide the replacement or insertion text; for an addition, state its reader purpose and provide the new Markdown content. Include verified examples, prerequisites, or expected results when they are necessary to make it usable.
+
+Do not substitute a list of page titles, a navigation tree, or vague instructions such as "expand this section" for actual content proposals. For a broad documentation overhaul, first provide the full content-level change map, then develop coherent batches of drafts, clearly marking what remains undrafted. If only a plan was requested, provide content-level outlines without implying that full drafts have been completed.
+
+Follow the ingested terminology, language, and page conventions while correcting factual errors. Preserve unaffected text and existing links or anchors where possible. Call out links that would need adjustment when a proposed heading, location, or page name changes. Keep evidence references and reviewer commentary outside the proposed reader-facing prose unless they belong in the documentation itself.
+
+When evidence is insufficient, separate the open question from the usable draft. Do not invent API signatures, configuration defaults, supported platforms, commands, or product behavior to make a proposal look complete.
+
+## Implement the confirmed proposal
+
+Once the user confirms, proceed with the actual documentation edits, not another plan. Apply only the confirmed items; partial confirmation authorizes only the selected subset. Routine wording and formatting adjustments within that scope do not need another approval. If new evidence requires a substantive content or scope change, complete the unaffected confirmed work and present the changed proposal for confirmation.
+
+Recheck the affected files before editing so that intervening user changes are preserved. Update the existing passages and create the confirmed additions using the ingested style. Apply the necessary confirmed navigation, cross-link, anchor, include, and asset changes so the content remains discoverable and coherent.
+
+For generated content, change a maintained documentation source only when it is within the confirmed scope. If the required source is application code, a source comment, or an excluded build or generator script, report that constraint instead of changing it or hand-editing generated output that would be overwritten.
+
+Review the resulting diff against the initial state to ensure every change made by this task is within the identified documentation paths and preserves unrelated work. Check headings, links, examples, and supported Material syntax. When an existing documentation toolchain is available, inspect its hooks and plugins before running a local build; run it only if its effects stay within documentation validation and scratch output, without changing any non-documentation file or tracked generated output. Do not install dependencies or alter the environment to force validation. Otherwise perform static checks and report the missing build verification. Fix documentation issues introduced by the confirmed changes within the same scope.
+
+Report the documentation actually updated or added, the checks performed, and any remaining gaps. Confirm that this task changed only documentation files and left the rest of the codebase untouched. Do not claim a rendered or published result when only files were edited or statically checked.
+
+## Material for MkDocs compatibility
+
+Use Markdown constructs and Material features supported by the project's inspected configuration. Do not assume that every extension or plugin shown in upstream examples is enabled locally. Prefer an existing supported form; if a new feature is necessary, include its documentation configuration changes in the proposal and apply them only when confirmed. Dependency or tooling changes remain outside this workflow.
+
+Respect how the site manages navigation, whether explicitly configured, inferred, or plugin-managed. MkDocs `nav` paths are relative to `docs_dir`; navigation is not necessarily a one-to-one inventory of the content. Preserve the project's link, asset, include, and generated-reference conventions. See the official [MkDocs configuration reference](https://www.mkdocs.org/user-guide/configuration/) and [Material site configuration guide](https://squidfunk.github.io/mkdocs-material/creating-your-site/) when a specific configuration question requires verification against the project's version.
+
+Review proposed Markdown statically for heading hierarchy, link targets, anchors, code fences, and consistency with enabled syntax. Do not claim successful rendering, working examples, or a passing build from static review. Reserve build validation for the confirmed implementation under the constraints above.
+
+## Missing documentation and delivery
+
+If no documentation exists, say that an existing style cannot be ingested. Derive a minimal proposed organization and editorial baseline from the available project evidence and user requirements, clearly labeling them as proposals. If only published documentation is accessible, analyze its visible content and style while identifying source configuration and file paths as unknown. Ask for missing information only when it materially blocks a reliable proposal; continue the parts supported by evidence.
+
+Before confirmation, deliver a concise ingestion summary followed by the content revisions, new content, and any unresolved evidence or validation limits; state that no files have been changed yet. After confirmation, deliver the implementation result and validation status. Scale each response to the requested scope and omit empty categories. Do not create separate report artifacts unless requested.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pandoro PR Create"
+  short_description: "Create PRs from notes and commits, grouped by module"
+  default_prompt: "Use $pandoro-pr-create to create a pull request from these raw notes, add missing changes from the PR commits as entries in the same module groups without duplicates, preserve the supplied wording with minimal language corrections, and apply matching existing labels. Ask me for any unclear source or destination branch before proceeding."

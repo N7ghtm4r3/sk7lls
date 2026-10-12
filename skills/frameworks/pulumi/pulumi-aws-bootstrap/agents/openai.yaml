@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pulumi AWS Bootstrap"
+  short_description: "Bootstrap Pulumi infrastructure on AWS"
+  default_prompt: "Use $pulumi-aws-bootstrap to set up Pulumi on AWS for this repository."

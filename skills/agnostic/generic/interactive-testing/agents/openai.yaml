@@ -1,0 +1,4 @@
+interface:
+  display_name: "Interactive Testing"
+  short_description: "Workflow effettivi, verifica guidata e handoff"
+  default_prompt: "Usa $interactive-testing per individuare workflow effettivi in readonly e guidarmi passo passo fino al risultato finale, attendendo la mia conferma a ogni passo, con monitoraggio su richiesta e handoff sempre aggiornato fuori dal progetto."

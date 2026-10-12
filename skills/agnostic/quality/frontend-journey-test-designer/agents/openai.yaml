@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend Journey Test Designer"
+  short_description: "Design realistic multi-user frontend journey tests"
+  default_prompt: "Use $frontend-journey-test-designer to design and implement realistic frontend journey tests across roles and domains."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ship Round"
+  short_description: "Commit and push only this round’s changes"
+  default_prompt: "Use $ship-round to commit and push only the changes made in this round."

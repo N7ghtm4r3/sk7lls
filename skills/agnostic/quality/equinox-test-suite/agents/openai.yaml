@@ -1,0 +1,4 @@
+interface:
+  display_name: "Equinox Test Suite"
+  short_description: "Equinox route and E2E tests with Parikshan"
+  default_prompt: "Use $equinox-test-suite to design, migrate, diagnose, or validate Equinox route tests and the complete Parikshan E2E suite."
