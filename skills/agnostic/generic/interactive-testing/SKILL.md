@@ -1,6 +1,6 @@
 ---
 name: interactive-testing
-description: Derive actual user or consumer workflows from the request and codebase using readonly, then verify them interactively with a guided step-by-step default or user-requested case selection. Ask which mode to use when unspecified or ambiguous, await confirmation at every operational step, enable monitoring only on request through iterative-monitoring, and always refresh the handoff outside the project. Use for interactive workflow verification rather than unattended test-suite generation or bug fixing.
+description: "Guide interactive verification of actual user or consumer workflows one confirmed step at a time, or offer case selection when requested. Monitor only on request and keep progressive records outside the project."
 ---
 
 # Interactive Testing
@@ -11,7 +11,9 @@ Put the user in a position to explore and verify the requested behavior, one con
 
 Read and follow [readonly](../readonly/SKILL.md) before context analysis and scenario preparation. Read and follow [iterative-monitoring](../iterative-monitoring/SKILL.md) only when the user requests monitoring and its authorized scope requires local instrumentation. Resolve their available locations if this collection has moved. If a required skill is unavailable, report the missing dependency and stop the affected phase.
 
-When preparing or updating a continuation handoff, read the shared [handoff skill](../handoff/SKILL.md) and its [source notes](../handoff/SOURCE.md). Follow its language, portability, and continuation contract; interactive testing does not activate an upstream delivery workflow.
+Read [original skill integration](references/original-skill-integration.md) before resolving the original `verify-behavior`, `create-verification-skill`, `update-verification-skill`, or `handoff` skill. Load each source only when its named branch fires; record the exact identity and dependencies. Interactive Testing retains its authorization, confirmations, optional monitoring, records, and session conclusions.
+
+When preparing or updating a continuation, use the original `handoff` skill with those caller rules. Write the handoff and continuation prompt in English unless another artifact language was requested. Reading a dependency activates no implementation or delivery workflow.
 
 Analysis remains read-only. It does not create a handoff file, run the application, or insert instrumentation. Its phase-local readonly constraint ends when proceeding to an authorized session. A separate readonly restriction imposed by the user remains binding until explicitly lifted.
 
@@ -35,6 +37,8 @@ Record the chosen mode and any agreed scenario order in the handoff. A mode chan
 ## Analyze and prepare reference scenarios
 
 Inspect only the relevant code, existing execution commands, configuration, tests, logs, and documentation. Start from the user or consumer goal in the request, then trace how the actual project supports it across entry points, related actions, state transitions, and resulting effects. Distinguish inspected facts from inferred runtime behavior.
+
+Use the resolved original `verify-behavior` Select procedure to connect each requested check to project coverage. Finish selection with a cited executable path or an exact gap/blocker per check. Writing verifier references or helpers requires separate authorization for those paths; analysis may retain a proposed change in memory. Missing coverage stays blocked until the original creator/updater supplies its required proof.
 
 Identify meaningful workflows, not a collection of isolated control checks. Each main scenario must connect an actor's starting conditions to a practical outcome through related actions and consequences. For a UI, API, CLI, service, or library, trace the corresponding real usage flow rather than assuming a browser journey. Anchor the scenario to the relevant implementation paths or project contracts.
 
@@ -63,6 +67,10 @@ For the selected scenario, explain its purpose and define a compact contract in 
 - whether monitoring was requested, its authorized scope if enabled, and the startup or execution operations needed;
 - the result to retain, handoff destination, and relevant cleanup.
 
+For an evaluable verify/reproduce scenario, include the selected original
+verification skill's proof identities and observation obligations in this
+contract. An exploratory scenario retains explicit unknown expectations instead.
+
 When monitoring is requested, use `maxAttempts = 3` when unspecified, and disclose it. Define any scenario repetition limit separately where needed. Count attempts at the agreed scenario boundary, not instructional steps, arbitrary log lines, internal callbacks, or tool reads. When one user action invokes the monitored snippet repeatedly, explain how the snippet's bounded observation relates to the scenario count before activation. Do not reset an exhausted count merely to continue the same session.
 
 Ask only for details that prevent a reliable scenario or safe activation. If the project is unavailable, give a provisional contract based on supplied evidence and identify what remains unknown; do not invent commands or claim the scenario is ready.
@@ -76,6 +84,8 @@ Use the project's existing build, launch, and service commands as needed to make
 Startup permission does not authorize source or configuration edits, dependency installation or upgrades, migrations, provisioning, unrelated fixtures, or changes to shared infrastructure. If an uncovered prerequisite blocks startup, report the smallest additional operation needed and obtain authorization for it rather than adapting the project. Do not require additional permission for operations already covered by the user's instructions.
 
 Confirm readiness from actual evidence before inviting the user to act. Reuse healthy existing processes where appropriate and record which processes the session starts. Keep secrets out of command output and the handoff. Do not execute the user's scenario for them unless they explicitly ask for that action.
+
+Before Drive, follow the selected app's Launch and Doctor. Apply original verification and any authorized maintenance recipes through the same confirmation loop below. Retain maintenance readiness separately from the requested workflow result.
 
 ## Guide one step and await confirmation
 
@@ -96,31 +106,17 @@ Assess each completed workflow against its established expectations and final ou
 - **Not verifiable:** missing, ambiguous, or inaccessible evidence prevents a conclusion.
 - **Interrupted:** the user stops or an environment problem prevents completion.
 
+Retain the original verification skill's result, failed/blocked checks and
+evidence provenance alongside these caller observation labels. Keep coverage
+maintenance outcomes separate from verification of the original scenario.
+
 Waiting for the user is not a failed attempt. Define an evidence deadline only when the scenario needs one; expiration means not verifiable unless the contract specifically requires an outcome within that deadline. Do not wait or poll indefinitely for runtime evidence.
 
 Stop local monitoring on success, exhaustion, interruption, unsafe repetition, or unavailable evidence. A harness success is evidence about its predicate, not completion of the whole user flow: later checkpoints still require the user's confirmation. Ending monitoring must not terminate ordinary application behavior from inside the harness. Prefer observing executions the user triggers. Never automatically retry an operation with side effects or uncertain repeatability. A failed result or newly discovered bug does not authorize repair.
 
-## Preserve observations and a compact handoff outside the project
+## Preserve progressive records outside the project
 
-The handoff is mandatory throughout an authorized session, including sessions without monitoring. Keep analysis notes in conversation memory while readonly applies. Once the session is authorized, initialize its records before the first operational instruction and refresh them progressively; do not wait for a separate request to save results. Keep a progressive `observations.md` journal for resumability in a unique session directory under `${CODEX_HOME}/interactive-testing/`, or `~/.codex/interactive-testing/` when CODEX_HOME is unset. Resolve paths using the actual environment; do not repurpose environment variables.
-
-Use the shared handoff skill to maintain a compact `handoff.md` in a unique directory under the operating system's temporary directory by default. Honor an already agreed external destination, or a user-requested persistent destination. Include the receiving task and a provable next action or the exact missing proof, current scenario outcomes and attempt counts, concise verified findings, exact blockers and explicit unknowns. Identify the project by its stable repository or project identity, revision when known, and repository-relative paths. Link to the journal and relevant evidence instead of embedding their full bodies, retaining the decisive facts in the handoff. Mark local-only evidence that needs transfer and runtime observations that need rediscovery; local save paths are delivery details, not portable project references. Each context pointer must identify its artifact or session and explain what must be rechecked for freshness.
-
-Before writing either artifact, verify that the resolved destination, including symlink resolution, is outside the project and its worktrees. If a default falls inside them, choose another external user-state or temporary directory and disclose it. Never put session artifacts in the project, modify ignore rules for them, or overwrite another session's files. Disclose temporary handoff retention and keep the durable journal sufficient to reconstruct it. If persistence is unavailable, maintain and refresh the complete handoff in memory and explain the persistence limitation; do not silently omit it.
-
-Record progressively in the journal after preparation and each meaningful action, observation, finding, or interruption, and refresh the compact handoff at the same checkpoints:
-
-- session identity, stable project identity and revision when known, interaction mode, reference scenario inventory, agreed or guided order, user selections, and authorized operations;
-- scenario contract, current step, steps awaiting confirmation, confirmed actions, and expected versus actual outcomes;
-- attempts used and remaining where applicable, and monitoring requested/not requested with its current state;
-- user-reported verification and independently observed evidence, with provenance;
-- bugs or anomalies, their reproduction steps, supporting evidence, and whether they are confirmed or suspected;
-- open questions, blocked or unperformed checks, and the next useful step;
-- instrumentation locations, session-created processes, runtime outputs, and their current cleanup status.
-
-Retain enough evidence to resume without copying secrets or unnecessarily large payloads. Preserve earlier journal results when adding findings; correct mistaken conclusions explicitly. Do not create issue tickets, send messages, or turn the handoff into an implementation task unless requested.
-
-On resumption, read the handoff and its relevant journal entries, resolve the context pointers, and recheck relevant project and runtime state read-only before acting. An old handoff documents prior authorization and observations; it is not fresh permission to restart services, replay side effects, or overwrite changed code. Reuse authorization that remains applicable in the current user conversation and ask only for uncovered operations.
+Read [session records](references/session-records.md) before creating records, maintaining the handoff, or resuming a session. Analysis notes stay in memory under readonly. Authorized sessions initialize external records before the first operational instruction and refresh them after every confirmed step and meaningful observation. Records remain mandatory without monitoring.
 
 ## Close the session
 

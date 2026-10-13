@@ -1,6 +1,6 @@
 ---
 name: ship-round
-description: Perform a Git-only commit and normally push only the changes attributable to the current work round, without editing code or touching pre-existing, user, or other-agent files. Use when asked to deploy, commit, or ship the current round; support commit-only mode when explicitly requested.
+description: "Publish the current work round through Git when asked to deploy, commit, or ship it. Commit only owned changes and push by default; honor commit-only requests."
 ---
 
 # Ship Round
@@ -34,6 +34,8 @@ Inspect the exact candidate diff, then use the least invasive Git mechanism that
 - Quote pathspecs safely and pass `--` before paths.
 - Re-check the candidate immediately before committing. If `HEAD` or any candidate path changed unexpectedly during preparation, recompute ownership and the patch before proceeding.
 - Write a concise commit message that describes the round's completed change. Do not create an empty commit.
+
+## Verify the owned commit
 
 After committing, verify the new commit with `git show --stat --oneline HEAD` and `git diff HEAD^ HEAD -- <committed-paths>`. Confirm that every committed path or hunk belongs to the round and that unrelated staged and unstaged changes remain present.
 

@@ -1,6 +1,6 @@
 ---
 name: pandoro-pr-create
-description: Create pull requests from user-supplied raw change notes, supplementing them with changes found in the PR commits, grouping entries by module without duplicates, and applying relevant existing repository labels. Use when raw notes must become a PR or a ready-to-use PR description; not for implementing the listed changes.
+description: "Create a PR or prepare its description from raw change notes, adding missing changes verified in the PR commits. Group notes by module, preserve wording, and match existing labels."
 ---
 
 # Pandoro PR Create
@@ -13,9 +13,15 @@ Turn the user's raw list into a pull request whose body starts with `In this ver
 - Use the actual notes as the starting content, then supplement them from the confirmed PR commit range as described below. Read repository context to identify the PR scope, additional changes, modules, and relevant labels.
 - If only illustrative material was provided, ask for the actual notes before creating a PR. Do not reinterpret examples as a live request.
 
+## Resolve the repository and branches
+
+Use an available repository connector or CLI. Resolve the repository and any requested draft status from the user's request and current repository context.
+
+**Both branches must be clear before proceeding.** Identify the source (head) and destination (base) branches from explicit user instructions or unambiguous session context. If either branch is missing, unclear, or has conflicting evidence, you must ask the user to specify it and wait for the answer before selecting the PR commit range, creating or updating the PR, or performing branch-related mutations. Never silently substitute the checked-out branch, upstream, repository default, or a conventional branch name for the user's unclear intent. Read-only discovery and preparation of the supplied notes may continue while waiting; elapsed time is not an answer.
+
 ## Add missing entries from commits
 
-- Establish clear source and destination branches using the mandatory branch clarification rule below before selecting a commit range. Inspect the commits included in that PR and their changes, together with the cumulative PR diff. Use the provider's PR comparison or the equivalent source-only commit range and merge-base comparison; do not use the entire repository history, destination-only commits, or uncommitted work as PR content.
+- Use the confirmed source and destination branches before selecting a commit range. Inspect the commits included in that PR and their changes, together with the cumulative PR diff. Use the provider's PR comparison or the equivalent source-only commit range and merge-base comparison; do not use the entire repository history, destination-only commits, or uncommitted work as PR content.
 - Identify relevant changes missing from the supplied notes, including behavior, APIs, fixes, build configuration, CI, tests, and documentation when they materially describe the PR. Validate vague commit messages against the changes. Describe the resulting state; omit changes fully reverted or superseded within the PR.
 - Add each missing change as a new bullet under its module using the same structure, language, and level of detail as the supplied notes. Do not create a separate commit-history section, append commit messages verbatim, or decorate entries with commit hashes and attribution.
 - Deduplicate by meaning across both sources and across commits. If a supplied note already describes a change, retain that note with only the permitted language corrections and do not add another entry for it. Combine multiple commits implementing one change into one new entry. A distinct change absent from the notes still deserves its own entry even if it touches the same module or file.
@@ -48,10 +54,6 @@ Read the target repository's current label catalog, including descriptions when 
 - If the catalog cannot be read, do not guess label names. Continue with the prepared PR when otherwise possible and report that label matching could not be completed.
 
 ## Create and verify the PR
-
-Use an available repository connector or CLI. Resolve the repository and any requested draft status from the user's request and current repository context.
-
-**Both branches must be clear before proceeding.** Identify the source (head) and destination (base) branches from explicit user instructions or unambiguous session context. If either branch is missing, unclear, or has conflicting evidence, you must ask the user to specify it and wait for the answer before selecting the PR commit range, creating or updating the PR, or performing branch-related mutations. Never silently substitute the checked-out branch, upstream, repository default, or a conventional branch name for the user's unclear intent. Read-only discovery and preparation of the supplied notes may continue while waiting; elapsed time is not an answer.
 
 Once both branches are clear, check for an existing PR with the same source and target before creating another; if one exists, report its URL and update it only when the user has authorized an update.
 

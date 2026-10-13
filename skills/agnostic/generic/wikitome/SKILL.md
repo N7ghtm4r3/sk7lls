@@ -1,6 +1,6 @@
 ---
 name: wikitome
-description: Create a compact wiki entry in chat about an API, technical capability, or functionality to implement. Analyze available project context with $readonly and present examples or proposed corrections with $code-preview. Use to explain the conceptual contract, implementation, use cases, limitations, alternatives, and a minimal example independently of languages and frameworks unless requested otherwise. For scenarios with multiple candidate capabilities, list them and expand the user's selections one at a time. Evaluate a supplied snippet or scenario against the described API only when explicitly requested.
+description: "Explain an API or capability as a compact, technology-neutral wiki entry in chat; select candidates before expanding a multi-capability scenario, and evaluate supplied snippets only on explicit request."
 ---
 
 # WikiToMe
@@ -11,7 +11,7 @@ Produce a compact technical wiki entry that can be understood at a glance. Remai
 
 ## Skill composition
 
-Read and follow `$readonly` for context analysis ([../readonly/SKILL.md](../readonly/SKILL.md) in this collection). Read and follow `$code-preview` when presenting code examples or proposed code corrections ([../code-preview/SKILL.md](../code-preview/SKILL.md)). Use the available skill locations if this collection has moved; if a required skill is unavailable, report the missing dependency and stop the affected phase.
+Read and follow `readonly` for context analysis ([../readonly/SKILL.md](../readonly/SKILL.md) in this collection). Read and follow `code-preview` when presenting code examples or proposed code corrections ([../code-preview/SKILL.md](../code-preview/SKILL.md)). Use the available skill locations if this collection has moved; if a required skill is unavailable, report the missing dependency and stop the affected phase.
 
 WikiToMe determines the explanatory structure and evaluation scope. Code Preview determines code presentation, including explanatory comments by default and docstrings only on request. Preserve language-neutral pseudocode for conceptual entries and the original language and framework for supplied snippets.
 
@@ -19,7 +19,7 @@ The wiki workflow produces chat content and remains read-only. Showing or approv
 
 ## Procedure
 
-1. Always use `$readonly` to analyze available project context before identifying or describing any API. Examine only the files, documentation, and elements relevant to the request. If no relevant project is available, use the supplied scenario and state material assumptions without inventing project details.
+1. Always use `readonly` to analyze available project context before identifying or describing any API. Examine only the files, documentation, and elements relevant to the request. If no relevant project is available, use the supplied scenario and state material assumptions without inventing project details.
 2. Identify the requested API, capability, or behavior and the problem it solves.
 3. When the user provides a scenario without naming a specific API, use it to identify candidate APIs or capabilities to document. Derive candidates only from the scenario and the analyzed context, without inventing missing requirements, APIs, or behaviors.
 4. If the scenario contains multiple candidates, return a compact list of the APIs or capabilities and the role each one plays. Do not expand all entries automatically. Let the user choose which candidates to explore, then document the selected ones one at a time, step by step.
@@ -27,7 +27,7 @@ The wiki workflow produces chat content and remains read-only. Showing or approv
 6. Describe the conceptual contract: input, output, state, persistence, errors, and relevant constraints. Omit items that do not apply.
 7. Explain the implementation through components and data flow, using abstract interfaces and language-neutral pseudocode.
 8. Highlight use cases, when to choose the solution, when to avoid it, and any better-suited alternatives. Base alternatives on the analyzed context and clearly state why they may be preferable.
-9. Use `$code-preview` to present a minimal example showing the requested behavior, the main path, and, when important, an error or edge case. Keep it within the wiki's Example section; do not append a duplicate preview or an automatic implementation offer.
+9. Use `code-preview` to present a minimal example showing the requested behavior, the main path, and, when important, an error or edge case. Keep it within the wiki's Example section; do not append a duplicate preview or an automatic implementation offer.
 10. Add a contextual evaluation only when the user explicitly asks to evaluate a snippet or scenario they shared.
 
 ## Response format
@@ -56,18 +56,11 @@ Cover in separate points: use cases, when to use it, when to avoid it, and bette
 
 #### Example
 
-Show a minimal, complete example of the main path using `$code-preview`. Briefly identify the behavior being illustrated, include comments on the meaningful code sections, and state the expected observable result. Keep pseudocode clearly identified as conceptual.
+Show a minimal, complete example of the main path using `code-preview`. Briefly identify the behavior being illustrated, include comments on the meaningful code sections, and state the expected observable result. Keep pseudocode clearly identified as conceptual.
 
-#### Snippet or scenario evaluation (optional)
+#### Snippet or scenario evaluation (explicit request only)
 
-Include this section only when explicitly requested and base it on the material provided by the user. Evaluate the usage against the contract, lifecycle, and use cases of the described API, not as a general code review.
-
-- State immediately whether the approach is suitable, partially suitable, or unsuitable, and explain why.
-- Identify at most three relevant aspects: correctness, lifecycle, keys or dependencies, state, errors, performance, or a more appropriate alternative.
-- Propose a minimal correction with `$code-preview` when needed; preserve the language, framework, and style of the original snippet. Make the requested behavior, observed issue, proposed correction, and expected effect explicit with concise prose or labels. Show only enough original code to explain the change, avoiding a full duplicate snippet.
-- Use a natural, direct tone. Do not impose the wiki structure on this section when a short prose explanation is clearer.
-- State any assumptions when the scenario lacks sufficient context. Do not invent missing requirements.
-- Label corrections as proposals and distinguish expected effects from verified results. Do not claim a correction was applied or tested merely because it appears in the preview.
+Only for requested evaluation of supplied material, read [snippet evaluation](references/snippet-evaluation.md). It owns suitability, the bounded assessment, proposed corrections, and evidence labels. Otherwise omit this section.
 
 ## Quality rules
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "Work Intake"
-  short_description: "Scegli tra intervento diretto e scoperta requisiti"
-  default_prompt: "Usa $work-intake per scegliere e seguire il flusso adatto a questo lavoro, usando $requirements-phase o $functional-finder quando necessario."
+  short_description: "Choose direct work or requirements discovery"
+  default_prompt: "Use $work-intake to choose and follow the appropriate workflow for this task, using $requirements-phase or $functional-finder when needed."

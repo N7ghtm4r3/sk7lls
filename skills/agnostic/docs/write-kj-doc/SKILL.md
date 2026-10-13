@@ -1,6 +1,6 @@
 ---
 name: write-kj-doc
-description: "Write, complete, normalize, or review KDoc and Javadoc in a specific personal English style, with role-aware blueprints for ordinary declarations, UI components, screens, ViewModels, service clients, requesters, and helpers. Use when Codex is asked to document Kotlin (.kt or .kts) or Java (.java) declarations, add documentation to a type and every member, convert existing API comments to this style, or check that documentation matches signatures and behavior. This skill changes only documentation blocks and explicitly marked `TODO: INGEST -` source comments; it must never change source code, imports, annotations, signatures, bodies, build files, other comments, or formatting outside documentation blocks."
+description: "Write, complete, normalize, or review Kotlin KDoc and Java Javadoc for declarations and members, role-aware blueprints, or signature/behavior checks, using the personal English style."
 ---
 
 # Write KDoc and Javadoc
@@ -69,24 +69,9 @@ Load only the role references that match the target code:
 6. Compare the edited files with the recorded baseline and reject any newly introduced difference outside KDoc or Javadoc blocks except their newly inserted line indentation and endings and the exact deletion of successfully ingested `TODO: INGEST -` comments. Correct only accidental changes made by this workflow and preserve all pre-existing user changes.
 7. Validate the result against the checklist below. Run an existing focused KDoc, Dokka, Javadoc, or doclint task only when it cannot rewrite target sources and is readily available and proportionate; do not alter the build merely to validate comments.
 
-## Resolve the release and place `@since`
+## Resolve release and class metadata
 
-- Before each documentation round, identify the repository, current branch, and relevant module. First check available conversation context and prior documentation-round records for a version already proposed for that same repository and branch. Reuse that proposal without proposing a different version or asking again, unless the user explicitly supersedes it. Do not reuse a proposal from another branch or repository
-- If no prior proposal is available, autonomously inspect release/version configuration, changelogs, release tags, and relevant Git history. Determine the release to which the additions belong; do not blindly use the latest published tag or infer a version from the date. Account for independently versioned modules
-- Before editing documentation, announce the proposed `@since` value, the repository/branch (and module when relevant), and the evidence supporting it. This is a proposal, not a mandatory approval gate: continue under the announced value unless the user requests confirmation. Keep this information in the conversation so later rounds can reuse it; do not create tracking files without a request
-- If evidence cannot distinguish plausible releases, ask one focused question before adding uncertain tags. Continue analysis that does not depend on the answer. Never fabricate either a version or a prior proposal
-- Determine when each declaration was introduced using the release baseline, branch changes, and relevant history, including committed additions from earlier rounds. A missing documentation block does not make a declaration new; an implementation edit, rename, or move does not by itself establish a new introduction version
-- For a type introduced in the selected release, put `@since` only on that type. Do not repeat it on its initial properties, constructors, methods, or nested types introduced in the same release, even if they were added in different documentation rounds
-- For an existing type or other enclosing declaration, put `@since` on each newly introduced declaration in the release: properties, constructors, methods, nested types, or top-level declarations as applicable. A newly added nested type carries the tag for its own initial members. Do not stamp the enclosing type or unchanged historical members with the current release
-- For a later-added Kotlin primary-constructor property, attach a standalone property KDoc when possible without changing any non-comment character. Do not put its `@since` on the containing class or invent an inline `@since` inside `@property`. If a declaration-level tag cannot be attached within the documentation-only boundary, report the limitation
-- Preserve accurate historical introduction versions. Within the requested documentation scope, remove redundant tags that repeat the enclosing type's introduction version, and correct wrongly placed or incorrect tags only when introduction evidence supports the correction. Do not overwrite an older valid version with the round's version; leave uncertain historical tags unchanged and report them
-
-## Resolve class-only `@see` entries
-
-- Place `@see` tags only in class documentation. Never add them to methods, functions, overrides, constructors, fields, properties, or other non-class declarations. Within the requested documentation scope, remove existing `@see` tags from those declarations; preserve useful contract information in prose or inline links when needed
-- For a documented class, include its actual direct superclass and directly implemented interfaces. Add an indirect ancestor only when its contract is essential to understanding this class; do not enumerate the complete inheritance chain or include universal implicit roots such as `Object` and `Any`
-- Include each selected ancestor once, direct references first. Use resolvable qualified names when needed without changing imports. Interfaces may be targets of class-level `@see` tags; that does not authorize placing the tags on non-class declarations
-- Verify each selected reference against the real hierarchy. Omit unresolved references and report the limitation rather than inventing links. These class-only rules also apply to every specialized blueprint
+Before editing, read [release metadata](references/metadata.md#resolve-the-release-and-place-since) for the release proposal and `@since` placement. When documenting classes or reviewing tags, also read [class-only see rules](references/metadata.md#resolve-class-only-see-entries). Reuse applicable proposals and historical evidence; unresolved optional metadata remains omitted/reported rather than fabricated.
 
 ## Validate every comment
 

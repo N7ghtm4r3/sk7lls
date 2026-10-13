@@ -1,6 +1,6 @@
 ---
 name: mkdocs-bookeping
-description: Maintain Material for MkDocs documentation by ingesting its organization, content, and writing style in read-only mode, proposing concrete revisions and missing content, then implementing the confirmed documentation changes. Use for documentation maintenance, content gap analysis, and additions consistent with an existing documentation set. All non-documentation files remain read-only, including after confirmation; publishing is outside this workflow.
+description: "Maintain Material for MkDocs documentation or fill content gaps: ingest organization, content, and style read-only, propose revisions or additions, then implement confirmed documentation changes."
 ---
 
 # MkDocs Bookeping
@@ -23,23 +23,9 @@ Before confirmation, use non-mutating inspection only: no builds, previews, test
 
 When static inspection cannot establish a fact, identify the missing evidence and the verification that would be needed. Do not modify implementation to make it agree with documentation. A discovered implementation defect may be reported as a separate observation; it is not authorization to fix it.
 
-## Selective subagent use
+## Select independent work when useful
 
-Use subagents when substantial, independent documentation tasks can run alongside useful work by the lead agent. Handle small edits, a short page, or tightly coupled content directly. Parallelism is a means to improve writing and turnaround, not a required stage.
-
-Start with one helper. Add a second only when another independent batch justifies the extra context and coordination; use at most two helpers per request unless the user asks for more. Reuse those helpers for focused follow-ups instead of spawning replacements for each phase or page. Do not allow nested delegation. If subagents are unavailable, complete the same workflow locally.
-
-The lead agent establishes the scope, content map, and editorial baseline once. Share a compact brief containing the assigned topic, audience, language, terminology and style conventions, relevant file references or short excerpts, evidence already established, open questions, and expected output. Pass only the context needed for that assignment, rather than the entire conversation. Helpers inspect any additional sources needed to substantiate their own content; do not ask each helper to repeat repository-wide ingestion.
-
-Choose a bounded assignment that avoids overlapping work:
-
-- **Analysis:** verify coverage or behavior for one independent topic, returning concise findings, source references, and unresolved gaps under [readonly](../readonly/SKILL.md).
-- **Proposal writing:** draft a coherent section or related group of sections from the shared baseline, returning proposed Markdown and essential evidence without writing files before confirmation. Avoid one agent per paragraph or multiple competing drafts of the same content unless requested.
-- **Confirmed implementation:** assign disjoint documentation files from the confirmed proposal. Specify exactly which files the helper may edit; keep shared navigation, configuration, and final integration with the lead agent. When assignments would touch the same file, have helpers return text for the lead to integrate instead.
-
-Every assignment must state the current phase, confirmation status, and documentation-only boundary. Delegation does not authorize edits before confirmation or changes to any non-documentation file. Keep shared context in messages during analysis rather than creating coordination files.
-
-The lead agent remains responsible for factual consistency, a uniform editorial voice, removing duplication, and connecting sections. Inspect delegated output and its supporting evidence, integrate it, and perform the combined validation once after integration. Delegate a focused review only when a concrete uncertainty warrants it; do not add an automatic reviewer or repeated review-and-rewrite cycles. Prefer a narrow follow-up on the affected passage over regenerating a complete draft. Do not duplicate a helper's active assignment locally.
+For substantial independent documentation batches alongside useful lead work, read [selective delegation](references/delegation.md) before assigning them. Small or tightly coupled edits stay local. Helpers are optional and require session permission and exposed tools; a serial run retains the same workflow.
 
 ## Phase 1 — Ingest the existing documentation
 
@@ -94,6 +80,8 @@ Once the user confirms, proceed with the actual documentation edits, not another
 Recheck the affected files before editing so that intervening user changes are preserved. Update the existing passages and create the confirmed additions using the ingested style. Apply the necessary confirmed navigation, cross-link, anchor, include, and asset changes so the content remains discoverable and coherent.
 
 For generated content, change a maintained documentation source only when it is within the confirmed scope. If the required source is application code, a source comment, or an excluded build or generator script, report that constraint instead of changing it or hand-editing generated output that would be overwritten.
+
+### Check scope and validation
 
 Review the resulting diff against the initial state to ensure every change made by this task is within the identified documentation paths and preserves unrelated work. Check headings, links, examples, and supported Material syntax. When an existing documentation toolchain is available, inspect its hooks and plugins before running a local build; run it only if its effects stay within documentation validation and scratch output, without changing any non-documentation file or tracked generated output. Do not install dependencies or alter the environment to force validation. Otherwise perform static checks and report the missing build verification. Fix documentation issues introduced by the confirmed changes within the same scope.
 

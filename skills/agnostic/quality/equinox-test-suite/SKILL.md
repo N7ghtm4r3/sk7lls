@@ -1,13 +1,13 @@
 ---
 name: equinox-test-suite
-description: Design, implement, migrate, review, diagnose, and validate Equinox backend route tests and Compose Multiplatform end-to-end journeys using Spring Boot, MariaDB Testcontainers, Kotlin, Parikshan, and Gradle Kotlin DSL. Use for HTTP integration tests, authorization and persistence coverage, shared Desktop/Wasm/iOS/Android journeys, real-backend fixtures, Parikshan upgrades, target lifecycle failures, Gradle E2E orchestration, and determining whether the complete suite ran even when product tests failed.
+description: "Design, implement, migrate, review, diagnose, or validate Equinox Spring/MariaDB route tests and Compose Multiplatform journeys with Parikshan; handle fixtures, cross-target execution, Gradle lifecycle failures, or explicitly authorized Parikshan upgrades."
 ---
 
 # Equinox Test Suite
 
 ## Compose the base skills
 
-Apply `route-test-designer` to backend route/API tests and `frontend-journey-test-designer` to frontend journeys. Apply both when a regression crosses UI, HTTP, security, persistence, and MariaDB.
+Read and apply [route-test-designer](../route-test-designer/SKILL.md) to backend route/API tests and [frontend-journey-test-designer](../frontend-journey-test-designer/SKILL.md) to frontend journeys. Apply both when a regression crosses UI, HTTP, security, persistence, and MariaDB.
 
 Read every applicable base skill completely. Preserve its product boundary, TDD, validation-gate, and reporting rules. If a base skill is unavailable, state that and retain the equivalent constraints here.
 
@@ -57,6 +57,8 @@ Inspect:
 6. Every comment or helper tied to a specific Parikshan version before upgrading it.
 
 Inspect the installed plugin source/API when target lifecycle matters. Do not infer current Parikshan behavior from documentation, task names, or previous runs.
+
+Discovery is complete when the selected scope, real lifecycle, target capabilities, and permitted test locations are identified, with missing capabilities recorded as blockers.
 
 ## Implement backend route tests
 

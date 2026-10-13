@@ -1,6 +1,6 @@
 ---
 name: defect-impact-report
-description: Produce an evidence-based, read-only report on the current state of a reported defect and the likely impact of a targeted fix. Use for defect assessment, blast-radius analysis, and fix-impact reporting; do not use to implement or apply changes.
+description: "Assess defect status, blast radius, or the impact of a targeted fix through read-only inspection. Report evidence in chat."
 ---
 
 # Defect Impact Report
@@ -23,11 +23,17 @@ Establish the current state from observable evidence. Separate clearly:
 - **Inferred:** a reasoned conclusion that is not directly demonstrated.
 - **Unknown:** information that cannot be established read-only from the available context.
 
+### Trace the defect
+
 Trace the relevant execution or data path far enough to identify the trigger, affected behavior, likely cause, affected components and consumers, and existing safeguards. Compare actual and expected behavior when the expected behavior is documented or supplied; do not invent requirements.
+
+### Assess the targeted fix
 
 Assess a narrowly scoped fix at the level justified by the evidence. Cover the intended behavioral change, probable files or components involved, direct and indirect consumers, compatibility concerns, data or state implications, security and privacy, performance, operations and observability, and regression risk. Omit dimensions that are genuinely irrelevant.
 
 Treat hypotheses as hypotheses. Include confidence and cite local file paths with line numbers, symbols, commits, logs, or other concrete evidence wherever available.
+
+Finish analysis with an evidence-backed status, the justified change surface, and explicit gaps; unresolved evidence remains unknown rather than a completed diagnosis.
 
 ## Report
 

@@ -1,158 +1,158 @@
-# Setup infrastruttura Pulumi con AWS
+# Set up Pulumi infrastructure with AWS
 
-Questa procedura descrive la struttura base per inizializzare un progetto infrastrutturale con Pulumi, usando AWS come provider cloud, S3 come backend per lo stato e AWS KMS come secrets provider.
+This procedure initializes a Pulumi infrastructure project using AWS as the cloud provider, S3 as the state backend, and AWS KMS as the secrets provider.
 
 ## Root
 
-Crea una cartella dedicata all'infrastruttura:
+Create a dedicated infrastructure directory:
 
 ```bash
 mkdir infra
 cd infra
 ```
 
-Dentro `infra`, crea una cartella dedicata al provider cloud utilizzato:
+Inside `infra`, create a directory for the selected cloud provider:
 
 ```bash
 mkdir aws
 cd aws
 ```
 
-> In alternativa ad `aws`, si puo creare una cartella con il nome del provider scelto.
+> Instead of `aws`, the directory may use the selected provider name.
 
-## Prerequisiti
+## Prerequisites
 
-Prima di iniziare servono:
+Before starting, you need:
 
-- Pulumi CLI installata
-- AWS CLI installata
-- credenziali AWS valide
-- bucket S3 gia creato per salvare lo stato Pulumi
-- chiave AWS KMS, o relativo alias, gia creata per cifrare i secrets
+- Pulumi CLI installed
+- AWS CLI installed
+- valid AWS credentials
+- an existing S3 bucket for Pulumi state
+- an existing AWS KMS key or alias for encrypting secrets
 
-## Configurare AWS CLI
+## Configure AWS CLI
 
-Configura le credenziali AWS:
+Configure AWS credentials:
 
 ```bash
 aws configure
 ```
 
-Il comando richiede:
+The command requests:
 
 - AWS Access Key ID
 - AWS Secret Access Key
 - Default region
 - Default output format
 
-## Login Pulumi su backend S3
+## Log Pulumi into the S3 backend
 
-Configura Pulumi per usare un backend S3 come storage dello stato:
+Configure Pulumi to store state in an S3 backend:
 
 ```bash
 pulumi login s3://[bucket-or-path]
 ```
 
-Esempio:
+Example:
 
 ```bash
 pulumi login s3://my-pulumi-state-bucket
 ```
 
-Questo passaggio va fatto prima di inizializzare il progetto, cosi lo stack viene creato direttamente sul backend corretto.
+Do this before initializing the project so the stack is created on the correct backend.
 
-## Inizializzare il progetto Pulumi
+## Initialize the Pulumi project
 
-Inizializza un nuovo progetto Pulumi con template AWS TypeScript:
+Initialize a new Pulumi project with the AWS TypeScript template:
 
 ```bash
 pulumi new aws-typescript
 ```
 
-Il comando crea il progetto Pulumi e inizializza uno stack.
+The command creates the Pulumi project and initializes a stack.
 
-## Configurare AWS KMS come secrets provider
+## Configure AWS KMS as the secrets provider
 
-Se lo stack e gia stato creato, puoi cambiare il secrets provider usando AWS KMS:
+For an existing stack, you can change the secrets provider to AWS KMS:
 
 ```bash
 pulumi stack change-secrets-provider \
   "awskms://alias/[slug]?region=[region]"
 ```
 
-Dove:
+Where:
 
-- `[slug]` e l'alias della chiave KMS
-- `[region]` e la regione AWS, ad esempio `eu-west-1`
+- `[slug]` is the KMS key alias
+- `[region]` is the AWS region, such as `eu-west-1`
 
-Esempio:
+Example:
 
 ```bash
 pulumi stack change-secrets-provider \
   "awskms://alias/my-project-key?region=eu-west-1"
 ```
 
-## Configurare le config dello stack
+## Configure the stack
 
-Prima di configurare i secrets, imposta le configurazioni non sensibili dello stack.
+Set non-sensitive stack configuration before configuring secrets.
 
-Queste configurazioni vengono salvate nel file dello stack, ad esempio:
+This configuration is stored in the stack file, for example:
 
 ```text
 Pulumi.staging.yaml
 ```
 
-Se esiste un template di riferimento, copia prima dal template le config non sensibili nel file dello stack corretto.
+If a reference template exists, first copy its non-sensitive configuration into the correct stack file.
 
-Dal template vanno copiate solo configurazioni come:
+Copy only configuration such as:
 
 - region
 - domain
 - DNS
-- nomi risorse
-- configurazioni applicative non segrete
+- resource names
+- non-secret application settings
 
-I secrets non devono essere copiati manualmente dal template.
+Do not manually copy secrets from the template.
 
-Dopo aver copiato le config dal template, verifica e imposta i DNS reali del progetto e dell'ambiente.
+After copying configuration, verify and set the real DNS values for the project and environment.
 
-Formato generale:
+General form:
 
 ```bash
 pulumi config set [nome-config] "[valore]"
 ```
 
-Esempio:
+Example:
 
 ```bash
 pulumi config set domain "avatar-poc.sandbox.devpunks.com"
 pulumi config set aws:region "eu-central-1"
 ```
 
-Questi valori possono anche essere controllati direttamente nel file `Pulumi.[stack].yaml`, ma e preferibile usare `pulumi config set` per mantenere il formato corretto.
+You may inspect these values in `Pulumi.[stack].yaml`, but prefer `pulumi config set` to preserve the correct format.
 
-### Configurazione immagine backend
+### Backend image configuration
 
-Se il progetto prevede un backend containerizzato, puo esserci una config per scegliere se usare un'immagine sample o l'immagine reale dell'applicazione.
+For a containerized backend, a configuration value may select a sample image or the real application image.
 
-Per un primo bootstrap dell'infrastruttura, puoi usare temporaneamente un'immagine sample:
+During initial infrastructure bootstrap, you may temporarily use a sample image:
 
 ```bash
 pulumi config set backend:useSampleImage true
 pulumi up
 ```
 
-Questa modalita e utile per verificare che VPC, cluster, load balancer, DNS e risorse base vengano creati correttamente senza dipendere dalla pipeline applicativa.
+This verifies that the VPC, cluster, load balancer, DNS, and base resources are created correctly without depending on the application pipeline.
 
-Se il progetto crea anche il repository ECR, questa modalita serve anche a rompere il ciclo di bootstrap:
+When the project also creates ECR, this breaks the bootstrap cycle:
 
 ```text
 Pulumi deve creare ECR -> Docker deve pushare su ECR -> ECS deve usare l'immagine da ECR
 ```
 
-Per questo il primo `pulumi up` puo usare una sample image. Dopo che ECR esiste, builda e pusha l'immagine reale.
+The first `pulumi up` may therefore use a sample image. Once ECR exists, build and push the real image.
 
-Esempio:
+Example:
 
 ```bash
 ECR=$(pulumi stack output ecrRepositoryUrl)
@@ -165,7 +165,7 @@ docker build -f [backend-dockerfile-path] -t "$ECR:$TAG" [docker-context]
 docker push "$ECR:$TAG"
 ```
 
-Solo dopo il push dell'immagine reale, imposta:
+Only after pushing the real image, set:
 
 ```bash
 pulumi config set backend:useSampleImage false
@@ -173,60 +173,60 @@ pulumi config set commitHash "$TAG"
 pulumi up
 ```
 
-In questo caso devi anche passare il tag dell'immagine da deployare. Se usi un valore manuale:
+Also supply the image tag to deploy. For a manual value:
 
 ```bash
 pulumi config set commitHash "[tag-immagine]"
 ```
 
-Il nome `commitHash` e una convenzione comune: spesso coincide con lo short hash del commit Git usato come tag dell'immagine Docker. In generale rappresenta la versione dell'applicazione da deployare.
+`commitHash` is a common convention: it often matches the short Git commit hash used as the Docker image tag. More generally, it identifies the application version to deploy.
 
-Non impostare `backend:useSampleImage false` prima che l'immagine `"[ecr-repository-url]:[tag-immagine]"` esista davvero nel registry. In caso contrario ECS provera a scaricare un'immagine inesistente e il servizio fallira.
+Keep `backend:useSampleImage` enabled until the image `"[ecr-repository-url]:[tag-immagine]"` exists in the registry. Disabling it earlier makes ECS fetch a nonexistent image and the service fails.
 
-## Configurare i secrets dello stack
+## Configure stack secrets
 
-Dopo aver configurato le config non sensibili e il secrets provider corretto, i valori sensibili devono essere salvati nello stack usando `--secret`.
+After configuring non-sensitive values and the correct secrets provider, store sensitive stack values with `--secret`.
 
-Formato generale:
+General form:
 
 ```bash
 pulumi config set --secret [nome-secret] "[valore]"
 ```
 
-Esempio:
+Example:
 
 ```bash
 pulumi config set --secret databasePassword "my-password"
 ```
 
-Per secret applicativi generabili, crea il valore al bootstrap e poi lascialo stabile. Ad esempio, un secret auth del backend puo essere generato cosi:
+For generated application secrets, create the value at bootstrap and keep it stable. For example, generate a backend auth secret as follows:
 
 ```bash
 pulumi config set --secret backend:authSecret "$(openssl rand -base64 32)"
 ```
 
-Non rigenerare secret di firma/sessione a ogni deploy: cambiarli puo invalidare sessioni o token gia emessi. Rigenerali solo quando crei lo stack, cambi secrets provider, recuperi da una perdita dei secret, o vuoi ruotarli intenzionalmente.
+Keep signing/session secrets stable across deployments: changing them can invalidate issued sessions or tokens. Regenerate them only when creating the stack, changing secrets provider, recovering lost secrets, or intentionally rotating them.
 
-I secrets configurati in questo modo vengono cifrati usando il secrets provider dello stack, quindi in questo caso AWS KMS.
+These secrets are encrypted by the stack secrets provider, AWS KMS in this case.
 
-Per verificare la configurazione dello stack:
+To inspect stack configuration:
 
 ```bash
 pulumi config
 ```
 
-## Utilizzare il template della repo
+## Use the repository template
 
-Dopo aver completato la configurazione base di Pulumi, puoi usare il template della repo `aws-infra-template` come riferimento per strutturare il progetto infrastrutturale.
+After completing base Pulumi configuration, use the `aws-infra-template` repository as a structural reference for the infrastructure project.
 
-In particolare, dal template devi recuperare le cartelle:
+Retrieve these directories from the template:
 
 - `components`
 - `lib`
 
-Queste cartelle vanno copiate dentro il progetto Pulumi appena inizializzato, sotto la cartella del provider.
+Copy them into the initialized Pulumi project below the provider directory.
 
-Esempio con AWS:
+AWS example:
 
 ```text
 infra/
@@ -238,104 +238,104 @@ infra/
     └── Pulumi.staging.yaml
 ```
 
-Il template va usato come passaggio successivo alla configurazione iniziale, non al posto di:
+Use the template after initial configuration, rather than replacing these steps:
 
 ```bash
 pulumi new aws-typescript
 ```
 
-In questo modo il progetto Pulumi viene prima inizializzato correttamente, poi arricchito con la struttura condivisa presente nella repo template.
+Initialize Pulumi correctly first, then add the shared template structure.
 
-## Copiare le config dal template
+## Copy template configuration
 
-Dopo aver copiato le cartelle `components` e `lib`, copia anche le configurazioni non sensibili dal template prima di impostare o modificare le config con `pulumi config set`.
+After copying `components` and `lib`, also copy non-sensitive template configuration before setting or changing values with `pulumi config set`.
 
-Le config possono trovarsi nei file stack, ad esempio:
+Configuration may live in stack files, for example:
 
 ```text
 Pulumi.staging.yaml
 Pulumi.production.yaml
 ```
 
-Dal template vanno copiate solo le configurazioni non sensibili, come:
+Copy only non-sensitive configuration, such as:
 
 - region
 - domain
 - DNS
-- nomi risorse
-- configurazioni applicative non segrete
+- resource names
+- non-secret application settings
 
-I secrets non devono essere copiati manualmente dal template.
+Do not manually copy secrets from the template.
 
-Dopo la copia, i DNS presenti nelle config devono essere sostituiti con i DNS reali del progetto e dell'ambiente.
+Replace copied DNS values with the real project and environment DNS values.
 
-I valori sensibili vanno reinseriti nello stack corretto usando:
+Reinsert sensitive values into the correct stack using:
 
 ```bash
 pulumi config set --secret [nome-secret] "[valore]"
 ```
 
-## Adattare l'entrypoint Pulumi
+## Adapt the Pulumi entrypoint
 
-Dopo aver copiato cartelle e config dal template, aggiorna l'entrypoint del progetto Pulumi, solitamente:
+After copying template directories and configuration, update the Pulumi entrypoint, usually:
 
 ```text
 index.ts
 ```
 
-Questo file deve usare davvero i componenti copiati dal template, ad esempio quelli presenti in:
+This file must actually use the copied components, for example those in:
 
 ```text
 components/
 lib/
 ```
 
-Il file generato da `pulumi new aws-typescript` contiene solo un esempio base. Prima di eseguire un deploy, sostituisci o adatta quell'esempio con la composizione reale dell'infrastruttura del progetto.
+`pulumi new aws-typescript` generates only a basic example. Before deployment, replace or adapt it to the actual project infrastructure composition.
 
-In modo generico, `index.ts` dovrebbe:
+In general, `index.ts` should:
 
-- leggere le config dello stack
-- istanziare i componenti infrastrutturali necessari
-- collegare tra loro risorse, DNS, backend, frontend, database o altri servizi richiesti
-- esportare gli output utili
+- read stack configuration
+- instantiate the required infrastructure components
+- connect resources, DNS, backend, frontend, database, and other required services
+- export useful outputs
 
-Prima di applicare le modifiche su AWS, verifica sempre cosa verrebbe creato:
+Before applying AWS changes, inspect what would be created:
 
 ```bash
 pulumi preview
 ```
 
-Solo se il preview mostra le risorse attese, procedi con:
+Proceed with the following only when preview shows the expected resources:
 
 ```bash
 pulumi up
 ```
 
-## Usare AWS Systems Manager per l'accesso amministrativo
+## Use AWS Systems Manager for administrative access
 
-Systems Manager permette di amministrare nodi gestiti senza esporre direttamente porte SSH o RDP. Un nodo gestito puo essere un'istanza EC2 Windows o Linux, una VM o un server registrato tramite l'attivazione ibrida di Systems Manager.
+Systems Manager administers managed nodes without directly exposing SSH or RDP ports. A managed node may be a Windows or Linux EC2 instance, a VM, or a server registered through a Systems Manager hybrid activation.
 
-### Installare AWS Session Manager Plugin sul computer locale
+### Install AWS Session Manager Plugin on the local computer
 
-Il comando `aws ssm start-session` richiede AWS CLI e AWS Session Manager Plugin sul computer dal quale viene aperto il tunnel. Il plugin e locale: non va installato sull'istanza EC2 usata come destinazione, dove deve invece essere attivo SSM Agent.
+`aws ssm start-session` requires AWS CLI and AWS Session Manager Plugin on the computer opening the tunnel. The plugin is local; the target EC2 instance instead needs an active SSM Agent.
 
-Verifica prima se il plugin e gia disponibile:
+First check whether the plugin is available:
 
 ```bash
 session-manager-plugin
 ```
 
-Se il comando non esiste, installalo con la procedura adatta al sistema operativo.
+If the command is absent, use the installation procedure for the operating system.
 
 #### macOS
 
-Con Homebrew, sia su Apple Silicon sia su Intel:
+With Homebrew on either Apple Silicon or Intel:
 
 ```bash
 brew install --cask session-manager-plugin
 ```
 
-In alternativa usa l'installer firmato AWS. Su Apple Silicon:
+Alternatively, use the signed AWS installer. On Apple Silicon:
 
 ```bash
 curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/mac_arm64/session-manager-plugin.pkg" \
@@ -345,13 +345,13 @@ sudo ln -s /usr/local/sessionmanagerplugin/bin/session-manager-plugin \
   /usr/local/bin/session-manager-plugin
 ```
 
-Su Mac Intel sostituisci `mac_arm64` con `mac` nell'URL.
+On Intel Macs, replace `mac_arm64` with `mac` in the URL.
 
-Documentazione ufficiale: [Installare Session Manager Plugin su macOS](https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-macos-overview.html).
+Official documentation: [Install Session Manager Plugin on macOS](https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-macos-overview.html).
 
 #### Windows
 
-Apri PowerShell e scarica l'installer ufficiale:
+Open PowerShell and download the official installer:
 
 ```powershell
 $installer = Join-Path $env:TEMP "SessionManagerPluginSetup.exe"
@@ -361,17 +361,17 @@ Invoke-WebRequest `
 Start-Process $installer -Verb RunAs -Wait
 ```
 
-L'installazione richiede privilegi di amministratore. Chiudi e riapri PowerShell dopo l'installazione. Se il comando non viene trovato, aggiungi al `PATH`:
+Installation requires administrator privileges. Reopen PowerShell afterward. If the command is not found, add this directory to `PATH`:
 
 ```text
 C:\Program Files\Amazon\SessionManagerPlugin\bin\
 ```
 
-Documentazione ufficiale: [Installare Session Manager Plugin su Windows](https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-windows.html).
+Official documentation: [Install Session Manager Plugin on Windows](https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-windows.html).
 
-#### Ubuntu o Debian
+#### Ubuntu or Debian
 
-Su sistemi `x86_64`:
+On `x86_64` systems:
 
 ```bash
 curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" \
@@ -379,108 +379,108 @@ curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64
 sudo dpkg -i session-manager-plugin.deb
 ```
 
-Su sistemi `ARM64`, sostituisci `ubuntu_64bit` con `ubuntu_arm64` nell'URL.
+On `ARM64`, replace `ubuntu_64bit` with `ubuntu_arm64` in the URL.
 
-Documentazione ufficiale: [Installare Session Manager Plugin su Ubuntu e Debian](https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-debian-and-ubuntu.html).
+Official documentation: [Install Session Manager Plugin on Ubuntu and Debian](https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-debian-and-ubuntu.html).
 
-#### Amazon Linux o RHEL
+#### Amazon Linux or RHEL
 
-Su Amazon Linux 2023 oppure RHEL 8 e 9 `x86_64`:
+On Amazon Linux 2023 or RHEL 8 and 9 `x86_64`:
 
 ```bash
 sudo dnf install -y \
   https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm
 ```
 
-Su Amazon Linux 2 oppure RHEL 7 usa `yum` al posto di `dnf`. Su sistemi `ARM64`, sostituisci `linux_64bit` con `linux_arm64` nell'URL.
+On Amazon Linux 2 or RHEL 7, use `yum` instead of `dnf`. On `ARM64`, replace `linux_64bit` with `linux_arm64` in the URL.
 
-Documentazione ufficiale: [Installare Session Manager Plugin su Amazon Linux e RHEL](https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-linux.html).
+Official documentation: [Install Session Manager Plugin on Amazon Linux and RHEL](https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-linux.html).
 
-#### Verificare l'installazione
+#### Verify installation
 
-Su tutti i sistemi, apri un nuovo terminale ed esegui:
+On every system, open a new terminal and run:
 
 ```bash
 session-manager-plugin
 ```
 
-Il comando deve confermare che il plugin e installato. Se `aws ssm start-session` restituisce `SessionManagerPlugin is not found`, il plugin manca oppure la sua directory non e presente nel `PATH`.
+The command must confirm installation. `SessionManagerPlugin is not found` from `aws ssm start-session` means the plugin is absent or its directory is missing from `PATH`.
 
-Documentazione ufficiale: [Verificare Session Manager Plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-verify.html).
+Official documentation: [Verify Session Manager Plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-verify.html).
 
-### Impostare o cambiare la password di un utente locale
+### Set or change a local user password
 
-Le credenziali del sistema operativo sono distinte da:
+Operating-system credentials are separate from:
 
-- credenziali AWS usate dalla CLI o dall'instance role
-- password del database conservate in Secrets Manager
-- secrets applicativi configurati nello stack Pulumi
+- AWS credentials used by the CLI or instance role
+- database passwords in Secrets Manager
+- application secrets in the Pulumi stack
 
-Accedi prima al nodo tramite Session Manager con un'identita autorizzata. Cambia una password locale solo quando serve realmente per RDP, console o un altro accesso del sistema operativo. Non inserire password permanenti in Pulumi, user data, repository, documentazione o comandi registrati nella cronologia.
+First access the node through Session Manager with an authorized identity. Change a local password only when needed for RDP, console, or other OS access. Keep permanent passwords out of Pulumi, user data, repositories, documentation, and commands recorded in history.
 
 #### Windows
 
-Da una sessione PowerShell con privilegi amministrativi, scegli l'utente locale e inserisci la nuova password in modo interattivo:
+From an administrative PowerShell session, select the local user and enter the new password interactively:
 
 ```powershell
 $UserName = "Administrator"; $Password = Read-Host "Nuova password Windows" -AsSecureString; Set-LocalUser -Name $UserName -Password $Password; Enable-LocalUser -Name $UserName
 ```
 
-Per un utente diverso, cambia il valore di `$UserName`. Verifica lo stato senza mostrare la password:
+For another user, change `$UserName`. Inspect status without showing the password:
 
 ```powershell
 Get-LocalUser -Name $UserName
 ```
 
-Per il login locale usa, ad esempio:
+For local login, use for example:
 
 ```text
 Username: .\Administrator
 Password: valore inserito nel prompt protetto
 ```
 
-Evita comandi come `net user Administrator "password"`: funzionano, ma lasciano la password in chiaro nella cronologia PowerShell, nei log o nei dati della sessione SSM.
+Avoid commands such as `net user Administrator "password"`: they work but retain plaintext in PowerShell history, logs, or SSM session data.
 
-Se l'istanza Windows e stata avviata senza una key pair, il normale flusso EC2 `Get Windows password` non puo decrittare la password iniziale. Una sessione SSM amministrativa consente comunque di impostare una nuova password locale con il comando precedente.
+When Windows was launched without a key pair, the normal EC2 `Get Windows password` flow cannot decrypt its initial password. An administrative SSM session can still set a new local password with the command above.
 
-#### Linux e altri sistemi Unix
+#### Linux and other Unix systems
 
-Individua prima l'utente corretto senza assumere che sia `root`, `ec2-user` o `ubuntu`:
+Identify the correct user without assuming `root`, `ec2-user`, or `ubuntu`:
 
 ```bash
 id [username]
 ```
 
-Poi usa il prompt interattivo di sistema, che non inserisce la password nella riga di comando:
+Then use the interactive system prompt, keeping the password out of command arguments:
 
 ```bash
 sudo passwd [username]
 ```
 
-Su macOS il comando `passwd [username]` puo essere usato da un account con privilegi adeguati. Le policy locali del sistema operativo determinano complessita, scadenza e blocco dell'account.
+On macOS, `passwd [username]` may be used by an adequately privileged account. Local OS policy governs complexity, expiry, and account lockout.
 
-Cambiare una password non abilita automaticamente l'accesso remoto. Per Windows preferisci Fleet Manager Remote Desktop o un tunnel SSM verso RDP; per Linux preferisci Session Manager o chiavi SSH. Non aprire `3389` o `22` a `0.0.0.0/0`.
+Changing a password does not enable remote access. For Windows, prefer Fleet Manager Remote Desktop or an SSM tunnel to RDP; for Linux, prefer Session Manager or SSH keys. Keep ports `3389` and `22` closed to `0.0.0.0/0`.
 
-## Accedere a un database privato tramite AWS Systems Manager
+## Access a private database through AWS Systems Manager
 
-Se il database non ha un endpoint pubblico, usa un nodo amministrativo gestito da AWS Systems Manager. Non aprire PostgreSQL o RDP verso Internet solo per accedere al database.
+For a database without a public endpoint, use a Systems Manager managed administrative node. Do not expose PostgreSQL or RDP to the Internet merely for database access.
 
-Prima di configurare il client, identifica dove viene eseguito:
+Before configuring the client, identify where it runs:
 
-| Posizione del client database | Host | Porta | Tunnel locale |
+| Database client location | Host | Port | Local tunnel |
 |---|---|---|---|
-| Computer esterno alla VPC | `localhost` | porta locale libera, ad esempio `55438` | necessario |
-| Nodo amministrativo dentro la VPC | endpoint privato del database | porta reale del database, normalmente `5432` | non necessario |
+| Computer outside the VPC | `localhost` | a free local port, such as `55438` | required |
+| Administrative node inside the VPC | private database endpoint | actual database port, usually `5432` | unnecessary |
 
-La porta PostgreSQL remota resta normalmente `5432`. Una porta come `55438` e solo l'estremita locale scelta per un tunnel SSM; non sostituisce la porta del database. Se pgAdmin, DataGrip o un altro client gira gia sul nodo amministrativo e quel nodo puo raggiungere il database, usa direttamente endpoint e porta reali.
+The remote PostgreSQL port normally remains `5432`. A port such as `55438` is only the selected local SSM tunnel endpoint, not the database port. If pgAdmin, DataGrip, or another client runs on the administrative node and can reach the database, use its real endpoint and port directly.
 
-La procedura seguente presuppone che lo stack Pulumi esporti:
+The following procedure assumes these Pulumi stack outputs:
 
-- ID dell'istanza amministrativa, ad esempio `dbAdminInstanceId`
-- endpoint del database, ad esempio `dbEndpoint`
-- ARN del secret del database, ad esempio `dbSecretArn`
+- administrative instance ID, such as `dbAdminInstanceId`
+- database endpoint, such as `dbEndpoint`
+- database secret ARN, such as `dbSecretArn`
 
-Sostituisci i nomi degli output se il progetto usa nomi diversi. Dalla cartella del progetto Pulumi, seleziona esplicitamente lo stack e ricava tutti i valori senza inserirli manualmente:
+Substitute output names when the project differs. From the Pulumi project directory, explicitly select the stack and derive all values without entering them manually:
 
 ```bash
 PULUMI_STACK="[stack]"
@@ -494,11 +494,11 @@ DB_SECRET_ARN="$(pulumi stack output dbSecretArn --stack "$PULUMI_STACK")"
 LOCAL_DB_PORT="55438"
 ```
 
-Se l'output `dbEndpoint` non include la porta, usa come `DB_PORT` la porta esportata dallo stack o quella configurata dal database, normalmente `5432` per PostgreSQL.
+If `dbEndpoint` omits the port, set `DB_PORT` from the stack output or database configuration, normally `5432` for PostgreSQL.
 
-### Client eseguito fuori dalla VPC: aprire il tunnel
+### Client outside the VPC: open the tunnel
 
-Verifica che l'istanza sia registrata e `Online` in Systems Manager:
+Verify that the instance is registered and `Online` in Systems Manager:
 
 ```bash
 aws ssm describe-instance-information \
@@ -508,7 +508,7 @@ aws ssm describe-instance-information \
   --output text
 ```
 
-Se il risultato e `Online`, avvia il tunnel in un terminale dedicato e lascialo aperto:
+If it is `Online`, open the tunnel in a dedicated terminal and leave it open:
 
 ```bash
 aws ssm start-session \
@@ -518,17 +518,17 @@ aws ssm start-session \
   --parameters "{\"host\":[\"$DB_HOST\"],\"portNumber\":[\"$DB_PORT\"],\"localPortNumber\":[\"$LOCAL_DB_PORT\"]}"
 ```
 
-Sul computer locale deve essere installato il plugin AWS Session Manager. L'istanza amministrativa deve avere:
+AWS Session Manager Plugin must be installed on the local client. The administrative instance needs:
 
-- SSM Agent attivo
-- un instance role che permetta la registrazione a Systems Manager
-- connettivita di rete verso Systems Manager e il database
+- an active SSM Agent
+- an instance role permitting Systems Manager registration
+- network connectivity to Systems Manager and the database
 
-Se il client gira gia sul nodo amministrativo, salta completamente questi comandi di port forwarding.
+Skip these port-forwarding commands entirely when the client already runs on the administrative node.
 
-### Recuperare le credenziali del database
+### Retrieve database credentials
 
-Se il secret di AWS Secrets Manager e un JSON con una proprieta `password`, su macOS copia la password negli appunti senza stamparla nel terminale:
+If the AWS Secrets Manager secret is JSON with a `password` property, copy the password to the macOS clipboard without printing it:
 
 ```bash
 aws secretsmanager get-secret-value \
@@ -538,7 +538,7 @@ aws secretsmanager get-secret-value \
   --output text | jq -r '.password' | pbcopy
 ```
 
-Da PowerShell locale:
+From local PowerShell:
 
 ```powershell
 $pulumiStack = "[stack]"
@@ -554,7 +554,7 @@ Set-Clipboard $secret.password
 Remove-Variable secret, secretJson, dbSecretArn
 ```
 
-Da PowerShell sul nodo amministrativo, AWS CLI puo usare l'instance role senza access key locali, se quel ruolo permette `secretsmanager:GetSecretValue` sul secret corretto. Ricevi regione e ARN del secret dall'operatore che ha selezionato lo stack, poi copia la password senza stamparla:
+On the administrative node, AWS CLI may use its instance role without local access keys when that role allows `secretsmanager:GetSecretValue` for the correct secret. Obtain region and secret ARN from the operator who selected the stack, then copy the password without printing it:
 
 ```powershell
 $awsRegion = "[aws-region]"
@@ -565,61 +565,61 @@ Set-Clipboard $secret.password
 Remove-Variable secret, secretJson, dbSecretArn
 ```
 
-Se `aws` non viene trovato sul nodo, AWS CLI non e installata o la sua directory non e nel `PATH`. La presenza di SSM Agent non implica la presenza di AWS CLI.
+If `aws` is not found on the node, AWS CLI is absent or its directory is missing from `PATH`. SSM Agent availability does not imply AWS CLI availability.
 
-La password del database e distinta dalla password dell'utente Windows, Linux o macOS usata per entrare nel nodo. Per PostgreSQL usa username e password contenuti nel secret del database, non le credenziali del sistema operativo.
+The database password is separate from the Windows, Linux, or macOS password used to enter the node. For PostgreSQL, use the database secret username and password rather than OS credentials.
 
-### Configurare il client fuori dalla VPC
+### Configure the client outside the VPC
 
-Con il tunnel SSM aperto, configura il client con:
+With the SSM tunnel open, configure the client as follows:
 
 ```text
 Host: localhost
-Porta: valore di LOCAL_DB_PORT, ad esempio 55438
-Database: nome configurato dal progetto
-Utente: utente configurato dal progetto
-Password: valore copiato da Secrets Manager
-SSL mode: modalita richiesta dallo stack, normalmente Require
+Port: value of LOCAL_DB_PORT, such as 55438
+Database: name configured by the project
+User: user configured by the project
+Password: value copied from Secrets Manager
+SSL mode: mode required by the stack, normally Require
 ```
 
-Il terminale del tunnel deve restare aperto per tutta la durata della connessione. Al termine interrompi la sessione con `Ctrl+C`.
+Keep the tunnel terminal open for the entire connection. End the session with `Ctrl+C` afterward.
 
-### Configurare pgAdmin sul nodo amministrativo
+### Configure pgAdmin on the administrative node
 
-Se pgAdmin gira gia sul nodo amministrativo dentro la VPC, non usare `localhost` e non usare `LOCAL_DB_PORT`. Registra una nuova connessione al database privato:
+If pgAdmin already runs inside the VPC on the administrative node, use neither `localhost` nor `LOCAL_DB_PORT`. Register a new connection to the private database:
 
 ```text
-General > Name: nome descrittivo dell'ambiente
+General > Name: descriptive environment label
 
 Connection:
-Host name/address: valore di DB_HOST
-Port: valore di DB_PORT, normalmente 5432
-Maintenance database: nome del database configurato dal progetto
-Username: utente contenuto nel secret del database
-Password: password contenuta nel secret del database
-Service: vuoto
-Role: vuoto
+Host name/address: value of DB_HOST
+Port: value of DB_PORT, normally 5432
+Maintenance database: database name configured by the project
+Username: user in the database secret
+Password: password in the database secret
+Service: empty
+Role: empty
 
-SSL > SSL mode: modalita richiesta dallo stack, normalmente Require
+SSL > SSL mode: mode required by the stack, normally Require
 ```
 
-Un'installazione PostgreSQL locale puo creare automaticamente in pgAdmin un server chiamato, ad esempio, `PostgreSQL 18`, e chiedere la password dell'utente `postgres`. Quel server rappresenta il PostgreSQL locale del nodo, non il database RDS o un altro database privato gestito dal progetto. Annulla quel prompt e usa `Servers > Register > Server` per creare la connessione descritta sopra, a meno che tu non voglia amministrare intenzionalmente il database locale.
+A local PostgreSQL installation may automatically register a pgAdmin server such as `PostgreSQL 18` and request the `postgres` password. That server is the node's local PostgreSQL, not RDS or the project's private database. Cancel that prompt and use `Servers > Register > Server` for the connection above unless local database administration is intentional.
 
-Il campo `Name` e solo un'etichetta locale di pgAdmin. Non inserire il nome del database nei campi `Service` o `Role`: `Service` richiede una definizione in `pg_service.conf`, mentre `Role` serve per un eventuale `SET ROLE` successivo al login.
+pgAdmin's `Name` is only a local label. Do not enter the database name in `Service` or `Role`: `Service` needs a `pg_service.conf` definition; `Role` is for an optional `SET ROLE` after login.
 
-Non inserire nella guida o nella configurazione applicativa ID delle istanze, endpoint, ARN dei secret, account ID, regioni o password specifici di un ambiente. Ricavali sempre dallo stack selezionato. Non stampare i secret e non salvarli nella cronologia della shell o nei log.
+Keep environment-specific instance IDs, endpoints, secret ARNs, account IDs, regions, and passwords out of the guide and application configuration. Derive them from the selected stack; never print secrets or retain them in shell history or logs.
 
-## Creare la GitHub Action
+## Create the GitHub Action
 
-Dopo aver configurato il progetto Pulumi, crea una GitHub Action dedicata all'infrastruttura.
+After configuring the Pulumi project, create a dedicated infrastructure GitHub Action.
 
-La workflow va inserita sotto:
+Place the workflow below:
 
 ```text
 .github/workflows/
 ```
 
-Esempio:
+Example:
 
 ```text
 .github/
@@ -627,19 +627,19 @@ Esempio:
     └── deploy-infra.yml
 ```
 
-La GitHub Action dovrebbe essere adattata al progetto e puo occuparsi di:
+Adapt the GitHub Action to the project. It may:
 
-- installare le dipendenze
-- configurare le credenziali del cloud provider
-- selezionare lo stack Pulumi corretto
-- eseguire `pulumi preview`
-- eseguire `pulumi up` quando previsto
-- passare eventuali config o variabili richieste dal progetto
-- usare i secrets GitHub necessari per autenticarsi verso cloud provider, registry o servizi esterni
+- install dependencies
+- configure cloud-provider credentials
+- select the correct Pulumi stack
+- run `pulumi preview`
+- run `pulumi up` when appropriate
+- pass configuration or variables required by the project
+- use required GitHub secrets for cloud-provider, registry, or external-service authentication
 
-La workflow deve essere generica rispetto al progetto, ma coerente con provider, stack e strategia di deploy.
+Keep the workflow generic across projects but consistent with the provider, stack, and deployment strategy.
 
-Una base di template puo essere questa:
+A base template follows:
 
 ```yaml
 name: Deploy
@@ -685,11 +685,11 @@ jobs:
 
       - name: Install backend dependencies
         run: |
-          # installare le dipendenze del backend
+          # install backend dependencies
 
       - name: Build backend
         run: |
-          # buildare il backend secondo lo stack del progetto
+          # build the backend with the actual project stack
 
       - name: Upload backend artifacts
         uses: actions/upload-artifact@v4
@@ -706,11 +706,11 @@ jobs:
 
       - name: Install frontend dependencies
         run: |
-          # installare le dipendenze del frontend
+          # install frontend dependencies
 
       - name: Build frontend
         run: |
-          # buildare il frontend secondo lo stack del progetto
+          # build the frontend with the actual project stack
 
       - name: Upload frontend artifacts
         uses: actions/upload-artifact@v4
@@ -734,7 +734,7 @@ jobs:
       - name: Install Pulumi dependencies
         working-directory: infra/aws
         run: |
-          # installare le dipendenze dell'infra
+          # install infrastructure dependencies
 
       - name: Pulumi login
         run: pulumi login "s3://[pulumi-state-bucket]"
@@ -762,11 +762,11 @@ jobs:
     steps:
       - name: Run post deploy steps
         run: |
-          # eseguire eventuali step post deploy
-          # esempi: wait del servizio, upload artifact statici, invalidazione cache
+          # perform applicable post-deployment steps
+          # examples: service readiness, static artifact upload, cache invalidation
 ```
 
-I passaggi di build backend e frontend devono restare agnostici rispetto al template: ogni progetto deve sostituire quei blocchi con i comandi reali del proprio stack applicativo.
+Backend and frontend build steps remain template-agnostic: each project replaces those blocks with its actual application-stack commands.
 
 ## GitHub Actions - AWS OIDC Authentication
 
@@ -1213,18 +1213,18 @@ gh variable set BACKEND_DNS_PROD --repo [github-org]/[github-repo] --body "[back
 gh secret set [SECRET_NAME] --repo [github-org]/[github-repo]
 ```
 
-### Esempio con commit hash
+### Commit hash example
 
-In alcuni progetti, la pipeline puo usare il commit hash come identificativo della versione da deployare.
+Some projects use a commit hash as the identifier of the application version to deploy.
 
-In questo scenario, la GitHub Action puo:
+In this scenario, the GitHub Action may:
 
-- calcolare il commit hash corrente
-- buildare l'immagine applicativa
-- pubblicare l'immagine su un container registry usando il commit hash come tag
-- passare quel valore a Pulumi come config o variabile di deploy
+- compute the current commit hash
+- build the application image
+- publish the image to a container registry using the commit hash as its tag
+- pass that value to Pulumi as configuration or a deployment variable
 
-Esempio concettuale:
+Conceptual example:
 
 ```bash
 COMMIT_HASH=$(git rev-parse --short HEAD)
@@ -1237,11 +1237,11 @@ pulumi config set commitHash "$COMMIT_HASH"
 pulumi up
 ```
 
-Il commit hash non e obbligatorio in assoluto: e solo un modo comune per rendere tracciabile quale versione dell'applicazione viene deployata.
+A commit hash is optional; it is a common way to trace the deployed application version.
 
-## Ordine consigliato
+## Recommended order
 
-Il flusso corretto da seguire e:
+Follow this sequence:
 
 ```bash
 mkdir infra
@@ -1255,19 +1255,19 @@ pulumi new aws-typescript
 pulumi stack change-secrets-provider \
   "awskms://alias/[slug]?region=[region]"
 
-# dopo la configurazione base, copiare dal template aws-infra-template
-# le cartelle components e lib dentro la cartella del provider, es. infra/aws
+# after base configuration, copy from aws-infra-template
+# the components and lib directories into the provider directory, such as infra/aws
 
-# copiare dal template anche le config non sensibili
+# also copy non-sensitive template configuration
 
-# poi impostare o modificare eventuali config non sensibili
+# then set or change applicable non-sensitive configuration
 pulumi config set [nome-config] "[valore]"
 
-# infine reinserire i secrets
+# finally reinsert secrets
 pulumi config set --secret [nome-secret] "[valore]"
 
-# adattare index.ts per usare davvero components e lib copiati dal template
+# adapt index.ts to use the copied components and lib
 
-# verificare cosa verra creato prima del deploy
+# preview what will be created before deployment
 pulumi preview
 ```

@@ -1,6 +1,6 @@
 ---
 name: iterative-monitoring
-description: Add a finite, scenario-local monitoring harness around a user-identified snippet to verify meaningful scenario outcomes across bounded attempts. Derive implementation details from analysis while treating unrelated code and external systems as read-only.
+description: "Monitor a user-identified snippet with a finite local harness when bounded observation of meaningful scenario outcomes is requested."
 ---
 
 # Iterative Monitoring
@@ -53,6 +53,8 @@ Use the scenario's natural control and error-handling constructs. Keep the harne
 - terminate with an explicit exhausted state when the limit is reached;
 - avoid logging secrets, credentials, tokens, or unnecessarily large payloads.
 
+### Observe or retry
+
 Distinguish observation from retry. Prefer observing executions that the program already performs. Re-execute the snippet only when the user asked for retries or repeated execution is known to be safe and idempotent. Never introduce active retries for a side-effecting or uncertain operation without explicit authorization. Do not swallow, translate, or delay existing errors unless that behavior is part of the requested monitoring contract.
 
 Timing, polling intervals, backoff, cancellation, and concurrency controls are optional and should be added only when the scenario requires them. Any wait or retry policy must remain bounded by the same attempt limit and preserve the local scope.
@@ -62,6 +64,8 @@ Timing, polling intervals, backoff, cancellation, and concurrency controls are o
 After insertion, inspect the edited region and verify the attempt bound, success exit, exhausted exit, and output path. Run only targeted checks that are known to be non-mutating. If meaningful verification would write caches, artifacts, runtime state, or external state, do not run it; report what remains unverified and name the exact check the user may authorize separately.
 
 Do not change the monitored code to make verification pass. A failed observation is a monitoring result, not permission to repair the scenario.
+
+Verification is complete when the local diff and permitted checks account for the attempt bound, success/exhausted exits, and output path; separately identify any unperformed runtime check.
 
 ## Return the result
 

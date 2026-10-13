@@ -1,6 +1,6 @@
 ---
 name: give-me-prompt
-description: Turn an existing analysis or work discussion into a plain-language recap followed by a self-contained agent prompt for resuming investigation, implementing a change, or fixing an issue. Use when the user wants a bookmark, handoff, or copyable continuation prompt, including after $readonly analysis. Do not use for unrelated prompt writing or to execute the proposed work.
+description: "Turn an existing analysis or work discussion into a plain-language recap and a self-contained bookmark, handoff, or continuation prompt, including after readonly."
 ---
 
 # Give Me Prompt
@@ -15,15 +15,19 @@ Distinguish verified findings from hypotheses, proposals, and unknowns. Keep per
 
 Do not restart or extend the investigation just to produce the bookmark. Use narrowly scoped, non-mutating inspection only when needed to resolve an essential reference. If the earlier analysis is unavailable, say so; build on the available evidence and make recovering the missing context the next step. Ask only when missing information prevents a useful handoff.
 
+Context recovery is complete when accepted decisions, performed work, and the first unresolved point are distinguishable without extending the investigation.
+
 ## Select the next task
 
 Follow the user's intended continuation: further investigation, implementation, correction, or another specified action. A generic request such as "give me a prompt" after an analysis means resume from the first unresolved point under the existing constraints; it does not authorize implementation.
 
-When the source analysis used `$readonly`, distinguish the constraints of that analysis from the intended future task:
+When the source analysis used `readonly`, distinguish the constraints of that analysis from the intended future task:
 
-- For continued analysis, preserve the read-only constraint explicitly in the generated prompt: no local or external state changes, including tests, builds, or commands with side effects. Restate the constraint so the prompt works even where `$readonly` is unavailable.
+- For continued analysis, preserve the read-only constraint explicitly in the generated prompt: no local or external state changes, including tests, builds, or commands with side effects. Restate the constraint so the prompt works even where `readonly` is unavailable.
 - When the user asks for a prompt to implement or fix the analyzed issue, describe that future change and its scope. Do not carry over a read-only constraint that would contradict the requested implementation. Producing this prompt does not execute it or authorize changes in the current task.
 - Preserve other applicable limits and exclusions. Do not add commits, pushes, deployments, messages, or unrelated cleanup unless requested.
+
+The next task is selected when its intended action and permission limits are explicit; a generic continuation retains the current constraints.
 
 ## Deliver the bookmark
 

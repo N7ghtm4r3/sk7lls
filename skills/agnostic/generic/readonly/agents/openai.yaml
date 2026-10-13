@@ -1,6 +1,6 @@
 interface:
   display_name: "Readonly"
-  short_description: "Analizza lo scenario senza alterare alcuno stato"
-  default_prompt: "Usa $readonly per analizzare questa richiesta in sola lettura e rispondere nel formato più adatto, senza modificare nulla."
+  short_description: "Analyze the scenario without changing any state"
+  default_prompt: "Use $readonly to analyze this request without changing local or external state and answer in the most suitable format."
 policy:
   allow_implicit_invocation: false

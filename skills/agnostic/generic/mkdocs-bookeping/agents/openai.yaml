@@ -1,4 +1,4 @@
 interface:
   display_name: "MkDocs Bookeping"
-  short_description: "Analizza, proponi e aggiorna la documentazione dopo conferma"
-  default_prompt: "Usa $mkdocs-bookeping per assimilare struttura, contenuti e stile della documentazione Material for MkDocs, proporre revisioni e nuovi contenuti e implementarli dopo la mia conferma, modificando esclusivamente i file dedicati alla documentazione e lasciando intatto tutto il resto della codebase."
+  short_description: "Inspect, propose, and update docs after confirmation"
+  default_prompt: "Use $mkdocs-bookeping to ingest the organization, content, and style of Material for MkDocs documentation, propose revisions and additions, and implement them after my confirmation, changing only dedicated documentation files and leaving the rest of the codebase unchanged."

@@ -1,18 +1,18 @@
 ---
 name: work-intake
-description: Choose and follow a work-intake flow for a new or expanding task, routing between a small direct change, requirements-phase for bounded decisions, and functional-finder for uncertain product behavior. Use when the user wants help choosing this workflow or requirements discovery has outgrown its initial scope.
+description: "Route work to a direct change, bounded requirements discovery, or functional exploration when workflow selection is needed or discovery outgrows its scope. Preserve the selected phase's entry rules."
 ---
 
 # Work Intake
 
 Choose the least elaborate flow that gives the user a reviewable result. Use
-`$requirements-phase` and `$functional-finder` as the actual workflow owners;
+`requirements-phase` and `functional-finder` as the actual workflow owners;
 this skill owns route selection, reassessment, and the handoff between them.
 Respond in the user's language.
 
 The reference diagram's `One Shot` means a small direct change;
-`/grill-with-docs` maps to `$requirements-phase`; `/wayfinder` maps to
-`$functional-finder`. These are conceptual mappings, not aliases to execute.
+`/grill-with-docs` maps to `requirements-phase`; `/wayfinder` maps to
+`functional-finder`. These are conceptual mappings, not aliases to execute.
 The named skills' current contracts govern their actual behavior.
 
 ## Establish context
@@ -27,13 +27,15 @@ needed context. Resolve each child skill only when needed, following
 [skill resolution](references/skill-resolution.md): project first, machine
 second, the named GitHub repository last.
 
+Context discovery is complete when the existing route/artifacts, scope, review cost, and material unknowns are identified; resolve a child skill only when its route is needed.
+
 ## Choose the route
 
 | Evidence | Route | Intended result |
 | --- | --- | --- |
 | The outcome is clear, the diff is quickly reviewable, and retrying is cheap | Direct change / One Shot | A concrete change the user can inspect |
-| The topic can be bounded, but material requirements, terminology, or tradeoffs need agreement | `$requirements-phase` | Accepted or explicitly parked decisions and the phase's requirements result |
-| The product behavior or boundaries are unclear, or discovery reveals several interacting unknowns that cannot yet be bounded | `$functional-finder` | Functional exploration, evidence, unresolved decisions, and a durable handoff |
+| The topic can be bounded, but material requirements, terminology, or tradeoffs need agreement | `requirements-phase` | Accepted or explicitly parked decisions and the phase's requirements result |
+| The product behavior or boundaries are unclear, or discovery reveals several interacting unknowns that cannot yet be bounded | `functional-finder` | Functional exploration, evidence, unresolved decisions, and a durable handoff |
 
 Small means low review and retry cost, not merely few changed lines. A short
 change to a permission rule, migration, or public contract can still require
@@ -60,7 +62,7 @@ the useful findings and reassess before building further on assumptions.
 
 ### Requirements Phase
 
-Read and follow the resolved `$requirements-phase`, including its referenced
+Read and follow the resolved `requirements-phase`, including its referenced
 skills. Pass the bounded request, known constraints, accepted decisions,
 unresolved questions, and exact existing artifact identities where available.
 Use its existing status and log rather than creating a parallel interview.
@@ -78,10 +80,10 @@ working through Requirements Phase's own decision and closure rules.
 
 ### Functional Finder
 
-Read and follow the resolved `$functional-finder` and its shared Finder engine.
+Read and follow the resolved `functional-finder` and its shared Finder engine.
 Respect its human-entry rules: the inspected reference requires an explicit
 human selection of `functional-finder`. If the user has not selected it, explain
-the uncertainty and present a ready-to-use `$functional-finder` invocation with
+the uncertainty and present a ready-to-use `functional-finder` invocation with
 the concrete context, then wait for that selection. Inferred complexity or
 invocation of `$work-intake` alone does not satisfy that entry rule.
 

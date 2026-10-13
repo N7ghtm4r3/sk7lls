@@ -1,4 +1,4 @@
 interface:
   display_name: "Defect Impact Report"
-  short_description: "Report read-only su difetti e impatti della fix"
-  default_prompt: "Usa $defect-impact-report per produrre un report conciso e read-only su questo difetto e sull'impatto di una fix mirata."
+  short_description: "Read-only defect status and fix-impact report"
+  default_prompt: "Use $defect-impact-report to produce a concise read-only report on this defect and the impact of a targeted fix."
