@@ -1,0 +1,4 @@
+interface:
+  display_name: "PR Review Triage"
+  short_description: "Assess PR review comments and propose fixes for approval"
+  default_prompt: "Use $pr-review-triage to read the selected reviewer's comments on this PR, check them against the current code, and summarize each as an R-numbered bullet with a proposed action. Wait for my approval before applying fixes."
