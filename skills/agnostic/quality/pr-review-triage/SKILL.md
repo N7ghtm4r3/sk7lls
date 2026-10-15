@@ -41,11 +41,19 @@ This step ends when each collected comment has an assessment supported by inspec
 
 ## 4. Present the report and wait
 
-Start with the PR link, reviewer scope, inspected head, and any coverage limitations. Then give one top-level bullet per comment, using this shape:
+Start with the PR link, reviewer scope, inspected head, and any coverage limitations.
 
-- **R1 — Short title** · [original comment](COMMENT_URL) · `path:line` when available. **Reviewer:** the reported issue. **Assessment:** status and brief supporting evidence. **Proposed action:** concrete fix and relevant verification, or the reason no fix is proposed.
+Before drafting the bullets, use [wait-what](../../../misc/wait-what/SKILL.md) to make the explanation direct and easy to read. Preserve canonical project terms and write in the user's language.
 
-Use real source links and verified locations. Keep the bullets concise while retaining distinct concerns. Attribute comments when multiple reviewers are selected. Include enough evidence to distinguish an independent assessment from a paraphrase of the reviewer.
+Give one top-level bullet per comment. Start with **R1 — Short title** and a link to the original comment. Use a few short sentences: explain when the problem occurs and what happens, say whether the current code supports it, then propose the fix. When the evidence confirms the reviewer, describe the observed behavior directly. State disagreement, uncertainty, or an existing fix explicitly when relevant. Keep the assessment categories from step 3 as reasoning aids; write each bullet as connected prose rather than a form with repeated labels.
+
+Illustrative wording, not a finding to copy into the report:
+
+- **R1 — Crash when the session expires** · [comment](COMMENT_URL). When the session expires, `user` is absent and reading `user.id` causes a crash. Check for the missing user first and return the session-expired error.
+
+Use concrete verbs and familiar words. Keep code identifiers or file locations when they help identify the cause or fix, using verified locations and real source links. Mention verification details when they help the user choose an action. Attribute comments when multiple reviewers are selected. Preserve every distinct concern, but give duplicate and informational comments only the explanation they need.
+
+Keep the initial report concise. When the user asks to explore an `R` item further or requests a technical report, match that depth: explain the relevant code path, root cause, failure conditions, fix tradeoffs, and verification as needed, with code excerpts and source references. Plain language supports technical precision; it does not limit technical detail. Preserve the same identifiers and distinguish inspected evidence from hypotheses.
 
 End by asking the user which identifiers to proceed with, allowing approval of all proposed fixes or a subset, such as “Proceed with R1 and R3.” Producing this report completes the triage turn. Before that approval, do not edit project files, publish PR replies, resolve threads, or perform Git mutations.
 
