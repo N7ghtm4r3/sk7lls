@@ -15,6 +15,27 @@ Keep these outcomes distinct:
 - Authenticated session without permission: present the appropriate denial or permitted
   destination according to product policy.
 
+Use the framework's own shapes for composition and access:
+
+- Shared structure belongs in layouts and route groups. Access checks are plain server
+  calls at the top of each protected page or its data loader, returning the identity the
+  page needs. Repeat them on every page: frameworks with partial rendering (for example the
+  Next.js App Router) keep layouts mounted across client navigation and do not re-run them,
+  so a layout-only check misses navigations.
+- Signal outcomes with the framework's interrupts and convention files instead of returning
+  substitute UI from a helper. The framework then stops the page, picks the fallback and
+  sets the status. For example:
+  - Next.js: `redirect()` for sign-in or another destination, `forbidden()` or
+    `unauthorized()` rendered by `forbidden.tsx` or `unauthorized.tsx`, and `notFound()`.
+  - Remix / React Router: the route `loader` throws `redirect()` or a 403 `Response`,
+    rendered by the route's error boundary.
+  - SvelteKit: the `load` function calls `redirect()` or `error(403)`, rendered by
+    `+error.svelte`.
+- Avoid wrappers that take the page as a render callback, such as
+  `withAccess(key, (user) => <Page />)`. They invert the page's shape, mix the access
+  decision with view selection and bypass the framework's statuses. Prefer
+  `const user = await requireAccess(key)` followed by the page's own JSX.
+
 Routes apply feature-owned permission and visibility rules. A landing route may select the
 first permitted destination using those rules. Protected data reads and mutations require
 their own trusted checks even when navigation and visible controls use the same policy.

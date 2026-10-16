@@ -97,7 +97,10 @@ parameters, metadata, redirects, session access, and framework loading or error 
 They may call permitted operations in their rendering context and provide results to their
 page template.
 Routes apply policies owned by the domain; server and API boundaries enforce access to
-protected data and operations.
+protected data and operations. Use the framework's native shapes: layouts compose, and
+access checks are plain calls at the top of each page that use the framework's interrupts,
+never wrappers that take the page as a render callback (see
+[Web authentication boundaries](references/authentication.md)).
 
 **Each rendered page has one dedicated page template**, comparable to its view. Give the
 template a dedicated folder with room for page-specific components. A route that only
