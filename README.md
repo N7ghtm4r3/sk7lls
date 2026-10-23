@@ -23,6 +23,7 @@ npx skills add https://github.com/wearedevpunks/skills/tree/main/skills/misc/sec
 - `skills/phases/*` holds lifecycle phase packs like requirements, delivery, debugging, review, docs ingest, and debt resolution
 - `skills/frameworks/*` holds stack-specific packs like Better Auth, Effect, Elysia, Next.js, tRPC, and Turborepo
 - `skills/misc/*` holds focused operational workflows that do not belong to a stack or lifecycle phase
+- `skills/work/*` holds work-environment workflows, including [local Collective Intelligence instances with selected external apps](skills/work/ci-local-test-environment/SKILL.md)
 - each skill still owns its own `SKILL.md` plus any local references, templates, scripts, or helper assets
 - some pack semantics overlap; physical grouping follows the main domain owner, so shared packs can reuse the same skill family
 

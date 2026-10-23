@@ -1,0 +1,4 @@
+interface:
+  display_name: "CI Local Test Environment"
+  short_description: "Start or resume CI with selected external applications"
+  default_prompt: "Use $ci-local-test-environment to start Collective Intelligence with the selected external apps, reusing the last instance or creating a new local one."
