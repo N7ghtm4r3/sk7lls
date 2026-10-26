@@ -1,6 +1,6 @@
 ---
 name: switch-git-workenv
-description: "Select or create a dedicated worktree for a requested Git branch, publish that task's changes on request, or remove its worktree only when explicitly requested and safe."
+description: "Select or create a dedicated worktree for a requested Git branch, publish that task's changes on request, or remove worktrees when explicitly requested and safe. Use clean-worktrees to find and remove verified unused, inactive worktrees in the selected repository."
 ---
 
 # Switch Git Workenv
@@ -8,6 +8,14 @@ description: "Select or create a dedicated worktree for a requested Git branch, 
 Establish one target branch and worktree for the current task. Continue all repository work from that worktree. A later invocation can publish only this task's changes on the same branch when the user asks to commit or push.
 
 ## Inspect before changing Git state
+
+For `$switch-git-workenv clean-worktrees [repository]` or an equivalent explicit
+cleanup request, read and follow [Worktree cleanup](references/worktree-cleanup.md).
+Show the worktree inventory and proposed actions in a table, then obtain explicit
+confirmation before removing or archiving any eligible checkout.
+That mode inventories multiple candidates instead of selecting one setup target;
+its checks and removal procedure replace the single-target setup and removal flow
+below. Setup, publication, and single-target removal do not implicitly run cleanup.
 
 Read and follow [readonly](../../agnostic/generic/readonly/SKILL.md) for this phase; the later worktree and publication phases use the authorization in the user's request. Read the repository root, current branch and worktree, `git status`, local and remote branch names, upstream configuration, and `git worktree list --porcelain`. Use task context and the user's request to identify the intended branch and worktree path. Do not fetch, checkout, switch, stash, reset, prune, or create anything during inspection.
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "Switch Git Workenv"
-  short_description: "Move work safely to a branch worktree"
+  short_description: "Select branch worktrees and clean up inactive ones"
   default_prompt: "Use $switch-git-workenv to work on my target branch in a dedicated worktree."
