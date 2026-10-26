@@ -52,3 +52,30 @@ rather than visual similarity or generic naming.
 
 **Limits:** A feature can have a single consumer if it represents an autonomous
 capability. Preserve domain dependencies when they are essential to its behavior.
+
+## H003 - Reuse Established UI Contracts
+
+**Behavior:** Build interfaces using the project's established components and
+conventions. Centralize recurring presentation and interaction rules in reusable
+UI abstractions, while keeping context-specific decisions with their owners.
+Apply those abstractions consistently across the affected existing interfaces.
+
+**Applies when:** Adding or revising UI, extracting shared components, or finding
+repeated styling and custom implementations of capabilities already provided by
+the project.
+
+**Reasoning:** Reusing established contracts preserves consistency in appearance,
+behavior, and accessibility. An abstraction provides value when its consumers
+share those guarantees; moving code or renaming components alone does not achieve
+this.
+
+**Limits:** Follow the project's chosen architecture without imposing a particular
+component taxonomy or directory structure. Keep isolated compositions local.
+Introduce or extend abstractions when existing components cannot express the
+required behavior, and avoid forcing superficially similar elements into one
+contract.
+
+**Example:** Multiple screens implement selection controls independently. Reuse
+or extend the established selection primitive for focus, keyboard interaction,
+and selected state, while leaving each screen responsible for its content and
+selection policy.
