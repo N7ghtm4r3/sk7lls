@@ -1,0 +1,4 @@
+interface:
+  display_name: "Move Work"
+  short_description: "Checkpoint, publish and resume work across machines"
+  default_prompt: "Use $move-work to checkpoint the current task, publish its scoped changes, and prepare a portable handoff that resumes on the recorded branch with $switch-git-workenv."
