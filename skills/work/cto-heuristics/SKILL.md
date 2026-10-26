@@ -1,6 +1,6 @@
 ---
 name: cto-heuristics
-description: Review a PR against collected CTO judgment heuristics in read-only mode. Use extract to derive a heuristic from context, check whether the collection already covers it, and propose additions or refinements for approval before saving.
+description: Review a PR against collected CTO judgment heuristics in read-only mode and rank confirmed findings P0-P3. Use extract to derive a heuristic from context, check whether the collection already covers it, and propose additions or refinements for approval before saving.
 ---
 
 # CTO Heuristics
@@ -77,9 +77,13 @@ Distinguish an observed defect from a design tradeoff or an unanswered question.
 Treat heuristics as judgment aids: their conditions and limits determine whether
 they apply, rather than their presence in the catalog making every deviation wrong.
 
+Before assigning priorities or writing the assessment, read
+[Prioritized analysis](references/prioritized-analysis.md). Priorities belong to
+findings in the current PR analysis, not to entries in the heuristic catalog.
+
 Return a summary of the change and the assessment, followed by material findings
 and suggested modifications. For each finding, identify the relevant heuristic,
-code location, evidence, consequence, and proposed improvement. Keep tradeoffs
+code location, evidence, consequence, priority rationale, and proposed improvement. Keep tradeoffs
 and open questions distinct from confirmed problems. Report when no applicable
 heuristic reveals an issue; a review need not produce findings. State the reviewed
 revision when available and the limits of the inspection. Suggest changes in
