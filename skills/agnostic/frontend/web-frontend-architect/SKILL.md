@@ -23,7 +23,10 @@ a separate product input.
    and relevant project documentation. Identify whether the request is an overview,
    a structure proposal, initial implementation, or a later implementation wave.
    Preserve product terminology. Ask only about unknowns that change ownership, behavior,
-   or the requested scope. Complete when the scope and material unknowns are explicit.
+   or the requested scope. For component work, establish the design system and component
+   composition standard under Design system and component composition below. Complete when
+   the scope and material unknowns are explicit, including those standards before proposing
+   or implementing affected components.
 2. **Identify owners.** Inventory the relevant pages, layouts, providers, rules, use cases,
    integrations, and their consumers. In a new app, derive these from accepted requirements;
    in an existing app, distinguish intended responsibilities from current placement.
@@ -49,6 +52,40 @@ the affected owners, existing contracts it reuses, and work deliberately deferre
 only the boundaries needed by that wave while preserving the direction of the full blueprint.
 Follow the project's existing plan and documentation conventions when they apply; a separate
 blueprint document is not required to use this skill.
+
+## Design system and component composition
+
+For work that proposes, creates, or changes components, establish two separate inputs:
+the design system or component library, and the component composition standard. Read
+explicit project guidance and reuse choices already established by the user. A library
+dependency or existing folder shape alone does not establish the composition standard.
+
+If either input is unspecified or conflicting, ask which design system and composition
+standard to follow before designing or implementing the affected components. For example:
+"Which design system or component library should these components follow, and should
+composition use Atomic Design, an existing project convention, or another standard?"
+Ask only for unresolved choices. An explicit choice to use no formal hierarchy is valid;
+Atomic Design is an option, not an automatic default. Continue independent architectural
+inspection while awaiting the answer.
+
+Inspect the selected system's documentation and nearby components before extending it.
+Reuse its components, semantic tokens, variants, and composition APIs. Follow its spacing,
+typography, color, iconography, interaction, and accessibility contracts. Compose existing
+primitives before introducing new ones. When a missing component is needed, implement it
+using the selected system's conventions rather than introducing a parallel component style.
+
+Apply the selected composition methodology where it helps express real responsibilities.
+With Atomic Design, compose primitives into meaningful groups and sections using the
+project's definitions of atoms, molecules, and organisms. Create only the levels needed
+by actual components; preserve equivalent existing names and locations. Its templates
+and pages describe composition levels, while this blueprint's page templates retain
+their dedicated page ownership.
+
+Composition levels do not replace architectural ownership. An organism with product rules
+still belongs to its feature or page owner; a molecule is not automatically shared UI.
+Place components according to Ownership below and keep common visual primitives independent
+of product concepts. Explain how the selected standard maps to those owners when proposing
+structure changes.
 
 ## Reference structure
 
@@ -210,11 +247,16 @@ session wiring, or authentication screens.
 An overview or proposal is complete when every in-scope responsibility has an owner, rendered
 pages map to their templates, the target tree and public dependencies agree, and the traced
 flow exposes material unknowns. Include migration mappings when existing code is affected.
+For component-related scope, identify the established design system and composition standard
+and show how the proposed components fit both that standard and their responsibility owners.
 
 An implementation wave is complete when its requested behavior works, each new boundary has
 concrete content, affected imports follow the blueprint, and browser/server and runtime
 lifetimes remain intentional. Use the narrowest relevant type, lint, build, or dependency
-checks already supported by the project. Verify affected user flows and test changed rules
-or coordination where behavior changed; a file move alone does not require a new test suite.
+checks already supported by the project. For component changes, also verify conformance to
+the selected system's tokens, component APIs, composition conventions, and accessibility
+contracts using existing project checks and representative states where applicable. Verify
+affected user flows and test changed rules or coordination where behavior changed; a file
+move alone does not require a new test suite.
 Report validation results, unresolved decisions, and deferred scope. Update project
 documentation when requested or required by local instructions.

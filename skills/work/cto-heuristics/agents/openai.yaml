@@ -1,4 +1,4 @@
 interface:
   display_name: "CTO Heuristics"
-  short_description: "Review PRs and propose reusable CTO heuristics"
+  short_description: "Review PRs and extract reusable CTO heuristics"
   default_prompt: "Use $cto-heuristics to review this PR in read-only mode against the collected heuristics and summarize findings with suggested changes."
