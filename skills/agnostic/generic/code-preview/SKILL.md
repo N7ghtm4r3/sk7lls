@@ -1,6 +1,6 @@
 ---
 name: code-preview
-description: "Preview code in chat when the user requests an explained programming example or wants to review a change before applying it. Implement only an approved preview."
+description: "Preview code examples and proposed changes before implementation. For requested comparisons, prefer a verified side-by-side preview with a unified diff fallback across harnesses. Implement only an approved preview."
 ---
 
 # Code Preview
@@ -15,17 +15,22 @@ Use the conversation and supplied code first. Whenever context analysis is neede
 
 Under `readonly`, inspect only the files and repository instructions needed to match the project's language, APIs, conventions, and integration point. If there is no project, provide a self-contained example and state material assumptions. Ask for missing information only when it prevents a useful, accurate preview.
 
-Keep preparation read-only: do not edit files, save the snippet, install dependencies, or run commands with side effects before implementation is authorized. Do not execute user-supplied code merely to display it. Clearly distinguish code reasoned about from code actually validated.
+Keep context analysis read-only: do not edit project files, save the snippet as implementation, install dependencies, or run commands with side effects before implementation is authorized. Presentation-only artifacts for explicitly requested rendered comparisons follow the comparison guidance below. Do not execute user-supplied code merely to display it. Clearly distinguish code reasoned about from code actually validated.
 
 ### Present the reviewable code
 
-Present the proposed snippet in a fenced code block with the appropriate language tag. Identify its purpose and, when known, the target file or declaration. Include enough context to understand the behavior and integration without dumping unrelated files. Prefer a complete usable snippet; if abbreviations are necessary, mark them in prose and do not present the snippet as ready to apply.
+Keep a complete snippet as the default. When the user asks for a diff, before/after,
+GitHub-style comparison, or side-by-side preview, read
+[Change comparisons](references/change-comparisons.md) before choosing the format.
+That mode shows the exact proposed edit and keeps teaching explanations outside the diff.
 
-For a documented example, combine concise comments on the relevant code sections with prose about behavior, inputs, outputs, assumptions, and tradeoffs. Include a small usage example or expected result when it makes the behavior clearer. Describe a visual result in prose unless the user also requests a rendered preview.
+For a full-snippet preview, present the proposed code in a fenced block with the appropriate language tag. Identify its purpose and, when known, the target file or declaration. Include enough context to understand the behavior and integration without dumping unrelated files. Prefer a complete usable snippet; if abbreviations are necessary, mark them in prose and do not present the snippet as ready to apply.
+
+For a documented full-snippet example, combine concise comments on the relevant code sections with prose about behavior, inputs, outputs, assumptions, and tradeoffs. Include a small usage example or expected result when it makes the behavior clearer. Describe a visual result in prose unless the user also requests a rendered preview.
 
 ## Comments and docstrings
 
-In chat previews, include short explanatory comments by default on the meaningful sections of the snippet, including usage examples when useful. Explain the purpose or a non-obvious decision rather than narrating every line. Use the language's valid comment syntax, including JSX comment syntax inside JSX. Omit these comments when the user requests an uncommented preview.
+In full-snippet chat previews, include short explanatory comments by default on the meaningful sections of the snippet, including usage examples when useful. Explain the purpose or a non-obvious decision rather than narrating every line. Use the language's valid comment syntax, including JSX comment syntax inside JSX. Omit these comments when the user requests an uncommented preview. In comparison mode, follow the exact-edit guidance instead.
 
 In implemented code, omit newly added explanatory comments by default, including in tests. Preview comments are teaching aids and do not imply that they should be copied into files. Before implementation, remove these comments from the code being applied while preserving the reviewed behavior.
 
