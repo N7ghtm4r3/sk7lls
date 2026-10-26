@@ -58,7 +58,8 @@ description: >-
      saved receipts and pure helpers first, then a focused reproduction on the
      Owned Stack. Before another expensive run, state its New Discriminator and
      confirm the Observation Manifest covers it; when the same observation is
-     missing again, revise the plan instead of rerunning. `implement-spec`'s
+     missing again, revise the diagnostic plan instead of rerunning; a
+     `PLAN.md` replacement routes to `requirements-phase`. `implement-spec`'s
      `references/validation-scope.md` owns these rules.
    - Use `$show-me` to present the evidence matrix before selecting a cause or
      fix. The visual explains the comparison; cited evidence and statuses remain
@@ -78,8 +79,8 @@ description: >-
    - Hand off review by entry mode:
      - Delivery-internal: return the repair to `delivery-phase` for Focused
        Repair Validation; this phase opens no review pass.
-     - Standalone: hand the human a `$review-phase` command naming the fix
-       target (branch, commit range or changed paths).
+     - Standalone: hand the human the `$review-phase <commit-or-range>`
+       command naming the commit or `base..head` range that holds the fix.
 8. **Exit.**
    - Fixed: report cause, patch, verification, and residual risk.
    - Blocked: report the concrete blocker and the missing artifact/access/action.

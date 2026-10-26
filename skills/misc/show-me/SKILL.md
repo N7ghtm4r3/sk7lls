@@ -49,6 +49,13 @@ src/
 └── transport/      # sends API requests
 ```
 
+Show a mapping where each row carries two or more attributes as a Markdown table:
+
+| Route       | Label | Contents          |
+| ----------- | ----- | ----------------- |
+| `/sessions` | Inbox | active sessions   |
+| `/settings` | Setup | provider accounts |
+
 Show component interaction, control flow, or data flow with Mermaid:
 
 ```mermaid
@@ -85,10 +92,20 @@ function expandSkill(command: string): string {
 
 Use one view when it is sufficient. Combine views only when each answers a distinct part of the question.
 
-## HTML Artifacts
+Keep text fences narrow: every pseudocode, tree, and diff line fits in 80 columns. Columns belong in a table or rendered HTML, where the chat column cannot wrap them.
 
-Create one focused HTML diagram, infographic, or short slide deck only when the user has explicit artifact intent and the environment supports both creating the file and presenting it through an available opener. Match the product's colors, type, spacing, and components; use real labels and data; support desktop and mobile. When either condition is absent, render the smallest inline text, diff, code, or Mermaid view instead.
+## Rendered HTML
+
+The catalog above picks the view's shape. Render that shape on the first surface the host supports:
+
+1. **Inline renderer.** When the host has one, render every view through it, whatever its size. In T3 Code that is `html_preview` then `html_render`, and the tools can load on demand: follow [inline HTML](references/inline-html.md) to load, build, check, and render the page above the reply.
+2. **HTML file.** Create one focused HTML diagram, infographic, or short slide deck only when the user has explicit artifact intent and the environment supports both creating the file and presenting it through an available opener.
+3. **Markdown.** Otherwise render the smallest inline table, text, diff, code, or Mermaid view.
+
+The inline page takes the host theme. An HTML file matches the product's colors, type, spacing, and components. Both use real labels and data and support desktop and mobile.
 
 ## Completion
 
-Place each visual next to its textual conclusion. Keep only the calls, files, props, states, mappings, and boundaries needed for the current question. Completion requires that the conclusion remains traceable to the authoritative source and the visual introduces no new decision, evidence, approval, or certainty.
+Place each visual next to its textual conclusion. Keep only the calls, files, props, states, mappings, and boundaries needed for the current question. Completion requires that the view is rendered through the inline renderer whenever the host has one, every multi-column mapping sits in a table or rendered HTML, every text fence line fits in 80 columns, the conclusion remains traceable to the authoritative source, and the visual introduces no new decision, evidence, approval, or certainty.
+
+These criteria bind the final reply even when `show-me` shares the prompt with research, subagents, or another skill: apply the view choice to the reply that closes the turn.

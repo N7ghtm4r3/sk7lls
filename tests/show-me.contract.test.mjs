@@ -31,9 +31,38 @@ test("show-me uses the smallest authority-preserving visual", () => {
   assert.doesNotMatch(skill, /Bash\(open/);
 });
 
+test("show-me keeps wide views readable in the chat column", () => {
+  const skill = read(`${showMePath}/SKILL.md`);
+
+  assert.match(skill, /mapping.*two or more attributes.*Markdown table/is);
+  assert.match(skill, /Inline renderer.*html_preview.*html_render/is);
+  assert.match(skill, /Inline renderer[\s\S]*HTML file[\s\S]*Markdown/u);
+  assert.match(skill, /text fence line fits in 80 columns/iu);
+  assert.match(
+    skill,
+    /criteria bind the final reply.*research, subagents, or another skill/is,
+  );
+});
+
+test("show-me renders every view inline on T3 Code and loads deferred tools", () => {
+  const skill = read(`${showMePath}/SKILL.md`);
+  const inline = read(`${showMePath}/references/inline-html.md`);
+  const round = read(
+    "skills/agnostic/requirements/requirements-grill/phases/round.md",
+  );
+
+  assert.match(skill, /render every view through it, whatever its size/u);
+  assert.match(skill, /\[inline HTML\]\(references\/inline-html\.md\)/u);
+  assert.match(skill, /rendered through the inline renderer whenever the host has one/u);
+  assert.match(inline, /ToolSearch\s+`select:mcp__t3-code__html_preview,mcp__t3-code__html_render`/u);
+  assert.match(inline, /until one\s+load attempt fails/u);
+  assert.match(round, /Load `\$show-me` before\s+building the view/u);
+  assert.match(round, /surface\s+it rendered on/u);
+});
+
 test("planning entrypoints present requirements, specs, plans, and delivery", () => {
   const grill = read(
-    "skills/agnostic/requirements/requirements-grill/SKILL.md",
+    "skills/agnostic/requirements/requirements-grill/phases/close.md",
   );
   const spec = read("skills/agnostic/planning/create-spec/SKILL.md");
   const plan = read("skills/agnostic/planning/create-plan/SKILL.md");
@@ -50,18 +79,24 @@ test("planning entrypoints present requirements, specs, plans, and delivery", ()
 });
 
 test("requirements grill delegates completion scheduling while retaining presentation", () => {
-  const grill = read(
-    "skills/agnostic/requirements/requirements-grill/SKILL.md",
-  );
+  const grillRoot = "skills/agnostic/requirements/requirements-grill";
+  const skill = read(`${grillRoot}/SKILL.md`);
+  const close = read(`${grillRoot}/phases/close.md`);
 
   assert.match(
-    grill,
-    /After `\$grilling` completes and the durable artifacts are current, invoke\s+`\$show-me`/u,
+    read(`${grillRoot}/phases/router.md`),
+    /No open question exists and the Close Guard passes \| \[`close\.md`\]/u,
   );
-  assert.doesNotMatch(
-    grill,
-    /frontier is empty|frontier remains open|empty-frontier/iu,
+  assert.match(
+    close,
+    /run `\$domain-modeling` for a final consistency pass over the full\s+status glossary and persist its results;\s+2\. invoke `\$show-me`/u,
   );
+  for (const text of [skill, close]) {
+    assert.doesNotMatch(
+      text,
+      /frontier is empty|frontier remains open|empty-frontier/iu,
+    );
+  }
 });
 
 test("phase entrypoints present complex state without taking authority", () => {
@@ -93,7 +128,7 @@ test("phase entrypoints present complex state without taking authority", () => {
     /\$show-me[\s\S]*each decision[\s\S]*observable workflow[\s\S]*milestone context[\s\S]*final Epic projection/iu,
   );
   assert.match(debugging, /\$show-me.*evidence matrix/is);
-  assert.match(review, /\$show-me.*retained.*report/is);
+  assert.match(review, /retain line is the presentation source[\s\S]*Pass Report stays the review\s+authority/u);
   assert.match(prototype, /\$show-me.*variant.*verdict/is);
 });
 
@@ -106,7 +141,7 @@ test("backlog visualizes material topology decisions while handoff stays untouch
   assert.match(backlog, /\$show-me.*authority-derived topology/isu);
   assert.match(
     backlog,
-    /Boundary, goal,[\s\S]*reparenting, or reorganization changes require explicit approval/iu,
+    /Boundary, goal,[\s\S]*reparenting,[\s\S]*structural changes/iu,
   );
   assert.match(
     backlog,

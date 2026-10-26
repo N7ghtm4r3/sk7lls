@@ -68,8 +68,8 @@ test("delivery and debugging preserve scope decisions before proceeding", () => 
 
 test("review routes scope decisions before repair", async () => {
   const { deriveReviewRouting } = await import("../skills/phases/review-phase/scripts/review-contract.mjs");
-  const run = read("skills/phases/review-phase/phases/run-review.md");
-  const returned = read("skills/phases/review-phase/phases/return-route.md");
+  const adjudicator = read("skills/phases/review-phase/references/adjudicator.md");
+  const routing = read("skills/phases/review-phase/references/routing.md");
   const delivery = read("skills/phases/delivery-phase/phases/review.md");
   assert.deepEqual(
     deriveReviewRouting([
@@ -81,19 +81,53 @@ test("review routes scope decisions before repair", async () => {
       secondary_architecture_follow_up: false,
     },
   );
-  assert.match(run, /Use\s+`human_steering_required` when the repair exceeds accepted bounds/iu);
-  assert.match(returned, /primary route is `human_steering_required`.*retain the blocking\s+finding, supporting evidence, and exact decision needed; return that outcome\s+and stop/isu);
+  assert.match(adjudicator, /`human_steering_required`: the repair exceeds accepted bounds/iu);
+  assert.match(routing, /`human_steering_required` \| either \| Stop\. Return the blocking findings, their evidence and the exact decision needed\. Delivery stays out of repair/iu);
   assert.match(delivery, /primary `human_steering_required`.*never opens a repair state/isu);
 });
 
-test("autoreview runs only inside review-phase", () => {
-  const skill = read("skills/agnostic/quality/autoreview/SKILL.md");
-  assert.doesNotMatch(skill, /disable-model-invocation/u);
-  assert.match(skill, /Outside `review-phase`, never run the structured review helper/iu);
-  assert.match(skill, /routes to an\s+explicit `\$review-phase` invocation/iu);
-  assert.doesNotMatch(skill, /after non-trivial code edits/iu);
-  assert.doesNotMatch(skill, /Outside `review-phase`.{0,160}helper exactly once/isu);
-  assert.doesNotMatch(skill, /rerun review until/iu);
+test("review-phase is the one review procedure and never waits on an engine", () => {
+  for (const removed of [
+    "skills/agnostic/quality/autoreview",
+    "skills/agnostic/quality/review",
+    "skills/phases/review-phase/phases",
+    "skills/phases/review-phase/AUTHORING-HANDOFF.md",
+  ]) assert.equal(existsSync(new URL(`../${removed}`, import.meta.url)), false, removed);
+  const skill = read("skills/phases/review-phase/SKILL.md");
+  assert.match(skill, /disable-model-invocation: true/u);
+  assert.match(skill, /review\.mjs run --run-dir <run_dir>` as\s+a background command and end the turn/u);
+  assert.doesNotMatch(skill, /sleep|poll|monitor|watch/iu);
+  assert.match(skill, /exactly one readonly Adjudicator/u);
+  assert.match(skill, /Adjudicator subagent in the\s+foreground and wait for it to return/u);
+  assert.match(skill, /six steps are the whole pass/u);
+  assert.match(skill, /retain --run-dir <run_dir>\s+--subagent-tokens <n>`/u);
+  assert.match(read("skills/phases/review-phase/references/adjudicator.md"), /Run a command only to test one specific candidate/u);
+  const standards = read("skills/phases/review-phase/references/axis-standards.md");
+  assert.match(standards, /documented standard from the source context is a hard rule/u);
+  assert.match(standards, /report it at P3, as\s+information/u);
+  assert.doesNotMatch(standards, /simplif/iu);
+});
+
+test("delivery handoff points at the Pass Report and derives the pass count", () => {
+  const handoff = read("skills/phases/delivery-phase/references/phase-handoff.md");
+  const fields = [...handoff.matchAll(/```text\n([\s\S]*?)```/gu)]
+    .flatMap(([, block]) => [...block.matchAll(/^([a-z_]+):/gmu)].map(([, name]) => name));
+  assert.ok(fields.includes("pass_report"), "pass_report field");
+  assert.ok(fields.includes("review_run_id"), "review_run_id field");
+  for (const removed of [/verified_retained_ref/u, /report_(path|commit|sha)/u, /sha256/u, /review_count/u]) {
+    assert.equal(fields.some((name) => removed.test(name)), false, String(removed));
+  }
+  assert.doesNotMatch(handoff, /verified_retained_ref|SHA-256/u);
+  assert.match(handoff, /review\.mjs status/u);
+  for (const path of [
+    "SKILL.md",
+    "references/artifact-state.md",
+    "references/context-continuity.md",
+    ...["review", "router", "closeout", "implement", "debug"].map((name) => `phases/${name}.md`),
+  ]) {
+    const text = read(`skills/phases/delivery-phase/${path}`);
+    assert.doesNotMatch(text, /review_count|repair_count|verified_retained_ref|autoreview|retained (report|review)/u, path);
+  }
 });
 
 test("delivery always passes through review-phase before closeout", () => {
@@ -102,12 +136,7 @@ test("delivery always passes through review-phase before closeout", () => {
   const implement = read("skills/phases/delivery-phase/phases/implement.md");
   assert.match(router, /Every completed implementation selects \[review\.md\]\(review\.md\)/u);
   assert.match(router, /No delivery\s+reaches docs ingest or closeout without one/u);
-  assert.match(closeout, /Require a valid retained completed review pass/u);
-  assert.match(implement, /never run `autoreview` here/u);
-});
-
-test("autoreview is the per-axis engine of review-phase and nothing else", () => {
-  const skill = read("skills/agnostic/quality/autoreview/SKILL.md");
-  assert.match(skill, /each of its two `review`\s+axes runs it once per pass/u);
-  assert.match(skill, /--review-packet <path> --reviewer-identity <identity> --axis standards\|spec/u);
+  assert.match(router, /`review-phase` starts every\s+review engine/u);
+  assert.match(closeout, /Require a valid Pass Report for this delivery/u);
+  assert.match(implement, /Code Review happens once in `review-phase`/u);
 });

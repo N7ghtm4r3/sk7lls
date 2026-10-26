@@ -13,7 +13,7 @@ description: Implement an agent-ready spec folder through a plan-derived Executi
 - **Delegates to:** `$tdd`, `$codebase-design`, `$simplify`, and internal scoped-worker orchestration
 - **Human handoff:** a `$requirements-phase` command and brief for debt that needs a decision outside the active goal
 - **Downstream:** `delivery-phase`, which runs `$review-phase` Code Review, then `$docs-ingest-phase` when the resulting spec folder should be ingested into domain knowledge
-- **Entry conditions:** existing agent-ready spec folder; stop and use `create-plan` if `PLAN.md` is missing
+- **Entry conditions:** existing agent-ready spec folder; route a missing or invalid `PLAN.md` to `requirements-phase`
 - **Stop conditions:** shared acceptance audit complete, final manual review checklist written, spec folder finalized, blocked work reported honestly
 
 ## Required Inner Skills
@@ -37,6 +37,12 @@ Follow [references/parallel.md](references/parallel.md) as the execution contrac
 
 The parent owns Task Gates, Active Write Scopes and shared artifacts. Scoped workers own
 implementation tasks.
+
+When the delivery brief names a `design-phase` promote commit, its UI files are
+Design-Owned UI Code: accepted input that tasks extend with logic and data. Put
+that rule in each worker brief that touches those files. A change to a
+design-owned file is a defect fix only; record each one in
+`IMPLEMENTATION-NOTES.md` with the defect and the file.
 
 ## Task identity state
 
@@ -96,6 +102,10 @@ Provider mechanics remain inside `write-backlog`.
 Read [references/lifecycle.md](references/lifecycle.md) before implementation for
 recorded branch/base authority, existing PR identity and early draft visibility.
 Workers write on that recorded branch under exclusive Active Write Scopes.
+One plan creates at most one pull request per Touched Repository; split or
+stack PRs only when the user explicitly asks. Every wave, repair, and review fix
+lands on that repository's branch and PR, even when the plan groups tasks into
+waves or backlog items.
 
 ## Advanced features
 

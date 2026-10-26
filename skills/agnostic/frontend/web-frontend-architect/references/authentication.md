@@ -36,8 +36,12 @@ Use the framework's own shapes for composition and access:
   decision with view selection and bypass the framework's statuses. Prefer
   `const user = await requireAccess(key)` followed by the page's own JSX.
 
-Routes apply feature-owned permission and visibility rules. A landing route may select the
-first permitted destination using those rules. Protected data reads and mutations require
+Protected page components and loaders live in Composition and apply feature-owned
+permission and visibility rules through public contracts. Framework route files connect
+those Composition exports rather than importing Features or Modules directly. When the
+framework requires an access decision in a route-level entrypoint, expose its implementation
+through the Composition public contract. A landing page or loader may select the
+first permitted destination using domain-owned rules. Protected data reads and mutations require
 their own trusted checks even when navigation and visible controls use the same policy.
 
 ## Authentication flow

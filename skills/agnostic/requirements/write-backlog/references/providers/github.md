@@ -28,7 +28,8 @@ guidance and zero provider mutations. There is no flat Issues fallback.
 Resolve the configured Product/Backlog Root by stable Projects V2 node ID and
 durable wiki identity. Read the linked repository, Project metadata, fields,
 views, items, Issues, parents, milestones, blockers, bodies, and immutable
-source links before choosing create, reuse, or enrich.
+source links before choosing create, reuse, or enrich. Read `viewer` through
+the same connection; its node ID and login are the authenticated user.
 
 Stable provider identity plus durable wiki identity is the reuse key. A title
 match, standalone provenance URL, incomplete search, ambiguous candidate,
@@ -52,7 +53,7 @@ Read every configured option by stable node ID:
 Record durable wiki identities in option descriptions when the API supports
 them and in the Project README identity map otherwise. Ordinary writes reuse
 configured IDs. Initialization may call `createProjectV2Field` only after a
-structural preview and explicit approval.
+structural preview.
 
 Create or preserve semantically equivalent product-owner views. Supported
 automatic inputs are `createProjectV2View` and `updateProjectV2View` fields
@@ -85,14 +86,15 @@ edges with native `addBlockedBy` relations.
 ## Small Mutation
 
 Build the complete mutation envelope in memory: ordered operations, stable IDs,
-preconditions, immutable source identities, approval record, and expected
-readback. Preview every material structural change and obtain explicit approval.
+preconditions, immutable source identities, and expected readback. Preview
+every material structural change.
 
-Write the approved delta parent-first:
+Write the validated delta parent-first:
 
-1. Reconcile approved Project metadata, fields, views, and milestones.
+1. Reconcile intended Project metadata, fields, views, and milestones.
 2. Use `createIssue` with `projectV2Ids`, `parentIssueId`, and `milestoneId` as
-   applicable. Attach an existing exact child only with `addSubIssue`.
+   applicable, plus `assigneeIds` set to the authenticated user for every Task.
+   Attach an existing exact child only with `addSubIssue`.
 3. Resolve Project item IDs and set Product Area, Initiative, and Kind through
    `updateProjectV2ItemFieldValue`.
 4. Add each validated Task prerequisite with `addBlockedBy`.
@@ -105,7 +107,8 @@ traceability, and immutable specification source.
 
 Exact readback must prove Project membership, recursive parent chain, repository
 milestone, Product Area, Initiative, Kind, native blocker relations, Fog
-provenance, immutable source links, stable IDs, and URLs. Initialization also
+provenance, immutable source links, created-Task assignee, stable IDs, and
+URLs. Initialization also
 reads back Project metadata, linked repository, identity maps, and all required
 view configurations. A response without an exact comparison remains unresolved.
 

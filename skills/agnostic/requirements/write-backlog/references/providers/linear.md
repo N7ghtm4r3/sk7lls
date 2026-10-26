@@ -23,8 +23,8 @@ Initiative membership. Initiative, Epic, Story, and Task Issues share the
 Product Area Project and team; required `Kind/*` labels and recursive
 `parentId` relations preserve semantic type and ownership. A nested native
 Initiative, a Project per semantic Initiative or Epic, an extra parent, or a
-mismatched Project is divergent topology. It remains unchanged until an
-explicitly approved Normalization operation targets it.
+mismatched Project is divergent topology. It remains unchanged until a
+Normalization operation targets it.
 
 ## Destination and Read-Before-Write
 
@@ -36,10 +36,12 @@ explicitly approved Normalization operation targets it.
 3. Require the returned workspace ID and workspace URL to identify the same
    workspace encoded by the configured Root URL. A wrong workspace returns its
    observed identity, expected identity, and zero provider mutations.
-4. Treat a Linear Project URL, legacy project destination, or any non-Initiative
+4. Read `viewer` through that same connection. Its user ID is the
+   authenticated user for this workspace.
+5. Treat a Linear Project URL, legacy project destination, or any non-Initiative
    Root URL as invalid. Return exact `hi ensure` destination guidance and zero
    writes rather than guessing or creating another Root.
-5. Read all candidate Projects, Issues, parents, labels, milestones, relations,
+6. Read all candidate Projects, Issues, parents, labels, milestones, relations,
    views, and durable identity links before choosing create, reuse, or enrich.
 
 Stable provider identity plus durable wiki identity is the reuse key. A title
@@ -59,7 +61,7 @@ Use the configured issue label group for exact labels including
 distinguishes the Root and Product Area Project. Missing, overlapping, or
 non-exclusive Kind labels return setup guidance and zero writes. Ordinary
 projection reuses configured label IDs; initialization may provision labels
-only after a structural preview and explicit approval.
+only after a structural preview.
 
 Preserve semantically equivalent existing views before proposing another:
 
@@ -99,10 +101,10 @@ evidence and are excluded from automatic Normalization.
 ## Small Mutation and Exact Readback
 
 Build the complete intended mutation envelope in memory: ordered operations,
-stable IDs, preconditions, immutable source identities, approval record, and
-expected readback. Preview every material structural change and obtain explicit
-approval before writing. Write only the validated delta, parent-first, using
-stable IDs; capture each returned ID before a dependent operation.
+stable IDs, preconditions, immutable source identities, and expected readback.
+Preview every material structural change before writing. Write only the validated delta, parent-first, using
+stable IDs; capture each returned ID before a dependent operation. Create every
+Task with `assigneeId` set to the authenticated user.
 
 Exact readback must prove:
 
@@ -113,7 +115,8 @@ Exact readback must prove:
 5. exactly one contextual `V*` milestone per Story and the same one per Task
 6. semantic views, Fog provenance, immutable sources, and source links
 7. every native `relatedTo`, `blockedBy`, and `blocks` relation
-8. created, enriched, repaired, or unchanged classification for every object
+8. the authenticated user as assignee of every created Task
+9. created, enriched, repaired, or unchanged classification for every object
 
 A mismatch remains unresolved reconciliation. On partial provider failure,
 stop further writes, read back every affected object, and return observed writes,

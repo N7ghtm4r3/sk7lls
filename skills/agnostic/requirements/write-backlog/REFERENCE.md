@@ -18,7 +18,6 @@ Required input:
 - proposed semantic delta, source wording, immutable source links, and expected
   provider state
 - exact `V*` milestone for every Story and derived Task
-- structural approval record whenever the delta crosses an approval boundary
 
 Missing, mutable, ambiguous, or conflicting authority returns every gap with
 zero provider mutations.
@@ -51,15 +50,16 @@ provider-item cardinality.
 
 Before the first provider write:
 
-1. Prove Product/Backlog Root, repository, wiki, and actual provider workspace.
+1. Prove Product/Backlog Root, repository, wiki, actual provider workspace, and
+   authenticated user.
 2. Read every target and relation from the provider.
 3. Apply the exact create/reuse/enrich/stop decision table from
    [issue reconciliation](references/issue-reconciliation.md). A title is only
    discovery evidence.
-4. Reuse exact structure and fitting `V*` milestones. Require preview and
-   explicit approval for material topology changes.
+4. Reuse exact structure and fitting `V*` milestones. Preview material
+   topology changes.
 5. Validate hierarchy, adapter representation, memberships, immutable source
-   links, accepted evidence, approval state, and historical-ticket exclusion.
+   links, accepted evidence, and historical-ticket exclusion.
 6. Validate every parent Story and the complete reachable Task graph. Reject a
    missing parent or blocker, milestone mismatch, future-iteration edge,
    self-edge, duplicate edge, or cycle.
@@ -68,11 +68,12 @@ Before the first provider write:
 
 ## Result Envelope
 
-Return provider, workspace, and Product/Backlog Root identities; operation and
-immutable evidence identity; stable provider IDs and durable wiki identities;
-created, enriched, repaired, or unchanged classification; exact parents,
-relations, `V*` membership, semantic fields, views, source links, and statuses;
-the approval record; observed writes; recovery point; and residual delta.
+Return provider, workspace, Product/Backlog Root, and authenticated-user
+identities; operation and immutable evidence identity; stable provider IDs and
+durable wiki identities; created, enriched, repaired, or unchanged
+classification; exact parents, relations, `V*` membership, assignees, semantic
+fields, views, source links, and statuses;
+structural changes; observed writes; recovery point; and residual delta.
 
 Only exact readback proves success. A successful provider request with a
 mismatched readback remains unresolved reconciliation.

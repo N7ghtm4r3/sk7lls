@@ -30,7 +30,11 @@ conflicting proof routes the exact gap to Requirements Phase /
 `requirements-grill`. Require the plan to reference that same retained pair.
 Compiler readiness needs no separate spec review or approval state.
 
-If `PLAN.md` is missing, stop and use `create-plan`. Do not auto-generate plans from this skill.
+If `PLAN.md` is missing or invalid, stop and route the exact gap to
+`requirements-phase`, which owns `create-plan`. Do not auto-generate plans from
+this skill. Execution-only amendments within accepted bounds still call
+`create-plan` directly through
+[architecture-conformance.md](architecture-conformance.md).
 
 ## 2. Resolve the target folder
 
@@ -58,8 +62,8 @@ decision selectors, mapped spec codes and source Q evidence in worker Context Po
 Input Sets. Recheck them before dependent dispatch, Task Gates and finalization.
 Refresh changed sources through existing freshness gates; preserve unaffected
 proof and historical review lineage. Missing plan pointers return to
-`create-plan`; missing or conflicting accepted design returns to Requirements
-Phase / `requirements-grill`.
+Requirements Phase / `create-plan`; missing or conflicting accepted design
+returns to Requirements Phase / `requirements-grill`.
 
 When `PLAN.md` declares architecture applicability as `architecture-bearing`,
 also read [architecture-conformance.md](architecture-conformance.md) before
@@ -168,7 +172,9 @@ Create an item file only for debt that must survive the run.
 
 After the recorded branch/base gate passes, inspect the remote branch and its
 pull requests before dispatching further implementation. Preserve the recorded
-branch, base and stack intent. If an in-scope specification or implementation
+branch and base for each Touched Repository. One plan creates at most one pull
+request per Touched Repository; split or stack PRs only when the user explicitly
+asks. If an in-scope specification or implementation
 commit is already pushed, reuse its matching draft pull request or create one
 now. Otherwise continue implementation and perform this check immediately after
 the first meaningful in-scope commit is pushed. An empty visibility commit is
@@ -179,7 +185,8 @@ and exact provider readback in implementation notes. Search by recorded head
 and base before creation; on resume or an ambiguous creation response, read back
 that identity before retrying. A conflicting base, stack or existing non-draft
 PR requires reconciliation against accepted intent before mutation. Completion
-of this visibility step is one matching draft PR with observed provider state,
+of this visibility step is one matching draft PR per Touched Repository with
+observed provider state,
 not a locally prepared URL. Route observed lifecycle facts through the existing
 `write-backlog` contract. A provider failure records the exact visibility blocker;
 independent eligible work can continue within its accepted scope.

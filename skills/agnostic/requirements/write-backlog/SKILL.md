@@ -18,9 +18,10 @@ silently renaming them.
 ## Mutation Pipeline
 
 1. Read [project context](references/project-context.md). Resolve settings,
-   Product/Backlog Root, wiki, repository, and actual provider workspace. A
-   missing or legacy destination returns exact `hi ensure` guidance and zero
-   writes. Completion means every destination identity is proven.
+   Product/Backlog Root, wiki, repository, actual provider workspace, and
+   authenticated user. A missing or legacy destination returns exact
+   `hi ensure` guidance and zero writes. Completion means every destination
+   identity and the authenticated user are proven.
 2. Read fresh provider state for every intended object, parent, relation,
    milestone, field, and view. Completion means the current topology is known
    by stable provider identity, not inferred from names.
@@ -40,14 +41,16 @@ silently renaming them.
    - [record observed delivery state](references/delivery-status.md)
 5. Construct the complete intended delta in memory. Validate authority, stable
    identity, provider-neutral hierarchy, adapter representation, source links,
-   contextual `V*` membership, and the full reachable Task blocker graph.
+   contextual `V*` membership, created-Task assignees, and the full reachable
+   Task blocker graph.
    Completion means validation accepts the whole delta before the first write.
-6. Use `$show-me` to preview the authority-derived topology. Boundary, goal,
-   parent, roadmap, milestone movement, duplicate closure, merge, split,
-   reparenting, or reorganization changes require explicit approval.
-   Divergent-topology repair uses the same gate. The visual explains the
-   proposal; it is not approval. Completion means every material structural
-   decision has an approval record.
+6. Use `$show-me` to preview the authority-derived topology, then continue to
+   the write without waiting for a reply. Boundary, goal, parent, roadmap,
+   milestone movement, duplicate closure, merge, split, reparenting,
+   reorganization, and divergent-topology repair are structural changes: the
+   invocation plus accepted evidence authorizes them. Ambiguity, conflict, or
+   missing authority still stops with zero writes. Completion means every
+   structural change is previewed and recorded for the return envelope.
 7. Apply `$wait-what` when proposed ticket wording or project terms do not land.
    Re-pitch in canonical language while preserving accepted meaning.
 8. Select exactly one adapter from `backlogProvider`:
@@ -55,12 +58,12 @@ silently renaming them.
    - `GitHub`: read [the GitHub provider branch](references/providers/github.md).
    A missing hierarchy, metadata, milestone, relation, or readback capability
    returns setup guidance and zero provider mutations.
-9. Write only the validated, approved delta. Read back every intended identity,
+9. Write only the validated delta. Read back every intended identity,
    parent, relation, source link, field, view, milestone, status, and provider
    object. On partial failure, stop further writes and return observed writes
    plus the exact residual delta.
 10. Return stable provider IDs and URLs, durable wiki identities, operation,
-   created/enriched/repaired/unchanged classification, approvals, exact
+   created/enriched/repaired/unchanged classification, structural changes, exact
    readback, and residual delta. Completion requires the return envelope to
    reconcile byte-for-byte with the intended provider state.
 

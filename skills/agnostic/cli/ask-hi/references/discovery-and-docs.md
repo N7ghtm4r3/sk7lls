@@ -1,9 +1,9 @@
 # Discovery, design and docs family
 
-This family covers human intake before requirements (Finder), human-evaluated prototypes, product design from existing evidence, docs and wiki ingest, onboarding, and writing skills or agent docs. Finder starts only from a human-typed wrapper; the engine creates or resumes one Fog, routes support to research or prototype children, and returns a bounded result with next human options; the Fog stays open and the human starts `$requirements-phase` separately. `$design-phase` runs intake → grill → prototype → approval → backlog → brief, then stops for the human to start `$delivery-phase`. `$docs-ingest-phase` resolves the project wiki contract, then runs exactly one branch per pass.
+This family covers human intake before requirements (Finder), human-evaluated prototypes, product design from existing evidence, docs and wiki ingest, onboarding, and writing skills or agent docs. Finder starts only from a human-typed wrapper; the engine creates or resumes one Fog, routes support to research or prototype children, and returns a bounded result with next human options; the Fog stays open and the human starts `$requirements-phase` separately. `$design-phase` runs intake → grill → brand → design system → compose → motion plan → variant rounds (quality gate, verdict) → promote → backlog → brief, then stops for the human to start `$delivery-phase`. `$docs-ingest-phase` resolves the project wiki contract, then runs exactly one branch per pass.
 
 - `$business-finder` | `$functional-finder` → `$finder-phase` → `$grilling` ↔ `$parallel-research` | `$prototype-phase` → `$write-backlog` → human → `$requirements-phase`
-- `$design-phase` → `$requirements-grill` → `$prototype` → approval → backlog → human → `$delivery-phase`
+- `$design-phase` → `$requirements-grill` → `$brandkit` → `$shadcn` → `$imagegen-frontend-web|mobile` → `$find-animation-opportunities` → `$prototype-variants` ⇄ quality gate → verdict → promote → backlog → human → `$delivery-phase`
 - `$docs-ingest-phase` → setup | capture | health | private/internal | public (`$writing-fragments` → `$writing-beats` → `$writing-shape`)
 - `hi init` → `$hi-cli` → `$writing-for-agents` → `$rule-authoring` → `$docs-onboarding` → `$requirements-phase`
 
@@ -11,7 +11,7 @@ This family covers human intake before requirements (Finder), human-evaluated pr
 Explicit-only; Pack `planning`. Durable graph engine that creates or resumes exactly one Fog for one explicit Business or Functional intake.
 - **Use when:** a human typed `$business-finder` or `$functional-finder`; inputs: lens, intake profile, ceiling `Initiative|Epic`, one product request, optional Fog identity or handoff. **Not for:** requirements closure, specs or delivery-depth projection (`$requirements-phase`); review (`$review-phase`, invoked by the human).
 - **Steps:** bootstrap reads contract, state graph, handoff; reconstructs state from fresh evidence; router on every entry, first match: 1 conflict or projection above ceiling → human-steering; 2 no exact Fog readback → ensure-fog; 3 one open Research child → research; 4 one open Prototype child → prototype; 5 accepted projection intent without readback → reconcile; 6 bounded result ready → return-target; 7 else → grilling. Each gate writes the handoff, then stops or re-enters.
-- **Gates:** ensure-fog: allocate the wiki Fog id once, upsert via `$write-backlog`, exact readback. grilling: reuse/create one `Kind/grilling` child, one `$grilling` conversation in the wrapper profile (`$wait-what`, `$show-me`). research: `$parallel-research` report retained by SHA + path. prototype: `$prototype-phase` verdict + immutable pointer. reconcile: ceiling-safe intent → `$write-backlog` (preview, approval, readback). return-target: Fog id, lens, children, evidence, readback, unresolved decisions, next human options.
+- **Gates:** ensure-fog: allocate the wiki Fog id once, upsert via `$write-backlog`, exact readback. grilling: reuse/create one `Kind/grilling` child, one `$grilling` conversation in the wrapper profile (`$wait-what`, `$show-me`). research: `$parallel-research` report retained by SHA + path. prototype: `$prototype-phase` verdict + immutable pointer. reconcile: ceiling-safe intent → `$write-backlog` (preview, write, readback). return-target: Fog id, lens, children, evidence, readback, unresolved decisions, next human options.
 - **Calls:** `$write-backlog`, `$grilling`, `$parallel-research`, `$prototype-phase`, `$wait-what`, `$show-me`. **Called by:** `$business-finder`, `$functional-finder`.
 - **Writes:** `.devpunks/finder-phase/handoffs/<durable-wiki-fog-id>.md` (Status `complete|blocked|skipped|checkpoint|human_steering_required`, Fog/provider/snapshot identities, immutable lens, child ids, relations, evidence, ceiling, projection, unresolved decisions); provider Fog, child items, relations, optional Product Area/Initiative/Epic via `$write-backlog`.
 - **Stops / gates:** evidence authority: direct evidence > workflow-native artifacts > handoff > suggested route. `human_steering_required` stops before any mutation intent. `approval_required` checkpoint at reconcile. Return never claims the Fog resolved; delivery evidence owns completion. Research and prototype results never accept product direction.
@@ -37,7 +37,7 @@ Explicit-only; Pack `planning`. Develops uncertain product behavior nontechnical
 
 ## `$prototype-phase`
 Model-invoked; Pack `planning`. Standalone human-evaluated prototype for one claim, from construction to verdict.
-- **Use when:** a Finder prototype gate or `$wayfinder` route needs a human verdict on one precise question. **Not for:** design artifacts (`$design-phase` uses `$prototype`); production code.
+- **Use when:** a Finder prototype gate or `$wayfinder` route needs a human verdict on one precise question. **Not for:** design work (`$design-phase` builds variants in the real app); production code.
 - **Steps:** 1 Claim one question; record expected learning + source ticket. 2 Build with `$prototype` on `prototype/<slug>`. 3 Give the run command; `$show-me` per variant; ask accept | iterate | reject. 4 Iterate: update `PROTOTYPE-VERDICT.md`, commit, rebuild only the tested part. 5 Accept/reject: finalize the verdict from `VERDICT-TEMPLATE.md`, commit, push, verify the remote ref, return SHA + path to `$finder-phase`. Reject keeps the question open.
 - **Calls:** `$prototype`, `$show-me`. **Called by:** `$finder-phase` (prototype gate), `$create-spec` (gap route); `$wayfinder` recommends it.
 - **Writes:** branch `prototype/<slug>`; `PROTOTYPE-VERDICT.md` beside the artifact (Question, Source ticket, Verdict, Run command, Evidence, Rejected alternatives, Risks, Implications, Open decisions, Artifact commit, Artifact path).
@@ -45,42 +45,91 @@ Model-invoked; Pack `planning`. Standalone human-evaluated prototype for one cla
 - **Source:** `.agents/skills/prototype-phase/SKILL.md`, `VERDICT-TEMPLATE.md`
 
 ## `$design-phase`
-Explicit-only; Pack `planning`. Routes product design work from existing evidence through intake, lean grill, prototype, approval, backlog and a delivery brief.
-- **Use when:** design work with existing evidence (routes, tokens, components, screenshots, Figma, brand). **Not for:** blank-slate invention; new Stories/Tasks (`$requirements-phase`); starting delivery (the human types `$delivery-phase`).
-- **Steps:** router every entry, first match: 1 goal/surface unclear → ask one question; 2 evidence missing/stale → intake; 3 constraints missing → grill (`$requirements-grill`, one branch per page/flow); 4 artifact intent missing → ask image refs vs prototype; 5 artifacts missing → prototype (subagent: `$imagegen-frontend-web|mobile` for images, `$prototype` for prototypes; `$design-taste-frontend`, `$image-to-code`; `$repo-asset-management` links); 6 no approval → approval (explicit decision + artifact contract per set); 7 approved set without backlog → backlog; 8 backlog ids without delivery → delivery-handoff; 9 report completion with route trace.
-- **Backlog phase:** reads the grill glossary; needs an agent-ready `SPEC.md` with verified blob URL linking ≥1 approved set; new Stories/Tasks → evidence back to `$requirements-phase`; in-scope → `$repo-asset-management` attachments, existing backlog ids kept.
-- **Calls:** `$requirements-grill`, `$prototype`, `$imagegen-frontend-web`, `$imagegen-frontend-mobile`, `$design-taste-frontend`, `$image-to-code`, `$repo-asset-management`. **Called by:** human.
-- **Writes:** router output block, phase handoff block, route trace, approved artifact contracts, durable visual links, delivery brief (ids, links, surfaces, scope, constraints, checks, before/after PR evidence).
-- **Stops / gates:** the entrypoint activates no child skill; each phase loads its own. Approval never inferred; no backlog conversion without an approved set; temp files and transient URLs are never final evidence; stops after presenting the brief.
-- **Source:** `.agents/skills/design-phase/SKILL.md`, `phases/{router,intake,grill,prototype,approval,backlog,delivery-handoff}.md`
+Explicit-only; Pack `frontend`. Durable Workflow Graph from brand evidence through a design system, accepted Compositions and quality-checked variant rounds on the real route to committed Design-Owned UI Code, backlog linkage and a delivery brief.
+- **Use when:** product design work on a real route of an existing app (routes, tokens, `components.json`, DESIGN.md, screenshots, Figma, brand). **Not for:** throwaway prototypes (`$prototype-phase`); a target app that does not exist; new Stories/Tasks (`$requirements-phase`); starting delivery (the human types `$delivery-phase`).
+- **Steps:** bootstrap loads the router on every entry; first match: 1 unresolved steering decision → `human_steering_required`; 2 goal, surface or spec folder unclear, or several handoffs match → `design_target_unclear`; 3 same-authority conflict → `design_state_conflict`; 4 pending brand, compose or verdict checkpoint without a reply → checkpoint; 5 reply → the owning gate; 6 intake evidence missing/low-confidence/stale → intake (surface `web|expo`, existing-UI intent, one scope unit per real route); 7 constraints missing → grill (`$requirements-grill`); 8 no Brand Kit and no fresh intake brand artifacts → brand (`$brandkit` boards; else a trace row records the skip); 9 DESIGN.md or theme missing/stale → design-system (DESIGN.md template; web `$shadcn` theme, `cva` variants, design system page; Expo NativeWind via `$expo-tailwind-setup`); 10 scope unit without accepted Compositions → compose (`$imagegen-frontend-web` + `$imagegen-frontend-mobile` briefs + DESIGN.md + shadcn-Primitive Directive + copy lens); 11 Composition without a decided Motion Plan → motion-plan (`$find-animation-opportunities`); 12 round due, unbuilt, failing or stale → variant-round (3-5 variants behind dev-only `?variant=` on the real route via `$prototype-variants`, `$shadcn`, `$design-taste-frontend`, `$image-to-code`, `$emil-design-eng`, `$animate`|`$animate-expo`, `$mobile-native`; existing-UI intent `improve-existing` passes to `$design-taste-frontend`'s redesign route; 375px + 1280px checks); 13 built variant without a quality result → quality-gate (light `$break-ui`, `$mobile-native` checklist, `$review-animations`, copy lens, Motion Plan conformance); 14 all variants pass, no Verdict → verdict (`riff | combine | keep | reject`); 15 `keep` without a promote commit → promote (full `$break-ui` + fix, in-place production rewrite, switch and losing variants removed, dev-only worst-case fixtures kept, promote commit, approved artifact contract); 16 promote commit without a backlog outcome → backlog; 17 `requirements_phase_return` → terminal; 18 linked ids without a brief → delivery-handoff; 19 fresh brief → `design_complete`.
+- **Backlog phase:** reads the grill glossary; needs an agent-ready `SPEC.md` with verified blob URL linking the approved artifact contract; new Stories/Tasks → evidence back to `$requirements-phase`; in-scope → `$repo-asset-management` attachments, promote commit + contract linked to existing backlog ids.
+- **Calls:** `$requirements-grill`, `$brandkit`, `$shadcn`, `$expo-tailwind-setup`, `$imagegen-frontend-web`, `$imagegen-frontend-mobile`, `$find-animation-opportunities`, `$prototype-variants`, `$design-taste-frontend`, `$image-to-code`, `$emil-design-eng`, `$animate`, `$animate-expo`, `$mobile-native`, `$break-ui`, `$review-animations`, `$repo-asset-management`; Codex image generation (native, or T3 `delegate_task`). **Called by:** human.
+- **Writes:** `DESIGN-HANDOFF.md` beside `SPEC.md` (Design Target, Round State with round counter, Motion Plan, Artifact Index, Approved Artifact Contracts, Route Trace, Gate Outcomes); DESIGN.md, theme, component variants, design system page; variant code on the working branch; promote commit (its files are Design-Owned UI Code); durable visual links; delivery brief (promote commit, ids, links, surfaces, scope, constraints, checks, Design-Owned UI Code boundary, before/after PR evidence).
+- **Stops / gates:** the router is the sole route authority; gates own every child-skill activation. Human checkpoints: brand, compose, verdict. Acceptance comes only from the user's explicit words; a recorded `keep` is the approval. Every image comes from the Codex image ladder or the gate blocks (`image_generation_unavailable|pending`); no code or HTML fallback. A later visual change re-enters the router (layout change → compose, else a new round). Temp files and transient URLs are never final evidence; stops after presenting the brief.
+- **Source:** `.agents/skills/design-phase/SKILL.md`, `phases/{router,intake,grill,brand,design-system,compose,motion-plan,variant-round,quality-gate,verdict,promote,backlog,delivery-handoff}.md`, `references/{design-handoff,image-generation,design-md-template,shadcn-primitive-directive,copy-lens}.md`
 
 ## `$design-taste-frontend`
-Model-invoked; Pack `frontend`. Anti-slop frontend direction for landing pages, portfolios and redesigns.
-- **Use when:** marketing, landing, portfolio or redesign briefs. **Not for:** dashboards, data tables, multi-step product UI.
-- **Steps:** infer the brief; set DENSITY / MOTION / VARIANCE dials; map brief → design system; engineering directives; redesigns audit first; done at the final pre-flight check.
-- **Calls:** none. **Called by:** `$design-phase` (prototype, delivery brief). **Writes:** code. **Stops / gates:** pre-flight check.
-- **Source:** `.agents/skills/design-taste-frontend/SKILL.md`
+Model-invoked; Pack `frontend`. Taste-skill 2.1 anti-slop art direction for pages and app screens: a script deals researched directions, a strict house style is measured in a real browser, and a look-and-fix loop runs on screenshots.
+- **Use when:** building, redesigning, restyling, polishing or reviewing a page (landing, marketing, product, portfolio, one-pager) or an app screen (dashboard, admin or analytics view, settings, inbox); every design-phase variant. **Not for:** design images without code (`$imagegen-frontend-web|mobile`).
+- **Steps:** decide page or app screen first; an app screen follows `references/app-screens.md` (`draw.mjs --app`, `inspect.mjs --app`). Page run: 1 read the brief and project; 2 write the argument; 3 draw the direction (`scripts/draw.mjs` deals three of twenty); 4 find the idea; 5 write the words; 6 build it, still; 7 gate (`lint.mjs`, `inspect.mjs` at 1440/768/390, `scenes.mjs`; fix every `FAIL`); 8 look (critique screenshots, fix the top three, at most three rounds); 9 move (motion layer); 10 report. Redesign route "Redesign, restyle or review of an existing page or app screen": record the before; a review stops at the critique; keep stack, content and what works; type → colour → frame → states → stock components; prove before/after.
+- **Calls:** none. **Called by:** `$design-phase` (variant-round, every variant; `improve-existing` runs its redesign route; its `references/copy.md` feeds the copy lens). **Writes:** code; working files under `.taste-skill/`. **Stops / gates:** reports only with 0 `FAIL` at every width on the final page.
+- **Source:** `.agents/skills/design-taste-frontend/SKILL.md`, `references/{app-screens,critique,copy}.md`
 
 ## `$image-to-code`
 Model-invoked; Pack `frontend`. Generates website design images first, analyzes them, then implements to match.
-- **Use when:** visually important web tasks. **Not for:** cropping old images; images only (`$imagegen-frontend-web`).
+- **Use when:** visually important web tasks; design-phase variant-round with accepted Compositions as its design images. **Not for:** cropping old images; images only (`$imagegen-frontend-web`).
 - **Steps:** generate large section-specific images; deep analysis (text, type, spacing, buttons, color); anti-drift implementation; done at the clarity check.
-- **Calls:** none. **Called by:** `$design-phase`. **Writes:** images + code. **Stops / gates:** clarity check.
+- **Calls:** none. **Called by:** `$design-phase` (variant-round). **Writes:** images + code. **Stops / gates:** clarity check.
 - **Source:** `.agents/skills/image-to-code/SKILL.md`
 
 ## `$imagegen-frontend-web`
 Model-invoked; Pack `frontend`. Premium website design reference images, one horizontal image per section.
-- **Use when:** design-phase image intent for web. **Not for:** code (`$image-to-code`); multi-section boards.
+- **Use when:** design-phase compose needs web Compositions. **Not for:** code (`$image-to-code`); multi-section boards.
 - **Steps:** one image per section; variation engine; one palette across images; done at the clarity check.
-- **Calls:** none. **Called by:** `$design-phase`. **Writes:** images. **Stops / gates:** clarity check.
+- **Calls:** none. **Called by:** `$design-phase` (compose). **Writes:** images. **Stops / gates:** clarity check.
 - **Source:** `.agents/skills/imagegen-frontend-web/SKILL.md`
 
 ## `$imagegen-frontend-mobile`
 Model-invoked; Pack `frontend`. App-native mobile screen and flow images in phone mockups; images only.
-- **Use when:** design-phase image intent for iOS, Android or cross-platform. **Not for:** code.
+- **Use when:** design-phase compose needs mobile Compositions for iOS, Android or cross-platform. **Not for:** code.
 - **Steps:** platform mode; screen-first, enough screens; app design bible; consistent logical flow; device frame; done at the quality check.
-- **Calls:** none. **Called by:** `$design-phase`. **Writes:** images. **Stops / gates:** quality check.
+- **Calls:** none. **Called by:** `$design-phase` (compose). **Writes:** images. **Stops / gates:** quality check.
 - **Source:** `.agents/skills/imagegen-frontend-mobile/SKILL.md`
+
+## `$brandkit`
+Model-invoked; Pack `frontend`. Premium brand-guidelines boards: logo system, color, type, image direction; images only.
+- **Use when:** design-phase brand gate needs a Brand Kit. **Not for:** screen Compositions (`$imagegen-frontend-web|mobile`); code.
+- **Steps:** brand intake; strategy first; logo concept methods; board composition (default 3x3 panel system); done when the boards cover the brand system.
+- **Calls:** none. **Called by:** `$design-phase` (brand). **Writes:** images. **Stops / gates:** none; design-phase brand checkpoint follows.
+- **Source:** `.agents/skills/brandkit/SKILL.md`
+
+## `$shadcn`
+Model-invoked (not user-invocable); Pack `frontend`. Adds, searches, fixes, styles and composes shadcn/ui components; maps DESIGN.md to a theme.
+- **Use when:** a project with `components.json`, shadcn init or presets, or a design system from DESIGN.md. **Not for:** non-shadcn component libraries.
+- **Steps:** read project context; critical rules (styling, forms, composition, components over custom markup, icons); CLI via `npx shadcn@latest`; `design-system.md`: DESIGN.md → tokens → theme → `cva` variants → design system page → verify.
+- **Calls:** none. **Called by:** `$design-phase` (design-system, variant-round). **Writes:** components, theme. **Stops / gates:** design-system verify step.
+- **Source:** `.agents/skills/shadcn/SKILL.md`, `design-system.md`, `rules/*.md`
+
+## `$find-animation-opportunities`
+Model-invoked; Pack `frontend`. Readonly search for places that should animate; proposes motion with exact values, rejects the rest.
+- **Use when:** "what could animate here?"; design-phase motion-plan. **Not for:** implementing motion (`$animate`); critiquing existing motion (`$review-animations`).
+- **Steps:** hunt the code or UI; output opportunities table, rejected candidates (required), verdict.
+- **Calls:** none. **Called by:** `$design-phase` (motion-plan). **Writes:** nothing. **Stops / gates:** readonly.
+- **Source:** `.agents/skills/find-animation-opportunities/SKILL.md`
+
+## `$prototype-variants`
+Explicit-only; Pack `frontend`. Builds genuinely different versions of one UI piece behind a live visual picker, then promotes the chosen one.
+- **Use when:** a human or the design-phase variant-round and promote gates need variants on the real route. **Not for:** throwaway logic prototypes (`$prototype`).
+- **Steps:** scope; recon; choose directions; build the picker harness; verify and hand off; promote on selection.
+- **Calls:** none. **Called by:** `$design-phase` (variant-round, promote). **Writes:** variant code. **Stops / gates:** promote only on a selection.
+- **Source:** `.agents/skills/prototype-variants/SKILL.md`
+
+## `$emil-design-eng`
+Model-invoked; Pack `frontend`. Emil Kowalski's UI polish bar: component design, animation decisions, invisible details.
+- **Use when:** building or critiquing UI craft; design-phase variant-round craft bar. **Not for:** worst-case data (`$break-ui`); a motion review verdict (`$review-animations`).
+- **Steps:** core philosophy; required review format; animation decision framework (whether, purpose, easing, duration); springs; component building principles.
+- **Calls:** none. **Called by:** `$design-phase` (variant-round). **Writes:** code or review. **Stops / gates:** none.
+- **Source:** `.agents/skills/emil-design-eng/SKILL.md`
+
+## `$break-ui`
+Model-invoked; Pack `frontend`. Feeds a UI worst-case data behind a dev-only "Demo data / Worst case" toggle and reports what broke, with a fix each.
+- **Use when:** stress-test or edge-case requests; design-phase quality-gate (light) and promote (full + fix). **Not for:** visual critique (`$emil-design-eng`); motion (`$review-animations`).
+- **Steps:** 1 map the surface; 2 build the worst case; 3 wire the toggle; 4 break it; 5 report (What broke, Decisions for you, What held up) and stop; 6 fix on request.
+- **Calls:** none. **Called by:** `$design-phase` (quality-gate, promote). **Writes:** fixtures, toggle, fixes on request. **Stops / gates:** stops after the report unless fixing was asked.
+- **Source:** `.agents/skills/break-ui/SKILL.md`
+
+## `$mobile-native`
+Model-invoked; Pack `frontend`. Makes a web app feel native on a phone: hover, tap, viewport, inputs, scroll, safe areas, gestures, browser chrome.
+- **Use when:** web UI built or reviewed for mobile, PWAs, bottom sheets, carousels, touch; design-phase variant-round (responsive web) and quality-gate. **Not for:** motion (`$animate`); React Native (`$animate-expo`).
+- **Steps:** symptom table → fixes; baseline; Never Ship table; output lists what needs a real phone.
+- **Calls:** none. **Called by:** `$design-phase` (variant-round, quality-gate). **Writes:** code. **Stops / gates:** Never Ship table; real-hardware items stay open.
+- **Source:** `.agents/skills/mobile-native/SKILL.md`
 
 ## `$docs-ingest-phase`
 Model-invoked; Pack `docs`. Routes docs-affecting work through the project wiki contract into setup/adoption, source capture, health, private/internal ingest or public docs.
@@ -151,8 +200,8 @@ Model-invoked; Pack `docs`. Maintains project-owned Codebase Rules after `hi ini
 ## `$hi-cli`
 Model-invoked; no Pack (installed by `hi operator install|update`). Operates `hi` / `hint` (`@punks/cli`) through init, update, diff, check, tools ensure, report, upgrade, operator and post-command flows.
 - **Use when:** a user runs or asks about `hi`, `hint`, or generated `.devpunks/` work. **Not for:** Project Verifier work (`$create-verification-skill`, `$update-verification-skill` via `$implement-spec`).
-- **Steps:** run one bounded command; classify; follow one branch of `references/post-command-flow.md`; stop at branch completion or an exact blocker. Init: read `.devpunks/installed.json`, `AGENT-HANDOFF.md`, `AGENT-SYSTEM-PROMPT.md`; `$writing-for-agents` then `$rule-authoring` to author `AGENTS.md` from `.devpunks/specs/prompts/**`; tailor `.agents/subagents/manifest.mjs`, rerun `hi update`; review `lint.scopes`; wiki structure check → `pass` activates `$docs-onboarding`; `hi check --json`. Update: row table, then the same two skills before completing a changed update.
-- **Calls:** `$writing-for-agents`, `$rule-authoring`, `$docs-onboarding`. **Called by:** human.
+- **Steps:** run one bounded command; classify; follow one branch of `references/post-command-flow.md`; stop at branch completion or an exact blocker. Init: read `.devpunks/installed.json`, `AGENT-HANDOFF.md`, `AGENT-SYSTEM-PROMPT.md`; `$writing-for-agents` then `$rule-authoring` to author `AGENTS.md` from `.devpunks/specs/prompts/**`; tailor `.agents/subagents/manifest.mjs`, rerun `hi update`; review `lint.scopes`; wiki structure check → `pass` activates `$docs-onboarding`; `hi check --json`. Update: row table, then the same two skills before completing a changed update. Report: activate `$retro` scoped to only the reported issue, put its findings into `--steps`, `--expected` and `--actual` (no project-environment fixes), then `hi report`.
+- **Calls:** `$writing-for-agents`, `$rule-authoring`, `$docs-onboarding`, `$retro` (Pack `misc`; before `hi report`). **Called by:** human.
 - **Writes:** root/scoped `AGENTS.md` with sibling `CLAUDE.md` symlinks, `.agents/subagents/manifest.mjs`; harness agent files only via `hi update`; Project Verifier references byte-preserved.
 - **Stops / gates:** existing `.devpunks/` files create no work; the Registry installs no wiki.
 - **Source:** `.agents/skills/hi-cli/SKILL.md`, `references/{post-command-flow,commands,wiki-structure,managed-lint}.md`
@@ -161,10 +210,9 @@ Model-invoked; no Pack (installed by `hi operator install|update`). Operates `hi
 All model-invoked unless marked. Read `.agents/skills/<name>/SKILL.md`.
 
 - `$agent-browser` (`frontend`): browser automation, Lightpanda default, Chrome for rendering.
-- `$animate` (`frontend`): build an animation in decision order, from whether to animate through exit.
-- `$review-animations` (`frontend`, explicit-only): critique motion code against a craft bar.
-- `$improve-mobile-frontend` (`frontend`): touch, viewport, safe areas, gestures, real-device checks.
-- `$frontend-domain-structure` (`frontend`): frontend domain boundaries, imports, component splitting.
+- `$animate` (`frontend`): build an animation in decision order, from whether to animate through exit; `$design-phase` variant-round uses it per accepted Motion Plan entry.
+- `$review-animations` (`frontend`, explicit-only): critique motion code against a craft bar; `$design-phase` quality-gate requires its Approve.
+- `$frontend-domain-structure` (`frontend`): fixed composition layer model, frontend domain boundaries, imports, component splitting.
 - `$backend-domain-structure` (`backend`, `python`): domain-first layers, thin transport.
 - `$backend-recoverable-actions` (`backend`): transaction, retry, rollback, compensation for multi-step mutations.
 - `$logging-best-practices` (`backend`): wide events, canonical log lines.
@@ -187,3 +235,4 @@ All model-invoked unless marked. Read `.agents/skills/<name>/SKILL.md`.
 - `$sqlalchemy-schema-design` (`sqlalchemy`): SQLAlchemy 2.x models, Alembic.
 - `$better-auth-best-practices` (`better-auth`): Better Auth integration.
 - `$elysiajs` (`elysia`): ElysiaJS backend.
+- Pack `video` (optional): `$cinetic` (code-made films and motion design with Remotion or HyperFrames), `$earshot` (listen to judge, trim or compare sound), `$real-sound` (soundtracks from real licensed recordings).

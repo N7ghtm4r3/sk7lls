@@ -11,7 +11,7 @@ disable-model-invocation: true
 `delivery-phase` is a reusable phase router.
 
 1. Read [phases/router.md](phases/router.md).
-2. Inspect only enough issue, architecture, spec, plan, notes, diff, retained review, durable
+2. Inspect only enough issue, architecture, spec, plan, notes, diff, Pass Report, durable
    handoff, validation, and docs state to choose the current gate.
 3. If approved artifact links or UI Evidence links are present, carry them as routing evidence.
 4. Load exactly one phase file from `phases/`.
@@ -29,11 +29,10 @@ Within accepted bounds, full delivery grants its selected inner steps the author
 ## Phase Files
 
 - [phases/router.md](phases/router.md): choose the next phase from artifacts and evidence.
-- [phases/spec.md](phases/spec.md): route missing or stale Architecture/SPEC or backlog projection proof to Requirements Phase.
-- [phases/plan.md](phases/plan.md): create or repair the execution-ready plan.
+- [phases/spec.md](phases/spec.md): route missing or stale Architecture/SPEC, backlog projection or plan proof to Requirements Phase.
 - [phases/implement.md](phases/implement.md): execute the accepted plan.
 - [phases/review.md](phases/review.md): prepare the explicit review handoff or
-  classify findings from a retained report.
+  route findings from a Pass Report.
 - [phases/debug.md](phases/debug.md): investigate runtime-evidence failures.
 - [phases/human-steering.md](phases/human-steering.md): return a scope or authority boundary for human steering.
 - [phases/docs-ingest.md](phases/docs-ingest.md): ingest docs-affecting changes or record a no-op.
@@ -46,6 +45,13 @@ Within accepted bounds, full delivery grants its selected inner steps the author
   before dependent dispatch in every entry mode, including local and resumed
   delivery. Reuse fresh matching authority; activate child skills only from
   their selected phase.
+- One plan creates at most one pull request per Touched Repository; split or
+  stack PRs only when the user explicitly asks. Every phase, including
+  implementation, repair, review fixes, and docs, commits to that repository's
+  branch and PR.
+- Design-Owned UI Code from a `design-phase` promote commit is accepted input.
+  Delivery adds logic, data, and the rest of the requirement to it. A change to a
+  design-owned file is a defect fix only, recorded in the Phase Result.
 - Full Delivery continues within accepted bounds. Other modes emit one common
   Phase Result and stop at their requested boundary.
 - [references/context-continuity.md](references/context-continuity.md) owns
