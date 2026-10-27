@@ -24,6 +24,12 @@ direction through deliberate public contracts. Keep business rules independent o
 presentation, transport, and coordination details. Evaluate actual imports and
 execution boundaries, beyond directory names.
 
+- **Client/server boundaries:** When a capability spans browser and server
+  execution, expose distinct entrypoints and enforce allowed dependencies.
+  Keep secrets, privileged operations and authoritative validation server-side.
+  Both sides may remain within the same feature; no particular folder structure
+  is required.
+
 **Applies when:** Introducing or changing application layers, shared
 infrastructure, product capabilities, or dependencies between owners.
 
