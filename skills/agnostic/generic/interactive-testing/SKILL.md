@@ -1,11 +1,11 @@
 ---
 name: interactive-testing
-description: "Guide interactive verification of actual user or consumer workflows one confirmed step at a time, or offer case selection when requested. Monitor only on request and keep progressive records outside the project."
+description: "Guide interactive workflow tests with complete cases and immediate monitoring when requested. Offer step-by-step guidance on request and keep session records outside the project."
 ---
 
 # Interactive Testing
 
-Put the user in a position to explore and verify the requested behavior, one confirmed step at a time, and preserve what the session establishes. Keep the workflow independent of language and framework; derive reference scenarios, startup commands, and any requested instrumentation from the actual project.
+Help the user verify actual workflows by presenting one complete case at a time and preserving the evidence. When monitoring is requested, arm observation before presenting the case and keep observing while the user fills and submits. Use per-step confirmation only when the user asks for it. Derive scenarios, startup commands, and any instrumentation from the actual project.
 
 ## Compose the skills and preserve authorization
 
@@ -25,14 +25,14 @@ Request activation only when it has not already been authorized. First make the 
 
 ## Choose the interaction mode
 
-Support two entry modes. Both conduct the actual scenario one operational step at a time, awaiting user confirmation and refreshing the handoff:
+Choose how cases are selected separately from how the user performs each case:
 
-- **Guided step-by-step:** the default mode to recommend. Use the inspected reference scenarios to choose a relevant starting point and a natural flow order. Explain the current scenario and give only its first step; do not require the user to choose from a full case inventory. Retain alternate and unfavorable paths rather than choosing an order intended to pass.
-- **Case selection:** use when the user requests the list, wants to choose where to start, or selects this mode. Present the reference cases, ask for a case or ordered subset, and then guide the selected scenario step by step.
+- **Guided cases:** the default. Choose a grounded starting case and natural order from the inspected workflows. Introduce only the current case; do not require the user to choose from the full inventory. Preserve alternate and unfavorable paths rather than choosing an order intended to pass.
+- **Case selection:** when the user asks for a list or wants to choose, present the reference cases and accept a case or ordered subset.
 
-If the current request does not explicitly indicate a mode, or the mode is genuinely ambiguous, ask once whether the user prefers guided step-by-step or case selection. Offer guided step-by-step as the default recommendation. Honor an applicable mode choice already made; do not ask again at every step or scenario. If the user delegates the choice, use guided step-by-step. A request for a run does not by itself select case-selection mode.
+In either mode, give the current case's complete instructions, including values, the user-triggered submit action and expected outcome. Do not insert routine confirmation pauses between navigation, filling and submission. If the user explicitly requests **step-by-step guidance**, give one operational step at a time and await their confirmation before the next step. Honor later changes to this preference.
 
-Record the chosen mode and any agreed scenario order in the handoff. A mode change does not erase prior observations or imply that pending steps were confirmed.
+Default to guided cases when the user has not chosen a mode. Ask only when an unresolved choice affects which workflow to test. Record case selection, interaction cadence and agreed order in the handoff; a mode change neither erases evidence nor confirms pending actions.
 
 ## Analyze and prepare reference scenarios
 
@@ -60,7 +60,7 @@ For the selected scenario, explain its purpose and define a compact contract in 
 
 - the actor's goal, requested behavior, and affected workflow paths; a local insertion point only if monitoring was requested;
 - the initial state, environment, data, and prerequisites;
-- the connected reference flow, state transitions, final outcome, and first individual action the user will perform;
+- the connected reference flow, state transitions, final outcome, and complete sequence the user will perform (or the first action in explicitly requested step-by-step guidance);
 - the expected observations and acceptance predicate when established, or the explicit exploratory questions when not;
 - the evidence source and how evidence will be associated with each action;
 - what starts and completes one attempt, and the finite attempt limit;
@@ -85,21 +85,33 @@ Startup permission does not authorize source or configuration edits, dependency 
 
 Confirm readiness from actual evidence before inviting the user to act. Reuse healthy existing processes where appropriate and record which processes the session starts. Keep secrets out of command output and the handoff. Do not execute the user's scenario for them unless they explicitly ask for that action.
 
-Before Drive, follow the selected app's Launch and Doctor. Apply original verification and any authorized maintenance recipes through the same confirmation loop below. Retain maintenance readiness separately from the requested workflow result.
+Before Drive, follow the selected app's Launch and Doctor. Apply original verification and any authorized maintenance recipes through the interaction cadence below. Retain maintenance readiness separately from the requested workflow result.
 
-## Guide one step and await confirmation
+## Arm monitoring before presenting the case
 
-Present the scenario context, then give exactly one operational step and what the user should observe. For example, navigation, entering a value, and submitting are separate steps when each needs confirmation. A reference flow may preview the route, but must not become a batch of instructions to perform before replying.
+Apply this section only when monitoring has been requested for the session. Reuse that authorization for subsequent selected cases; do not ask the user to enable monitoring again after they fill the form.
 
-Wait for the user's explicit confirmation or observation before giving the next step, entering another branch, or advancing to the next scenario. Silence, monitoring events, elapsed time, and the agent's inference do not count as user confirmation. If the reply confirms the action but omits a necessary observation, record what was confirmed and ask only for the missing observation.
+Before inviting the user to act, identify the target case and collect its baseline, relevant identifiers and observation cursor or start time. Start the observer and verify its first read or ready signal. When the host supports a concurrent listener or polling process, verify that it remains alive before presenting the case. Keep generated monitoring state outside the project; instrumentation still follows iterative-monitoring's separate boundary.
 
-After each reply, record the action and observation, collect correlated monitoring evidence only if requested, refresh the journal and handoff, and then give the next single step. For unexpected behavior, preserve the exact step and observation before asking for clarification or offering a different reference branch. Do not treat it as authorization to repair or silently choose a path that passes.
+If the tools support only sequential observations, take the baseline first, present the case in commentary, and continue bounded polling in the same active turn without waiting for another user message. Do not end the turn immediately after giving instructions and imply that polling continues in the background. State any capability gap plainly instead of claiming an observer is active.
+
+Set a finite wait for the user to start and a separate settlement window once an attempt is observed. Choose intervals that let the user fill the case without busy polling. Waiting for entry or reading an unchanged screen does not consume an attempt. If the idle window ends, preserve the pending case and report that observation has paused; never mark an unstarted case failed. Resume observation under the existing monitoring authorization when the user returns.
+
+## Present the case and observe its outcome
+
+After readiness and, when requested, observer activation, present the complete current case: its goal, initial conditions, all needed values, the user-triggered actions and expected outcome. Make clear that the user performs the actions and, when requested, the agent monitors the result. Do not wait for a separate "filled", "ready" or "done" message before observing a case already issued.
+
+Without monitoring authorization, let the user perform the complete case and report the outcome; do not silently begin polling. Keep requested monitoring running while the user fills, submits and waits. Use correlated UI state, logs or readback to establish actual execution and completion. A user report is needed only for evidence the agent cannot independently access or when step-by-step guidance was explicitly selected. In that cadence, await confirmation after each issued step while keeping any requested monitoring armed.
+
+Pause when a consequential choice, missing authorization, unavailable prerequisite or inaccessible observation prevents safe continuation. Directly observed events can establish behavior; they cannot grant permission, confirm an unobserved action or replace a required human decision. Do not submit or retry on the user's behalf unless explicitly authorized.
+
+After each meaningful action or observed transition, refresh the journal and handoff. Complete all applicable downstream checks before concluding the case, then present the next case in the agreed order; do not require a redundant confirmation of an independently established outcome. Preserve unexpected behavior before asking for missing information or choosing another branch. A failed result never authorizes a repair or a silent change to a passing path.
 
 Associate each observation with its scenario, step, attempt if applicable, and relevant execution. Use existing identifiers or bounded observation windows where possible. Do not attribute unrelated background events or stale output to the user's action. If association is uncertain, record that uncertainty.
 
 Keep the user's confirmation separate from evidence independently observed by the agent. If a UI result is only reported by the user, label it accordingly; do not claim direct inspection. Record disagreements without replacing either source. If monitoring was not requested or tools cannot access required evidence, state what remains unverified rather than enabling instrumentation automatically. Lack of requested monitoring is not a scenario failure.
 
-Assess each completed workflow against its established expectations and final outcome, or record findings without pass/fail for an exploratory scenario. A successful field check, button response, or intermediate operation does not establish the workflow's downstream effects. Keep the handoff current after every confirmed step, not only after completing an attempt or scenario. Distinguish:
+Assess each completed workflow against its established expectations and final outcome, or record findings without pass/fail for an exploratory scenario. A successful field check, button response, or intermediate operation does not establish the workflow's downstream effects. Keep the handoff current after every meaningful action, observation or confirmed step, not only after completing an attempt or scenario. Distinguish:
 
 - **Observed:** evidence demonstrates the required behavior; state the evidence source.
 - **Not observed:** an evaluable attempt completed without the required behavior.
@@ -110,9 +122,9 @@ Retain the original verification skill's result, failed/blocked checks and
 evidence provenance alongside these caller observation labels. Keep coverage
 maintenance outcomes separate from verification of the original scenario.
 
-Waiting for the user is not a failed attempt. Define an evidence deadline only when the scenario needs one; expiration means not verifiable unless the contract specifically requires an outcome within that deadline. Do not wait or poll indefinitely for runtime evidence.
+Waiting for the user is not a failed attempt. An observation window bounds how long the agent watches; it is not a product deadline. An unfinished attempt at that boundary is not verifiable unless the contract requires completion within that deadline. Keep its state and avoid indefinite waiting or polling.
 
-Stop local monitoring on success, exhaustion, interruption, unsafe repetition, or unavailable evidence. A harness success is evidence about its predicate, not completion of the whole user flow: later checkpoints still require the user's confirmation. Ending monitoring must not terminate ordinary application behavior from inside the harness. Prefer observing executions the user triggers. Never automatically retry an operation with side effects or uncertain repeatability. A failed result or newly discovered bug does not authorize repair.
+Stop local monitoring after all required outcome checks succeed, the observation budget or attempt limit is exhausted, the user interrupts, repetition would be unsafe, or evidence becomes unavailable. A harness or intermediate operation succeeding does not establish the complete workflow: observe later checkpoints independently, or request only the evidence that remains inaccessible. Stop only the observer, never ordinary application behavior from inside a harness. Prefer observing user-triggered executions. Never automatically retry a side-effecting or uncertain operation. A failed result or newly discovered bug does not authorize repair.
 
 ## Preserve progressive records outside the project
 

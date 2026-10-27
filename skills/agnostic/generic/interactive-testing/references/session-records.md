@@ -11,8 +11,9 @@ Before writing either artifact, verify that the resolved destination, including 
 Record progressively in the journal after preparation and each meaningful action, observation, finding, or interruption, and refresh the compact handoff at the same checkpoints:
 
 - session identity, stable project identity and revision when known, interaction mode, reference scenario inventory, agreed or guided order, user selections, and authorized operations;
-- scenario contract, current step, steps awaiting confirmation, confirmed actions, and expected versus actual outcomes;
+- scenario contract, complete case instructions or requested step-by-step cadence, current action, any genuinely required confirmation, and expected versus actual outcomes;
 - attempts used and remaining where applicable, and monitoring requested/not requested with its current state;
+- observer readiness and baseline/correlation cursor before case presentation, polling capability, user-action wait and settlement windows, and any pause or stopping reason;
 - user-reported verification and independently observed evidence, with provenance;
 - bugs or anomalies, their reproduction steps, supporting evidence, and whether they are confirmed or suspected;
 - open questions, blocked or unperformed checks, and the next useful step;

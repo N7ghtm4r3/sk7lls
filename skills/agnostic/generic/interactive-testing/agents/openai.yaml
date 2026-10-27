@@ -1,4 +1,4 @@
 interface:
   display_name: "Interactive Testing"
   short_description: "Actual workflows, guided verification, and handoff"
-  default_prompt: "Use $interactive-testing with the original verification and handoff skills to identify actual workflows through readonly and guide me step by step, waiting for confirmation at each step. Monitor only on request and keep the handoff current outside the project. Delivery context is optional for this caller."
+  default_prompt: "Use $interactive-testing to inspect actual workflows through readonly, then guide one complete case at a time. When monitoring is requested, arm it before presenting the case and keep polling while I fill and submit, without intermediate confirmation pauses. Use step-by-step guidance only on request and preserve evidence and handoff outside the project."
