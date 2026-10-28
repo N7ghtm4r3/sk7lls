@@ -138,6 +138,21 @@ needed, prepare the exact change before requesting the missing authorization.
 **Startup is complete when required services report application readiness**,
 not merely that their ports are listening.
 
+## Client tunnel command on request
+
+When the user asks for a tunnel command, recover the SSH destination and proxy
+ports from the selected environment and conversation. Return a ready-to-run
+command with concrete values using this form:
+
+```sh
+ssh -N -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 \
+  -L 127.0.0.1:<browser-port>:127.0.0.1:<proxy-port> <ssh-host>
+```
+
+Preserve the browser port used by the registered public origins. State that the
+command runs on the browser's machine, remains open during testing and stops
+with Ctrl-C. This branch produces command text only.
+
 ## Verify the intended test path
 
 Open the application through its configured public origin. Exercise a
