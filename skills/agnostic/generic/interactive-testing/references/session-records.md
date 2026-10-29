@@ -17,7 +17,7 @@ Record progressively in the journal after preparation and each meaningful action
 - user-reported verification and independently observed evidence, with provenance;
 - bugs or anomalies, their reproduction steps, supporting evidence, and whether they are confirmed or suspected;
 - open questions, blocked or unperformed checks, and the next useful step;
-- instrumentation locations, session-created processes, runtime outputs, and their current cleanup status.
+- instrumentation locations, runtime outputs, session-created versus reused runtime instances with identifiers and targeted shutdown methods, the user's closure choice or pending decision, and verified cleanup status or instances retained for another round.
 
 Retain enough evidence to resume without copying secrets or unnecessarily large payloads. Preserve earlier journal results when adding findings; correct mistaken conclusions explicitly. Do not create issue tickets, send messages, or turn the handoff into an implementation task unless requested.
 

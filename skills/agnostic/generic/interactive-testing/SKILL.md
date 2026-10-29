@@ -83,7 +83,7 @@ Use the project's existing build, launch, and service commands as needed to make
 
 Startup permission does not authorize source or configuration edits, dependency installation or upgrades, migrations, provisioning, unrelated fixtures, or changes to shared infrastructure. If an uncovered prerequisite blocks startup, report the smallest additional operation needed and obtain authorization for it rather than adapting the project. Do not require additional permission for operations already covered by the user's instructions.
 
-Confirm readiness from actual evidence before inviting the user to act. Reuse healthy existing processes where appropriate and record which processes the session starts. Keep secrets out of command output and the handoff. Do not execute the user's scenario for them unless they explicitly ask for that action.
+Confirm readiness from actual evidence before inviting the user to act. Reuse healthy existing processes where appropriate. Record which runtime instances the session starts and which it reuses, with identifiers and the targeted shutdown method for session-owned instances. Keep secrets out of command output and the handoff. Do not execute the user's scenario for them unless they explicitly ask for that action.
 
 Before Drive, follow the selected app's Launch and Doctor. Apply original verification and any authorized maintenance recipes through the interaction cadence below. Retain maintenance readiness separately from the requested workflow result.
 
@@ -132,6 +132,12 @@ Read [session records](references/session-records.md) before creating records, m
 
 ## Close the session
 
-Refresh the handoff with the stopping reason, scenario outcomes, pending scenarios, unconfirmed steps, and unfinished work. Stop only processes created for this session when they are no longer needed, unless the user requests that they remain running. Remove session-owned temporary instrumentation within its local boundary when testing is finished unless retention was requested; preserve intervening user changes and report cleanup that cannot be performed safely. Do not delete the handoff or indiscriminately remove runtime outputs.
+After the last case in the agreed round is concluded, ask once whether to close the runtime instances started for testing or keep them available for another round. Reuse an explicit choice already given. Acceptance of all test results alone does not choose between shutdown and another round. While the choice is pending, record that closure is awaiting the user and retain the runtime; monitoring still follows its bounded stopping rules.
+
+If the user chooses another round, retain the required session-owned instances and instrumentation, record what remains active, and await the next case without continuing observation beyond its budget. Keep the session available to resume rather than reporting cleanup as complete.
+
+On closure, stop session-owned observers and shut down only runtime instances created for this session, using their recorded identifiers and shutdown methods. Preserve pre-existing or shared instances and anything the user explicitly asked to keep running. Verify shutdown from actual process or service state; report any instance still active or whose shutdown cannot be verified. Remove session-owned temporary instrumentation within its local boundary when testing is finished unless retention was requested; preserve intervening user changes and report cleanup that cannot be performed safely. Do not delete the handoff or indiscriminately remove runtime outputs.
+
+Refresh the handoff after cleanup or the decision to retain the runtime with the stopping reason, scenario outcomes, pending scenarios, unconfirmed steps, unfinished work, the user's closure choice, and the final state of session-owned instances.
 
 Return a concise result in the user's language: what was verified and by whom, decisive evidence, attempt count, discovered bugs or uncertainties, remaining checks, cleanup status, and the absolute handoff and journal paths or memory-only limitation. Provide a short English continuation prompt tailored to the receiving task, unless another artifact language was explicitly requested. Describe any scenario-state changes actually observed. Never infer that a bug was fixed or that unexecuted checks passed.
