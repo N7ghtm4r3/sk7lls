@@ -1,4 +1,4 @@
 interface:
   display_name: "Iterative Monitoring"
-  short_description: "Add a tightly scoped monitoring harness"
-  default_prompt: "Use $iterative-monitoring to add a bounded monitoring harness around the indicated snippet."
+  short_description: "Monitor snippets or recheck fixes autonomously"
+  default_prompt: "Use $iterative-monitoring to monitor the indicated snippet, or $iterative-monitoring review to recheck corrected cases using this chat and its handoff, with bounded monitoring when needed."

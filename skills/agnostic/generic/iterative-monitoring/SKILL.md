@@ -1,9 +1,16 @@
 ---
 name: iterative-monitoring
-description: "Monitor a user-identified snippet with a finite local harness when bounded observation of meaningful scenario outcomes is requested."
+description: "Monitor a user-identified snippet with a bounded local harness, or use review to autonomously recheck corrected UI, API, CLI, or service cases from the current chat and handoff."
 ---
 
 # Iterative Monitoring
+
+## Choose the mode
+
+- **Review:** when invoked as `$iterative-monitoring review`, or asked to autonomously verify corrected cases, follow [review after corrections](references/review.md). Recover the cases from the current chat and its handoff, execute them with the appropriate tools, and use bounded monitoring when needed to establish the outcome. Deliver evidence and collect out-of-scope requests before session closure.
+- **Monitoring:** when asked to observe an identified snippet, follow the sections below. Keep the existing local harness boundary and finite observation contract.
+
+The sections below apply to Monitoring mode. Review owns its runtime execution and record updates; when it needs a harness, it uses the Monitoring procedure for that local insertion and its checks.
 
 Add the smallest harness that can observe the indicated snippet and decide whether the behavior requested by the user occurred. Keep the implementation native to the scenario's existing language and conventions; do not introduce a language, framework, dependency, service, or repository-wide abstraction merely to implement monitoring.
 

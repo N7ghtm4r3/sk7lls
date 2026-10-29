@@ -9,7 +9,7 @@ Help the user verify actual workflows by presenting one complete case at a time 
 
 ## Compose the skills and preserve authorization
 
-Read and follow [readonly](../readonly/SKILL.md) before context analysis and scenario preparation. Read and follow [iterative-monitoring](../iterative-monitoring/SKILL.md) only when the user requests monitoring and its authorized scope requires local instrumentation. Resolve their available locations if this collection has moved. If a required skill is unavailable, report the missing dependency and stop the affected phase.
+Read and follow [readonly](../readonly/SKILL.md) before context analysis and scenario preparation. Read and follow [iterative-monitoring](../iterative-monitoring/SKILL.md) when the user requests monitoring that requires local instrumentation, or autonomous review after corrections. Resolve their available locations if this collection has moved. If a required skill is unavailable, report the missing dependency and stop the affected phase.
 
 Read [original skill integration](references/original-skill-integration.md) before resolving the original `verify-behavior`, `create-verification-skill`, `update-verification-skill`, or `handoff` skill. Load each source only when its named branch fires; record the exact identity and dependencies. Interactive Testing retains its authorization, confirmations, optional monitoring, records, and session conclusions.
 
@@ -129,6 +129,10 @@ Stop local monitoring after all required outcome checks succeed, the observation
 ## Preserve progressive records outside the project
 
 Read [session records](references/session-records.md) before creating records, maintaining the handoff, or resuming a session. Analysis notes stay in memory under readonly. Authorized sessions initialize external records before the first operational instruction and refresh them after every confirmed step and meaningful observation. Records remain mandatory without monitoring.
+
+## Recheck after corrections
+
+When the user asks to verify applied corrections autonomously, continue with [iterative-monitoring](../iterative-monitoring/SKILL.md) in `review` mode in the same chat. Supply the current handoff and journal, affected case identifiers, original failures and expectations, corrected code/runtime identity, and applicable authorization and attempt bounds. That mode owns autonomous case execution and any necessary bounded monitoring; the guided user-action cadence does not apply to that review. Deliver its results and updated records before session closure.
 
 ## Close the session
 
