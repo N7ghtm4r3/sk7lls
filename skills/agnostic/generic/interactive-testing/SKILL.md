@@ -132,6 +132,8 @@ Read [session records](references/session-records.md) before creating records, m
 
 ## Close the session
 
+Before asking whether to close the session or carrying out an already authorized shutdown, finalize the testing journal and handoff with the stopping reason, scenario outcomes, evidence provenance, attempt counts, bugs or uncertainties, pending scenarios, unconfirmed steps, and unfinished work. Record that the runtime is still active and cleanup is pending. Present the testing report in the user's language and deliver the absolute handoff and journal paths, or the complete in-memory handoff with its persistence limitation. Include a short English continuation prompt tailored to the receiving task unless another artifact language was explicitly requested. Describe only scenario-state changes actually observed; never infer that a bug was fixed or that unexecuted checks passed. Complete this delivery while the session runtime and evidence remain available.
+
 After the last case in the agreed round is concluded, ask once whether to close the runtime instances started for testing or keep them available for another round. Reuse an explicit choice already given. Acceptance of all test results alone does not choose between shutdown and another round. While the choice is pending, record that closure is awaiting the user and retain the runtime; monitoring still follows its bounded stopping rules.
 
 If the user chooses another round, retain the required session-owned instances and instrumentation, record what remains active, and await the next case without continuing observation beyond its budget. Keep the session available to resume rather than reporting cleanup as complete.
@@ -140,4 +142,4 @@ On closure, stop session-owned observers and shut down only runtime instances cr
 
 Refresh the handoff after cleanup or the decision to retain the runtime with the stopping reason, scenario outcomes, pending scenarios, unconfirmed steps, unfinished work, the user's closure choice, and the final state of session-owned instances.
 
-Return a concise result in the user's language: what was verified and by whom, decisive evidence, attempt count, discovered bugs or uncertainties, remaining checks, cleanup status, and the absolute handoff and journal paths or memory-only limitation. Provide a short English continuation prompt tailored to the receiving task, unless another artifact language was explicitly requested. Describe any scenario-state changes actually observed. Never infer that a bug was fixed or that unexecuted checks passed.
+After the user's choice is carried out, report the verified cleanup status, any retained or still-active instances, and the updated handoff and journal paths. This cleanup update supplements the testing report already delivered.
