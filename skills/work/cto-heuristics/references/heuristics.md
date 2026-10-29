@@ -41,17 +41,28 @@ frontend changes; the detailed blueprint applies to web frontends.
 ## H002 - Component Ownership and Reuse
 
 **Behavior:** Keep components close to the page or capability that owns them.
-Move components into shared layers when their responsibilities and dependencies
-are independent of that context.
+Share components when their responsibilities and dependencies are independent of
+that context.
 
-**Applies when:** Deciding where components belong or whether to extract a
-reusable abstraction.
+Choose UI mounting scope, service lifetime, and data durability separately. Mount
+feature-specific providers only where needed. Define which data and work must
+survive navigation, reload, or session termination, then assign them an owner that
+satisfies that lifetime. Providers should reconnect to that owner when remounted.
 
-**Reasoning:** Placement should reflect responsibility and meaningful reuse,
-rather than visual similarity or generic naming.
+Make mocks honor these lifecycle requirements without forcing broader application
+scope.
 
-**Limits:** A feature can have a single consumer if it represents an autonomous
-capability. Preserve domain dependencies when they are essential to its behavior.
+**Applies when:** Placing components, providers, subscriptions, background
+operations, or saved state across application boundaries.
+
+**Reasoning:** UI unmounting should not accidentally destroy saved data or required
+ongoing work. Conversely, preserving that data or work should not require mounting
+an entire feature for unrelated routes or users.
+
+**Limits:** Genuinely shared behavior may belong at application scope. In-memory
+storage is sufficient when reload persistence is not required; durable storage is
+necessary only when the contract requires it. Unsaved drafts may remain local
+unless recovery is explicitly required.
 
 ## H003 - Reuse Established UI Contracts
 
