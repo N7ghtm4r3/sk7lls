@@ -8,59 +8,57 @@ description: >-
 
 # Web Frontend Architect
 
-This skill is the reusable architecture blueprint for a web frontend. Apply it to the
-product's capabilities, screens, rendering model, and existing conventions.
-
+Apply this blueprint to the product's capabilities, entities, pages and rendering model.
 Read [Frontend Domain Structure](../frontend-domain-structure/SKILL.md) and its agnostic
 reference for every invocation; also read its React addendum for React scopes. They are
 the single source of truth for layers, ownership classification, public entrypoints,
-dependency direction, and lint rules. This skill adds page mapping, authentication,
-design-system selection, and the architecture delivery workflow within that model.
+dependency direction and lint rules. This skill adds page mapping, authentication,
+design-system selection and the architecture delivery workflow within that model.
 
-Product names, web framework, API clients, and state or coordination tools are adaptable;
-the upstream layer names and dependency rules remain fixed.
-XState, React Query, Effect, hooks, and actions are implementation choices within these
-boundaries. Architecture design here concerns application structure; visual direction is
-a separate product input.
+Product names, frameworks, SDKs and coordination tools are adaptable; the canonical layer
+names and dependency rules remain fixed. XState, React Query, Effect, hooks and actions
+are implementation choices inside those boundaries. Visual direction is a separate input.
 
 ## Apply the blueprint
 
-1. **Establish scope.** Read local instructions, accepted product decisions, existing code,
-   and relevant project documentation. Identify whether the request is an overview,
-   a structure proposal, initial implementation, or a later implementation wave.
-   Preserve product terminology. Ask only about unknowns that change ownership, behavior,
-   or the requested scope. For component work, establish the design system and component
-   composition standard under Design system and component composition below. Complete when
-   the scope and material unknowns are explicit, including those standards before proposing
-   or implementing affected components.
-2. **Identify owners.** Inventory the relevant pages, layouts, providers, rules, use cases,
-   integrations, and their consumers. In a new app, derive these from accepted requirements;
-   in an existing app, distinguish intended responsibilities from current placement.
-   Apply the canonical layer model and the ownership guidance below. Complete when each in-scope responsibility has an owner
-   and every rendered page has its own template mapping.
-3. **Fit the structure.** Show the smallest useful target tree, its responsibility assignments,
-   and the direction of its public dependencies. For existing code, include current location
-   to target location mappings for the files in scope; leave unrelated code for later work.
-   Name use cases independently of their current machines,
-   hooks, mocks, or SDKs. Complete when each proposed boundary has a concrete purpose and
-   the structure resolves the in-scope ownership problems.
-4. **Trace a flow.** Follow at least one real in-scope use case through route inputs,
-   applicable access controls, rules, integration, outcome, and presentation. Identify
-   relevant failure, retry, concurrency, or lifetime decisions that the requirements leave
-   open. Complete when the flow fits the proposed boundaries without hidden business logic
-   in the page composition or transport adapter.
-5. **Deliver the requested mode.** Overview and proposal requests return the relevant tree,
-   mappings, flow, and unresolved decisions without editing application files. Implement
-   when requested: make the smallest coherent change for that scope, preserve agreed
-   behavior, and validate as described under Completion.
+1. **Establish scope.** Read local instructions, accepted product and architecture decisions,
+   existing code and relevant documentation. Identify whether the request is an overview,
+   proposal, initial implementation or later wave. Preserve product terminology and the
+   project's review and delivery process. When a newly accepted structure reverses recorded
+   decisions, identify the superseded decisions and record their replacements through the
+   project's decision workflow before application delivery. Ask only about unknowns that
+   change ownership, behavior or scope. For components, establish the two inputs under
+   Design system and component composition. Complete when the scope, accepted structure
+   and material unknowns are explicit.
+2. **Identify owners.** Inventory pages, layouts, providers, policies, operations, entity
+   contracts, data sources, third-party bindings and their consumers. Classify capability
+   policy as Features, entity repositories and views as Kernel, agnostic mechanics as
+   Modules, external bindings as Integrations and assembly as Composition. Inspect mixed
+   folders file by file; a generic bridge or existing name does not establish one owner.
+   Complete when each responsibility has an owner and each rendered page has a template.
+3. **Fit the structure.** Show the smallest useful target tree and public dependencies.
+   For existing code, map in-scope files from current to target owners. Keep unresolved
+   placements explicit rather than assigning whole folders by their current names.
+   Name use cases independently of machines, hooks, fixtures or SDKs. Complete when each
+   boundary has concrete content and resolves an in-scope ownership problem.
+4. **Trace a flow.** Follow a real use case through route inputs, Composition access gating,
+   feature policy and coordination, applicable Kernel contracts, the selected source,
+   trusted server checks, outcome and presentation. Show where Composition supplies sources
+   to entity or feature providers. Resolve required failure, retry, concurrency and lifetime
+   behavior; choose UI mounting, service lifetime and data durability separately. Complete
+   when the flow fits without hidden business logic in routes or source selection in views.
+5. **Deliver the requested mode.** Overview and proposal requests return the tree, mappings,
+   flow and open decisions without editing application files. Implement when requested:
+   make the smallest coherent change, preserve agreed behavior and validate under Completion.
 
-Use this skill as the architectural index throughout staged work. For each wave, identify
-the affected owners, existing contracts it reuses, and work deliberately deferred. Create
-only the boundaries needed by that wave while preserving the direction of the full blueprint.
-Follow the project's existing plan and documentation conventions when they apply; a separate
-blueprint document is not required to use this skill.
+For staged work, identify affected owners, reused contracts and deferred work in each wave.
+Create only the boundaries needed by that wave while preserving the full model's dependency
+direction. Follow existing plan and documentation conventions; a separate blueprint document
+is not required. Skill changes do not themselves authorize application migrations, publishing
+or changes to a separate lint-plugin repository.
 
 ## Design system and component composition
+
 
 For work that proposes, creates, or changes components, establish two separate inputs:
 the design system or component library, and the component composition standard. Read
@@ -96,175 +94,165 @@ structure changes.
 
 ## Reference structure
 
-These paths illustrate the canonical model for a single-package web application. Adapt
-route filenames and mounting conventions to the framework and product names to the product.
-Map existing directories into these layers when they are in scope. Each directory earns
-its place through real content; keep related files together when an extra folder adds only
-navigation. For monorepos, follow the canonical shared-package and UI placement rules.
+This tree illustrates a single-package web app. Use the framework's required route filenames
+and lifecycle conventions while keeping implementation behind Composition exports. Every
+folder earns its place through actual content; monorepos follow the canonical shared-package
+and UI placement rules.
 
 ```text
 src/
-  app/
-    layout.tsx
+  app/                              # or routes/: required framework adapters only
+    layout.tsx                      # when the framework requires it
     <route>/page.tsx
   composition/
     providers/
-      index.tsx
-    <surface>/
-      index.ts
-      shell/
-      pages/
-        <SpecificPageTemplate>/
-          index.tsx
-          components/
-  features/
-    <product-capability>/
-      index.ts
-      model/
-      operations/
-      components/
-  modules/
-  integrations/
-    <external-system>/
-      index.ts
+      index.ts                      # re-exports RootProviders
+      RootProviders.tsx             # global runtime, query client, session, toaster
+    proxy/
+    routing/
+      index.ts                      # re-exports page/shell folder indexes
+      access/
+      shells/<name>/
+        index.ts
+        layout.tsx                  # assembles feature providers + selected sources
+      pages/<page>/
+        index.ts                    # re-exports only
+        route.tsx                   # Composition's framework page contract
+        template.tsx
+        components/                 # when page-local responsibilities need them
+        hooks/
+  features/<capability>/
+    index.ts
+    model/
+    operations/
+    providers/
+    components/
+    api/                            # capability-owned source, if needed
+    simulated/
+  kernel/<entity>/
+    index.ts
+    contract.ts
+    port.ts
+    providers/
+    views/                          # entity pickers, badges
+    api/
+    simulated/
+  modules/<agnostic-capability>/
+  integrations/<third-party>/
   server/
   ui/
 ```
 
-`layout.tsx` and `page.tsx` are illustrative framework conventions. A client-rendered
-web app uses its router's equivalent entrypoints; server-only entries exist where the
-rendering model or server work requires them. Use the same responsibility boundaries with
-the framework's own components, lifecycle, and file conventions.
+A client-rendered app uses its router's equivalent entries. `route.tsx` inside Composition
+supplies the page contract exported to the framework route; it is separate from an HTTP
+route handler. Required framework `layout.tsx` files connect shell exports; layout
+implementations belong under `composition/routing/shells/<name>/`. Index files only
+re-export named implementations, including provider trees.
 
 ## Ownership
 
-### Routes and page templates
+### Routes, pages and shells
 
-**Routes are framework adapters**, comparable to controllers. They read framework inputs
-and connect the page, layout, metadata, or loader exports supplied by Composition through
-its public entrypoints. Product policy and data reads stay behind that composition
-contract; routes do not import Features or Modules directly. API handlers follow the
+Routes are framework adapters, comparable to controllers. They read framework inputs and
+connect page, layout, metadata or loader exports through Composition public entrypoints.
+Product policy and data reads remain behind those contracts. API handlers follow the
 canonical server exception.
 
-Composition applies domain-owned policies through permitted feature contracts; trusted
-server and API boundaries enforce access to protected data and operations. Use the
-framework's native shapes: layouts compose, and access checks are plain calls at the top
-of the protected Composition page or loader that use the framework's interrupts,
-never wrappers that take the page as a render callback (see
-[Web authentication boundaries](references/authentication.md)).
+Each rendered page has one dedicated template under `composition/routing/pages/<page>/`.
+Distinct pages keep distinct templates even when they consume the same feature; a redirect
+or technical response needs no artificial view. Templates own visual composition and
+page-specific forms, sections and hooks. Reusable capability presentation stays with its
+Feature; entity views stay with Kernel; visual primitives stay at the canonical UI location.
+Adding pages alone is not evidence for adding features.
 
-**Each rendered page has one dedicated page template**, comparable to its view. Give the
-template a dedicated folder under its Surface's `composition/<surface>/pages/`, with room
-for page-specific components. A route that only
-redirects or returns a technical response needs no artificial view. Distinct pages retain
-distinct templates even when they use the same feature.
+Shells own persistent presentation such as headers, navigation and the content frame.
+A shell assembles feature-owned providers with chosen dependencies. Global root providers
+alone live in `composition/providers/`; feature providers remain with their feature and
+entity providers with their Kernel owner. Keep construction and source selection out of
+page templates. Preserve server rendering when only a nested provider needs browser execution.
 
-Templates own the page's visual composition. Keep complex page-specific forms and sections
-there; put reusable product-capability presentation with its feature and visual primitives
-at the canonical UI location. Use props, children, or slots where the framework supports them. Templates consume
-public feature contracts; external SDK calls and integration internals stay behind their
-owners. Page composition is separate from the shared layout, runtime construction, and
-use-case coordination.
+Mount providers only where their consumers need them. Define which data and work must
+survive navigation, reload or session changes and give them a suitable owner; remounting
+reconnects to that owner. Simulated sources honor the same contract without forcing a
+feature into the global provider tree. Reuse runtime and caches already supplied by the SDK.
 
-For example, a creation page and a detail page each have their own template while both
-consume the same product capability. Adding pages alone is not evidence for adding features.
+### Features and Kernel
 
-### Composition, layouts, and shell
+A Feature owns a coherent product capability: policy, workflow, operations, providers and
+reusable presentation. It receives its dependencies as inputs and can coordinate several
+Kernel entities. Features never import peer Features; Composition connects cooperating ones.
+Choose feature granularity from product language, policy, state and change boundaries,
+using the canonical sibling scan before creating another owner.
 
-**Composition owns application assembly.** It connects configuration, concrete dependencies,
-providers, and runtime. App-wide providers live in `composition/providers/`. **Shell is
-persistent presentation** such as header, sidebar, navigation, and the content frame,
-assembled in `composition/<surface>/shell/`. Framework layouts connect the appropriate
-Composition exports. Shared shell capabilities consumed by Features belong to Modules.
+Kernel owns repository-like entity boundaries: contracts, ports, CRUD/query operations,
+entity invariants, providers and views. Kernels never import peer Kernels; logic involving
+multiple entities belongs in a Feature. Entity-specific pickers and badges can live in
+`views/` without becoming a generic UI or capability workflow.
 
-Choose mount boundaries deliberately: state and caches may persist between routes, while
-a change of user, session, or product context may require renewal. Reuse infrastructure
-already supplied by the application or SDK. Keep construction out of page templates;
-preserve server rendering where only a nested provider needs browser execution.
+Keep pure rules independent of the router, view lifecycle, coordinator, fixtures, SDK and
+transport DTOs. Give operations product-intent names and expose their inputs and outcomes
+independently of private machines or hooks. Semantic subpaths can keep related responsibilities
+under one domain; repeated name prefixes and one feature per operation obscure ownership.
 
-### Features
+### Sources, Integrations and server
 
-**A feature owns a coherent product capability**: its concepts, rules, operations, and
-reusable presentation. Determine granularity from policy, product language, workflow,
-consumers, and what must change together. Inspect existing siblings before introducing
-another owner. Extend an existing capability when it already owns the responsibility;
-introduce a distinct capability when it has a real independent responsibility.
+The owner of a data contract also owns its `api/` and `simulated/` implementations: Kernel
+for an entity repository, Feature for capability-specific data without a shared entity.
+Only Composition and tests import these source subpaths. Composition supplies the selected
+implementation through a port or existing deliberate contract; consumers use that contract.
+Domain root indexes do not re-export sources. Use existing functions as seams where sufficient.
 
-Pages, forms, individual operations, visual panels, and file counts do not by themselves
-establish a feature. Apply the same ownership test recursively within a large capability.
-Use technical subfolders only where they help organize actual content.
+Integrations hold third-party SDK and library bindings, including client and server runtime
+construction. Split mixed bridges by responsibility: session reads and gates belong to the
+access feature's API source; entity projections belong to that entity's Kernel API source;
+SDK runtime construction stays with its Integration. Inspect actual files before deciding.
 
-Within a feature:
+Only canonical API source subpaths and `app/api/` import local `server/` public entrypoints.
+Keep server-only code and credentials out of browser bundles; enforce protected reads and
+operations at their trusted server or API boundary. Browser and server entrypoints remain
+separate even when they belong to the same domain.
 
-- **Model** owns product invariants: validity, permissions, visibility, calculations,
-  transformations, and business state rules. Express these with ordinary functions and
-  types independent of the router, UI framework, coordinator, fixtures, SDK, and transport
-  DTOs. Form defaults and display messages belong to presentation; transport normalization
-  belongs to integration.
-- **Operations** own use cases: their sequence, policy application, integration calls,
-  and outcomes. Give them product-intent names. A state machine, hook, or action can
-  implement coordination; public operation inputs and outcomes belong with the use case,
-  so consumers remain independent of that implementation's private types.
-- **Components** own reusable presentation of the capability, including the presentation
-  lifecycle or bindings it needs. Keep components used only by one page with that template
-  unless they independently express a capability-owned responsibility.
+### Modules, shared packages and UI
 
-External calls, SDK bindings, transport contracts, and mappings live in the canonical
-`integrations/` layer rather than a feature-local integration folder. Operations consume
-its deliberate public contracts; model rules remain independent of transport and SDKs.
-Existing functions can be sufficient seams; introduce ports, repositories, factories,
-or services when a concrete need earns them.
+Modules own agnostic app-local mechanics such as forms, navigation guards, session support,
+instance helpers and theme. They accept required configuration; Composition supplies
+product-specific wiring. Product policy stays with Features and entity contracts with Kernel.
+A longer lifetime or a second consumer alone does not make product behavior agnostic.
 
-Expose deliberate public contracts for consumers. Where browser and server execution differ,
-provide appropriate entrypoints that preserve that boundary and the canonical import rules.
-Keep mock adapters and fixtures in Integrations, selected only by Composition or tests;
-temporary implementations do not define the final product domains.
-
-### Shared data, modules, server, and UI
-
-- **Shared data** follows the canonical invariant-owner classifier. Keep a capability's
-  private records local; place genuinely shared app-local data contracts in their honest
-  Module owner, or in a shared package when real consumers span applications. Keep SDK
-  bindings in Integrations. A separate top-level `entities/` layer is not part of this model.
-- **Modules** own genuinely common app-local technical capabilities, such as session
-  mechanics, runtime support, data sources, and form foundations. Their contracts accept
-  required data or configuration; Composition supplies feature-specific wiring. Product policy
-  stays with its product owner.
-- **Server** owns server-only infrastructure and credentials. Integrations access its public
-  entrypoints; API handlers follow the canonical exception. Features reach server behavior
-  through Integration contracts. A static browser app may need no local server directory.
-- **UI** owns visual primitives and theme, independent of session, runtime, and product
-  concepts, in the single-package UI layer or the monorepo's shared UI package. A
-  product-aware picker belongs to its Feature or Module owner.
+Use shared packages when real consumers span applications. Keep genuinely shared entity
+contracts with their entity owner rather than creating a separate `entities/` layer.
+UI owns visual primitives and theme tokens independent of product, session and runtime
+concepts. A product-aware picker belongs to its Feature or Kernel owner.
 
 ## Dependency direction
 
-Use the dependency and Lint Rules in the canonical
-[Frontend Domain Structure reference](../frontend-domain-structure/references/structure.md).
-Check actual imports and execution boundaries against those rules, including test and
-story files. Compose cooperating Features in Composition through props, slots, or callbacks;
-Features do not import peer Features. Keep server-only code out of browser bundles and
-enforce protected operations at the trusted server or API boundary.
+Apply the canonical dependency and lint rules, including public semantic-subpath indexes,
+re-export-only indexes, self-index restrictions, and Composition/test-only source imports.
+Trace actual imports and re-exports; filenames alone do not prove a boundary. Tests have
+only the exceptions stated in the canonical reference.
 
-For an app with authentication or protected routes, read
-[Web authentication boundaries](references/authentication.md) before proposing route groups,
-session wiring, or authentication screens.
+For authentication or protected routes, read
+[Web authentication boundaries](references/authentication.md). Composition applies
+feature-owned policies through public contracts; trusted boundaries enforce them. Access
+checks use plain calls and framework interrupts in the protected Composition page or loader.
 
 ## Completion
 
-An overview or proposal is complete when every in-scope responsibility has an owner, rendered
-pages map to their templates, the target tree and public dependencies agree, and the traced
-flow exposes material unknowns. Include migration mappings when existing code is affected.
-For component-related scope, identify the established design system and composition standard
-and show how the proposed components fit both that standard and their responsibility owners.
+An overview or proposal is complete when every in-scope responsibility has an owner, pages
+map to templates, the tree and public dependencies agree and the traced flow exposes material
+unknowns. Include file-by-file migration mappings and superseded decisions when applicable.
+For component scope, identify the design system and composition standard and show how
+components fit both that standard and their responsibility owners.
 
-An implementation wave is complete when its requested behavior works, each new boundary has
-concrete content, affected imports pass the canonical layer rules, and browser/server and runtime
-lifetimes remain intentional. Use the narrowest relevant type, lint, build, or dependency
-checks already supported by the project. For component changes, also verify conformance to
-the selected system's tokens, component APIs, composition conventions, and accessibility
-contracts using existing project checks and representative states where applicable. Verify
-affected user flows and test changed rules or coordination where behavior changed; a file
-move alone does not require a new test suite.
-Report validation results, unresolved decisions, and deferred scope. Update project
+An implementation wave is complete when requested behavior works, new boundaries have real
+content, imports and re-exports follow the canonical model and browser/server and runtime
+lifetimes remain intentional. Run the narrowest supported type, lint, build and dependency
+checks. Confirm which rules the installed plugin actually enforces; manually inspect missing
+coverage and report it until the plugin is updated. A passing older plugin does not prove
+conformance to the new model.
+
+For component changes, check system tokens, APIs, composition and accessibility contracts
+using existing checks and representative states. Verify affected flows and test changed
+rules or coordination when behavior changed; moving files alone needs no new test suite.
+Report validation, unresolved placements, enforcement gaps and deferred scope. Update project
 documentation when requested or required by local instructions.

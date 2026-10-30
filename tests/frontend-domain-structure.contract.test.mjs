@@ -103,90 +103,41 @@ test("frontend domain structure triggers domain granularity and React splitting 
   }
 });
 
-test("agnostic reference fixes the layer model with Composition on top", () => {
+test("agnostic reference separates capabilities, entities and selected sources", () => {
   const structure = prose(`${root}/references/structure.md`);
-
   assert.deepEqual(firstColumn(section(read(`${root}/references/structure.md`), "Layers")), [
-    "`app/` or `routes/`",
-    "`composition/`",
-    "`features/`",
-    "`modules/`",
-    "`integrations/`",
-    "`ui/`",
+    "`app/` or `routes/`", "`composition/`", "`features/`", "`kernel/`",
+    "`modules/`", "`integrations/`", "`ui/`",
   ]);
   assert.match(structure, /each layer imports only lower layers/i);
   assert.match(structure, /route layer[^.]*imports only `composition\/`/i);
-  assert.match(
-    structure,
-    /`proxy\.ts`, `middleware\.ts`,? and `instrumentation\.ts`[^.]*route layer/i,
-  );
-  assert.match(
-    structure,
-    /`server\/` sits outside the layers[^.]*`effect-backend-structure`/i,
-  );
-  assert.match(
-    structure,
-    /only `integrations\/` imports `server\/`[^.]*server public entrypoints/i,
-  );
+  assert.match(structure, /`proxy\.ts`, `middleware\.ts`,? and `instrumentation\.ts`[^.]*route layer/i);
+  assert.match(structure, /only `kernel\/\*\/api\/`, `features\/\*\/api\/` and `app\/api\/` may import `server\/`/i);
   assert.match(structure, /`app\/api\/` handlers import only `server\/`/i);
-  assert.doesNotMatch(structure, /These labels may differ between projects/i);
-
-  assert.match(
-    structure,
-    /Composition owns app-wide providers, Surface shells, page templates,? and cross-feature registries/i,
-  );
-  assert.match(
-    structure,
-    /first level[^.]*`providers\/` plus one folder per Surface/i,
-  );
-  assert.match(structure, /inside a Surface[^.]*`shell\/` and `pages\/<page>\/`/i);
-
   assert.match(structure, /a Feature never imports another Feature/i);
-  assert.match(
-    structure,
-    /nearest composition[^.]*connects them through props, slots,? or callbacks/i,
-  );
-  assert.doesNotMatch(
-    structure,
-    /highly discouraged|peer-feature exception|permit one only/i,
-  );
-  assert.match(
-    structure,
-    /shell parts that features consume[^.]*are Modules[^.]*shell assembly is Composition/i,
-  );
-  assert.match(
-    structure,
-    /mock data, demo data,? and fake runtimes are Integrations/i,
-  );
-  assert.match(structure, /no production UI[^.]*folder named "prototype"/i);
-
-  assert.match(structure, /a domain is the first folder under a layer/i);
-  assert.match(
-    structure,
-    /`index\.ts` or `index\.tsx`[^.]*only cross-domain entrypoint/i,
-  );
+  assert.match(structure, /a Kernel never imports another Kernel/i);
+  assert.match(structure, /logic spanning entities belongs here/i);
+  assert.match(structure, /nearest Composition[^.]*connects them through props, slots or callbacks/i);
+  assert.match(structure, /only Composition and tests consume these source subpaths; other code in the owning domain also receives the selected source as an input/i);
+  assert.match(structure, /domain root index never re-exports sources to bypass this restriction/i);
+  assert.match(structure, /an index file only re-exports/i);
+  assert.match(structure, /production code never imports its own folder's index[^;]*; tests may import it/i);
+  assert.match(structure, /domain or public semantic subpath's `index\.ts` or `index\.tsx`/i);
+  assert.match(structure, /required framework layout files remain thin Composition adapters/i);
+  assert.match(structure, /layout implementations live under `composition\/routing\/shells\/<name>\/`/i);
+  assert.match(structure, /mounts global root providers only/i);
+  assert.match(structure, /shell parts features consume[^.]*are Modules[^.]*shell assembly is Composition/i);
+  assert.match(structure, /simulated sources satisfy the same contract and required lifetime/i);
   assert.match(structure, /`ui\/` is exempt/i);
-  assert.match(
-    structure,
-    /layer root is `src\/` when it exists, else the package root/i,
-  );
-  assert.match(
-    structure,
-    /any other top-level folder under the layer root is an error/i,
-  );
-  assert.match(
-    structure,
-    /in a monorepo[^.]*shared UI package[^.]*app-local `ui\/` folder is an error/i,
-  );
-  assert.match(
-    structure,
-    /single-package repository[^.]*`src\/ui\/` is the lowest layer/i,
-  );
-  assert.match(structure, /test and story files follow the same rules/i);
+  assert.match(structure, /layer root is `src\/` when it exists, else the package root/i);
+  assert.match(structure, /any other top-level folder under the layer root is an error/i);
+  assert.match(structure, /in a monorepo[^.]*shared UI package[^.]*app-local `ui\/` folder is an error/i);
+  assert.match(structure, /single-package repository[^.]*`src\/ui\/` is the lowest layer/i);
+  assert.match(structure, /test and story files follow the same rules, with only the explicit test exceptions/i);
   assert.doesNotMatch(structure, /\bReact\b|\bJSX\b|component splitting/);
 });
 
-test("agnostic reference owns the Lint Rules table that frontend-layers implements", () => {
+test("agnostic reference owns the lint contract and discloses plugin coverage gaps", () => {
   const lintRules = section(
     read(`${root}/references/structure.md`),
     "Lint Rules",
@@ -205,9 +156,9 @@ test("agnostic reference owns the Lint Rules table that frontend-layers implemen
   for (const [, meaning] of tableRows(lintRules).slice(2)) {
     assert.ok(meaning, "each rule states when it is an error");
   }
-  assert.match(lintRules, /`frontend-layers`[^.]*implements this table/i);
+  assert.match(lintRules, /authority for the `frontend-layers` contract/i);
   assert.match(lintRules, /`react-frontend-layers`[^.]*`react` Pack/i);
-  assert.match(lintRules, /this table is the authority/i);
+  assert.match(lintRules, /check the installed plugin[^.]*actual rules before\s+claiming enforcement/i);
 });
 
 test("agnostic guidance classifies domain worthiness and recursive boundaries", () => {
@@ -222,7 +173,7 @@ test("agnostic guidance classifies domain worthiness and recursive boundaries", 
     structure,
     /real consumers in more than one application belongs to a shared package/i,
   );
-  assert.match(structure, /two Surfaces of one app[^.]*Feature or Module/i);
+  assert.match(structure, /two Surfaces of one app[^.]*Feature, Kernel or Module/i);
   assert.match(structure, /recursive[^.]*semantic/i);
   assert.match(structure, /deliberate public entrypoint/i);
   assert.match(structure, /cross-domain deep imports/i);
@@ -233,10 +184,10 @@ test("React guidance places Composition and splits by responsibility", () => {
   const react = prose(`${root}/references/react/structure.md`);
 
   assert.match(react, /`composition\/providers\/`/);
-  assert.match(react, /shells and page templates[^.]*`composition\/<surface>\/`/i);
+  assert.match(react, /`composition\/routing\/shells\/<name>\/layout\.tsx`/i);
   assert.match(
     react,
-    /page template exports its page component[^.]*optional `generateMetadata`[^.]*loader functions/i,
+    /contract can export a page component[^.]*optional `generateMetadata`[^.]*loader functions/i,
   );
   assert.match(react, /route file only connects them/i);
   assert.doesNotMatch(

@@ -36,7 +36,7 @@ Use the framework's own shapes for composition and access:
   decision with view selection and bypass the framework's statuses. Prefer
   `const user = await requireAccess(key)` followed by the page's own JSX.
 
-Protected page components and loaders live in Composition and apply feature-owned
+Protected page components and loaders live in `composition/routing/pages/<page>/` and apply feature-owned
 permission and visibility rules through public contracts. Framework route files connect
 those Composition exports rather than importing Features or Modules directly. When the
 framework requires an access decision in a route-level entrypoint, expose its implementation
@@ -54,3 +54,12 @@ loop.
 
 When the product specifies a local login experience or another authentication model,
 preserve that choice and give its actual screens their own page templates.
+
+## Ownership and source selection
+
+An access capability owns role policy, authentication outcomes and product-aware access presentation,
+regardless of which role originally named the folder. Its `api/` source owns session reads and request
+gating against trusted services. `composition/routing/access/` assembles that gate; Composition alone
+selects its source and supplies it through the access contract. Entity reads stay with the appropriate
+Kernel API source, and third-party runtime construction stays with its Integration. Split mixed
+bridges by those responsibilities. Follow the canonical source-import and server-entrypoint rules.

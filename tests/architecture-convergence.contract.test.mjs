@@ -77,5 +77,5 @@ test("create-plan routes frontend scope to the composition layer model", () => {
 
   assert.match(frontend, /\$frontend-domain-structure/);
   assert.match(frontend, /`composition\/`/);
-  assert.match(frontend, /React scope[\s\S]*providers,\s+shells\s+and\s+page\s+templates\s+into\s+`composition\/`/);
+  assert.match(frontend, /React scope[\s\S]*global provider assembly,\s+shells\s+and\s+page\s+templates\s+in\s+`composition\/`/);
 });

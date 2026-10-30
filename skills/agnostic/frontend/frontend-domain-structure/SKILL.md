@@ -22,8 +22,8 @@ classification, placement, and dependency rules, including the Lint Rules. Read 
 structure decision.
 
 For React scopes, also read the [React addendum](references/react/structure.md). It owns the React
-placement of providers, shells and page templates, and component, hook, context, JSX, and behavior-test
-guidance.
+placement of global assembly, feature and entity providers, shells and page templates, plus component,
+hook, context, JSX, and behavior-test guidance.
 
 ## Workflow
 
@@ -37,11 +37,11 @@ guidance.
 4. Trace affected public entrypoints and dependency direction recursively.
 5. In React scopes, read the React addendum and review component boundaries at responsibility and test seams.
 6. Run the `frontend-layers` lint rules with the project's lint command on the files in scope. Test and
-   story files follow the same rules. When the project does not install these rules, check each import
-   in scope against the Lint Rules table of the agnostic reference.
+   story files follow the same rules and stated test exceptions. When rules are absent or the plugin
+   version lacks required coverage, check each uncovered boundary against the agnostic reference.
 7. Complete in the requested mode.
    - For a review or diagnostic request, return findings and a recommended target structure without editing files.
-   - Only change files when the user explicitly asks to create, refactor, or implement; then make the smallest coherent move and validate with focused behavior tests, a new run of the `frontend-layers` lint rules, and the narrowest relevant static checks. Move each touched behavior out of a flat technical bucket, such as `views/`, `lib/` or `utils/`, to its invariant owner, and create its entrypoint before you update consumers.
+   - Only change files when the user explicitly asks to create, refactor, or implement; then make the smallest coherent move and validate with focused behavior tests, a new run of the `frontend-layers` lint rules, and the narrowest relevant static checks. Move each touched behavior out of a flat technical bucket, such as an unowned `lib/` or `utils/`, to its invariant owner, and create its entrypoint before you update consumers.
 
 ## Completion
 
