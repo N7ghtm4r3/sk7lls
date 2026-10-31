@@ -7,17 +7,18 @@ context, and JSX decisions.
 
 ## Composition Placement
 
-- Only global root providers, such as the app runtime, query client, session and toaster, are mounted
-  in `composition/providers/`. Implement the tree in a named file and re-export it from the index.
-- Feature providers belong to their feature; entity providers belong to their Kernel owner. They
-  receive dependencies as inputs. Composition selects API or simulated sources and connects them
-  in `composition/routing/shells/<name>/layout.tsx`, at the scope that needs those providers.
-- Page templates live in `composition/routing/pages/<page>/`, alongside a `route.tsx` that exposes
-  the Composition page contract and a re-export-only index. That contract can export a page component
-  plus optional `generateMetadata` and loader functions. The framework route file only connects them:
+- Global root providers, such as the query client, the SDK runtime and session tracking, live in
+  `composition/providers/`. Its `index.tsx` only re-exports; the provider tree lives in a named file
+  that the root layout renders.
+- Each Shell lives in `composition/routing/shells/<name>/`: its layout file plus the files it governs.
+  It mounts the Feature and Entity providers of its route group with the Data Sources that Composition
+  selects.
+- Page Templates live in `composition/routing/pages/<page>/`.
+- A page template exports its page component plus optional `generateMetadata` and loader functions. The
+  route file only connects them:
 
 ```tsx
-// app/admin/orders/page.tsx (Next.js App Router)
+// app/(admin)/orders/page.tsx (Next.js App Router)
 export { OrdersPage as default, generateMetadata } from "@/composition/routing";
 ```
 
@@ -29,16 +30,19 @@ import { loadOrders, OrdersPage } from "@/composition/routing";
 export const Route = createFileRoute("/admin/orders")({ loader: loadOrders, component: OrdersPage });
 ```
 
-A required framework layout or root route connects a shell export in the same way. Layout
-implementations live only under `routing/shells/<name>/`. Keep the Composition page adapter a thin
-orchestration shell: it reads route inputs, calls public Feature and Kernel contracts and connects
-presentation. Templates own the page's visual composition. A slot is a `ReactNode` prop and a callback
-is a function prop, for example `<OrderList onSelect={setOrderId} detail={<OrderDetail orderId={id} />} />`.
+A layout or root route file connects a Shell in the same way. Keep the page component a thin
+orchestration shell: it reads route inputs, calls Feature and Entity entrypoints, and connects features.
+A slot is a `ReactNode` prop and a callback is a function prop, for example
+`<OrderList onSelect={setOrderId} detail={<OrderDetail orderId={orderId} />} />`.
 
 Choose UI mounting scope, service lifetime and data durability independently. Feature-specific
 providers mount only where used and reconnect to the selected data or service owner on remount.
 Simulated sources preserve the lifetime required by the contract without requiring a global feature
 provider. Navigation, reload and session changes can have different reset and persistence requirements.
+
+Required framework layouts remain thin Composition adapters. Page folders may expose their
+Composition page contract through `route.tsx` and a re-export-only index; templates own visual
+composition. A domain or public semantic subpath may expose `index.ts` or `index.tsx`.
 
 ## Component-Splitting Classifier
 
@@ -67,9 +71,11 @@ useful only as secondary grouping inside a worthy domain.
 
 Context follows scope:
 
-- feature-scoped context stays in that feature; entity context stays with its Kernel owner;
-- a context that several features consume, such as a header slot or a toast channel, is a Module, and
-  Composition mounts its provider;
+- a feature-scoped context and its provider stays in that Feature;
+- an entity context, such as a collection provider, stays in its Entity;
+- a business-agnostic context, such as a toast channel, is a Module;
+- Composition mounts each provider in the Shell that needs it, or in `composition/providers/` when it
+  is global;
 - cross-app providers belong in a shared package only when they have real cross-app consumers.
 
 Hooks follow the owner of the state, side effect, query, mutation, or workflow they wrap. Display
@@ -77,8 +83,8 @@ components depend on owner-provided contracts rather than reaching through anoth
 
 ## Public React Boundaries
 
-A domain or public semantic subpath's `index.ts` or `index.tsx` may re-export its top-level component,
-public hook, workflow operation, and deliberate types. Consumers stay independent of its private component tree, query keys,
+A domain's `index.tsx` only re-exports its top-level component, public hook, workflow operation, and
+deliberate types from named files. Consumers stay independent of its private component tree, query keys,
 mutation details, and context implementation.
 
 ## Behavior Tests and Validation
@@ -93,7 +99,7 @@ Add focused behavior tests at the owning component, hook, model, or feature seam
 Choose the narrowest validation that proves the changed responsibility, then run the relevant type,
 lint, or build check for moved exports and imports.
 
-The React review is complete when global provider assembly, shells and page templates sit in Composition,
-feature and entity providers stay with their owners, each extracted unit owns a coherent responsibility,
-orchestration shells stay thin, props cross
+The React review is complete when global providers, Shells and Page Templates sit in Composition,
+feature and entity providers sit with their owners, each
+extracted unit owns a coherent responsibility, orchestration shells stay thin, props cross
 display-ready boundaries, and focused tests prove the changed behavior at its owning seam.

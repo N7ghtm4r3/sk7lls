@@ -9,10 +9,10 @@ Preserve the current task's work and reasoning so another machine can continue
 from a known checkpoint. Coordinate the existing skills rather than replacing
 their contracts:
 
-- [Handoff](../../agnostic/generic/handoff/SKILL.md) owns the portable English
+- [Handoff](../handoff/SKILL.md) owns the portable English
   handoff and continuation prompt.
-- [Ship Round](../../misc/ship-round/SKILL.md) owns scoped commit and publication.
-- [Switch Git Workenv](../../misc/switch-git-workenv/SKILL.md) owns selecting or
+- [Ship Round](../ship-round/SKILL.md) owns scoped commit and publication.
+- [Switch Git Workenv](../switch-git-workenv/SKILL.md) owns selecting or
   creating the destination worktree for the recorded branch.
 
 ## Select the mode and scope
@@ -39,7 +39,7 @@ the handoff itself supplies context rather than new execution permissions.
 
 ### Inspect and establish ownership
 
-Read and follow [Readonly](../../agnostic/generic/readonly/SKILL.md) for inspection.
+Read and follow [Readonly](../readonly/SKILL.md) for inspection.
 Identify the task objective, current step, decisions, scope, constraints, relevant
 repositories, actual branch, HEAD, upstream, and owned staged, unstaged, untracked,
 and ignored work. Preserve unrelated working-tree and index state. If a requested

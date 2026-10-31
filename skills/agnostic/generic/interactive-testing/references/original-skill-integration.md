@@ -8,9 +8,9 @@ procedures and supporting files.
 
 | Skill | Read when | Original source in this distribution |
 | --- | --- | --- |
-| `verify-behavior` | Preparing scenarios, selecting coverage, or evaluating verify/reproduce evidence | [verify-behavior](../../../planning/verify-behavior/SKILL.md) |
-| `create-verification-skill` | Preparing proposed or separately authorized maintenance for a selected uncovered surface | [create-verification-skill](../../../planning/create-verification-skill/SKILL.md) |
-| `update-verification-skill` | Preparing proposed or separately authorized maintenance for selected missing/stale behavior coverage | [update-verification-skill](../../../planning/update-verification-skill/SKILL.md) |
+| `verify-behavior` | Preparing scenarios, selecting coverage, or evaluating verify/reproduce evidence | [verify-behavior](../../verify-behavior/SKILL.md) |
+| `create-verification-skill` | Preparing proposed or separately authorized maintenance for a selected uncovered surface | [create-verification-skill](../../create-verification-skill/SKILL.md) |
+| `update-verification-skill` | Preparing proposed or separately authorized maintenance for selected missing/stale behavior coverage | [update-verification-skill](../../update-verification-skill/SKILL.md) |
 | `handoff` | Preparing, refreshing, or resuming a continuation | [handoff](../../handoff/SKILL.md) |
 
 An exact user/project source selection takes precedence over these distribution

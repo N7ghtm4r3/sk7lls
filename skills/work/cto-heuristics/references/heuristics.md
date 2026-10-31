@@ -40,7 +40,7 @@ and prevent implementation details from spreading across the application.
 conventions. Introduce abstractions and folders when they serve a concrete
 responsibility.
 
-**Reference:** [Web Frontend Architect](../../../agnostic/frontend/web-frontend-architect/SKILL.md),
+**Reference:** [Web Frontend Architect](../../web-frontend-architect/SKILL.md),
 particularly Ownership and Dependency direction. Consult these sections for web
 frontend changes; the detailed blueprint applies to web frontends.
 

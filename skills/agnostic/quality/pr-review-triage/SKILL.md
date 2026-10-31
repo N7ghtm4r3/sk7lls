@@ -43,7 +43,7 @@ This step ends when each collected comment has an assessment supported by inspec
 
 Start with the PR link, reviewer scope, inspected head, and any coverage limitations.
 
-Before drafting the bullets, use [wait-what](../../../misc/wait-what/SKILL.md) to make the explanation direct and easy to read. Preserve canonical project terms and write in the user's language.
+Before drafting the bullets, use [wait-what](../wait-what/SKILL.md) to make the explanation direct and easy to read. Preserve canonical project terms and write in the user's language.
 
 Give one top-level bullet per comment. Start with **R1 — Short title** and a link to the original comment. Use a few short sentences: explain when the problem occurs and what happens, say whether the current code supports it, then propose the fix. When the evidence confirms the reviewer, describe the observed behavior directly. State disagreement, uncertainty, or an existing fix explicitly when relevant. Keep the assessment categories from step 3 as reasoning aids; write each bullet as connected prose rather than a form with repeated labels.
 

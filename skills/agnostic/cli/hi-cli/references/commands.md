@@ -49,7 +49,7 @@ Rules to know:
 - When devDependencies change, the package-manager install runs once with `--ignore-scripts` (`dependencyInstall`). When the Commit Gate adds `lefthook`, the report prints a hint to run `node .agents/scripts/activate-git-hooks.mjs`, then `hi commit-gate verify`. `hi init` and `hi update` also run that Hook Activation script once; with settings `commitGate: "disabled"`, `hi update` runs the Commit Gate Opt-Out instead (removes the Managed Hook Script `.githooks/pre-commit` when its digest matches, unsets `core.hooksPath` only when it is `.githooks`, and keeps an old `.git/hooks/pre-commit`).
 - Authored Artifacts are never overwritten, with or without `--yes`.
 - Without `--yes`, a stale Copied file with a local edit is kept, reported `stale-reported`, and stays in the Installed Record.
-- A Registry Item's `postInstall` command runs only when the CLI allowlist names it (today only `effect-tsgo patch --no-typescript --oxlint`), with a minimal environment (`PATH` with `node_modules/.bin` first, `HOME`, `TMPDIR`, `SystemRoot`). Other commands are skipped and named in the `dependencyInstall` detail.
+- `hi update` runs no post-install command and patches nothing in `node_modules`. Managed lint runs Effect rules through `effect-tsgo oxlint` when `@effect/tsgo` 0.59.0 or later is installed. An older Baseline item's `postInstall` key is ignored.
 - A Project Skill whose id a Registry Item now provides is renamed to `.agents/skills/[DEPRECATED] <id>`, the Registry skill installs under the original id, and the rename is reported.
 - A stale devDependency is removed only when no first-party source in that workspace imports it; otherwise it is kept and reported.
 - A symlink that cannot be created is reported with its path and target. No copy is made. The next update retries.
@@ -57,7 +57,7 @@ Rules to know:
 - A failed or interrupted run converges when you run it again.
 - Exit code: 0 only when `status` is `applied`; 1 for `partial`, `refused`, or an unavailable Registry. Lint findings never change it.
 
-Row actions: `written`, `skipped`, `overwritten-local-edit`, `created`, `kept`, `merged`, `linked`, `link-failed`, `dependency-added`, `dependency-removed`, `dependency-kept`, `removed`, `stale-reported`, `moved-project-skill`, `renamed-project-skill`, `migrated-deleted`, `migrated-skipped` (a migration path whose parent resolves outside the repository is skipped, never followed). The report also has `mode`, `status` (`applied`, `partial`, `refused`), previous and applied Baseline, `lint` (`passed`, `findings`, `failed`, or `skipped`), `dependencyInstall`, `failedLinks`, `requiredTools`, `adoptedPacks`, `refusal`, and the migration summary.
+Row actions: `written`, `skipped`, `overwritten-local-edit`, `created`, `kept`, `merged`, `merge-reported`, `linked`, `link-failed`, `dependency-added`, `dependency-removed`, `dependency-kept`, `removed`, `stale-reported`, `moved-project-skill`, `renamed-project-skill`, `migrated-deleted`, `migrated-skipped` (a migration path whose parent resolves outside the repository is skipped, never followed). The report also has `mode`, `status` (`applied`, `partial`, `refused`), previous and applied Baseline, `lint` (`passed`, `findings`, `failed`, or `skipped`), `dependencyInstall`, `failedLinks`, `requiredTools`, `adoptedPacks`, `refusal`, and the migration summary.
 
 
 ## Migration of older repositories (historical files)

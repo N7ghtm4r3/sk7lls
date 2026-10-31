@@ -3,8 +3,9 @@
 ## Goal
 
 Give each frontend behavior one stable owner in one fixed layer model. The layer names and their order
-are the same in every project. This reference defines the architecture contract; see
-[Lint Rules](#lint-rules) for enforcement and version gaps.
+are the same in every project. The `frontend-layers` lint plugin checks the model with the rules in
+[Lint Rules](#lint-rules). To move a repository from the earlier composition-layer model, read
+[the migration map](migration.md).
 
 ## Layers
 
@@ -13,190 +14,221 @@ from top to bottom:
 
 | Layer | Owns |
 | --- | --- |
-| `app/` or `routes/` | Route files the framework requires. They only connect Composition exports. |
-| `composition/` | Application assembly, global providers, routing, shells, pages and source selection. |
-| `features/` | One user-facing capability with its own workflow, policy, state and providers. |
-| `kernel/` | Entity contracts, ports, CRUD/query behavior, entity providers and entity views. |
-| `modules/` | Agnostic app-local capabilities such as forms, session mechanics, theme and navigation guards. |
-| `integrations/` | Third-party SDK bindings, client setup and external library adapters. |
-| `ui/` | Visual primitives and design-system components. |
+| `app/` or `routes/` | Route files that the framework requires. They only connect Composition exports. |
+| `composition/` | Global root providers, the proxy, and routing: access, Shells and Page Templates. |
+| `features/` | One user-facing capability that combines Entities, with its own workflow, policy, state and providers. |
+| `entities/` | One business entity, like a repository: contract, port, CRUD and query machinery, providers, Data Sources and entity views. |
+| `modules/` | Business-agnostic app-local code with no product terms. |
+| `integrations/` | Adapters to third-party systems: SDK wrappers and client setup. |
+| `ui/` | Primitives and shadcn components. |
 
-Each layer imports only lower layers; it can import any lower layer, not only the next one.
-Domain-owned `api/` and `simulated/` sources follow the additional restrictions below.
-The rules govern imports between folders under the layer root, written as relative paths or an `@/`
-alias. Package imports, such as `next/navigation`, are outside these local import rules.
+Each layer imports only lower layers. A layer can import any lower layer, not only the next one. The
+rules govern imports between folders under the layer root, written as relative paths or with the `@/`
+alias. Package imports, such as `next/navigation`, are outside these rules.
 
 The layer root holds only these layer folders and `server/`. Any other top-level folder under the layer
-root is an error. Test and story files follow the same rules, with only the explicit test exceptions
-under Data Sources and Public Entrypoints. The local lint model applies to packages whose layer root
-contains `app/` or `routes/`; a package without a route layer still needs architectural review.
+root is an error. Test and story files follow the same rules as the code they test, except that they
+may import Data Sources and their own folder's `index`. A test or story file has `.test.`, `.spec.` or
+`.stories.` in its file name. The rules apply to a package whose layer root contains `app/` or
+`routes/`; a package without a route layer is not checked.
 
 ## Route Layer
 
-The route layer imports only `composition/`. Root files `proxy.ts`, `middleware.ts` and
-`instrumentation.ts` belong to the route layer. A route file reads framework inputs, connects the
-Composition export for its page or shell, and returns the result. Product policy and data reads belong
-to their invariant owners. Required framework layout files remain thin Composition adapters;
-layout implementations live under `composition/routing/shells/<name>/`.
+The route layer imports only `composition/`. The root files `proxy.ts`, `middleware.ts` and
+`instrumentation.ts` belong to the route layer; they connect `composition/proxy/`. A route file reads
+framework inputs, calls the Composition export for its page, and returns the result. Product policy,
+data reads and layout belong to their invariant owners.
 
 ## Composition
 
-Composition owns application assembly and source selection:
+Composition holds the global root providers, the proxy, and routing. Its first level is fixed:
+`providers/`, `proxy/` and `routing/`.
 
-- `composition/providers/` mounts global root providers only, such as the app runtime, query client,
-  session and toaster. Its index re-exports the provider tree implemented in a separate file.
-- `composition/proxy/` supplies request-bound framework adapter exports when needed.
-- `composition/routing/access/` assembles request gating using the access feature's contracts.
-- `composition/routing/shells/<name>/` holds one layout implementation per folder. It connects the
-  chosen sources to feature-owned providers and assembles the persistent presentation.
-- `composition/routing/pages/<page>/` holds one rendered page: a re-export-only `index.ts`, a
-  `route.tsx` adapter for the framework's page contract, and its template. Add page-local
-  `components/` or `hooks/` only when needed.
+- `providers/` holds only global root providers, such as the query client, the SDK runtime and
+  session tracking. A provider that serves one capability belongs to its Feature or Entity.
+- `routing/` holds `access/`, `shells/<name>/` and `pages/<page>/`, plus its `index.ts` entry. Each app has
+  exactly one `routing/`.
+- A **Shell** is the layout of one route group, such as a portal or a CMS. A layout file lives only in
+  `composition/routing/shells/<name>/`, one layout per folder, with only the files it governs. A Shell
+  combines Feature providers with the Data Sources that Composition selects.
+- A **Page Template** is the component that a route renders. Its folder `pages/<page>/` holds
+  `index.ts`, the route entry and the template at its root; other components and hooks go in
+  `components/` and `hooks/` only when needed. Use one folder per route.
 
-A **Surface** is one part of the app that a distinct user group sees through its own shell.
-Represent its shell under `routing/shells/`; features stay flat rather than nesting under a Surface.
-The routing index re-exports page and shell folders through their indexes. A page export gives the
-framework route everything that page needs, so the route file only connects it.
+A Page Template gives the route layer everything that one page needs, so that the route file only
+connects it.
 
-A Feature never imports another Feature. When two features work together, the nearest Composition
-owner holds both and connects them through props, slots or callbacks. Shell parts features consume
-(a navigation registry, header slot, toast or assistant channel) are Modules; shell assembly is
-Composition. Product-aware sidebar content stays with the capability whose policy it presents.
+Shell parts that features consume (a navigation registry, header slot, toast or assistant channel)
+are Modules; shell assembly is Composition. Product-aware sidebar content stays with the capability
+whose policy it presents.
 
 ## Features
 
-A Feature owns a coherent user-visible capability: its workflow, policy, state, providers and reusable
-presentation. It may combine several Kernel entities; logic spanning entities belongs here.
-A feature can also own a data source when that data has no shared entity owner. Keep its contract and
-port with the capability and its implementations in `api/` or `simulated/`.
+A Feature owns a coherent user-visible capability: its workflow, policy, state, providers,
+presentation and feature-local helpers. A Feature combines one or more Entities; for example, an HR
+feature combines the developer and salary Entities. Code that is not a clear single-entity concern is
+a Feature.
 
-A feature receives required dependencies as inputs. Composition chooses implementations and wires
-them into its providers or operations. Page count, individual forms and operations alone do not
-establish independent capabilities. Apply the domain-worthiness classifier before splitting one.
+A Feature never imports another Feature. When two features work together, the nearest composition that
+holds both connects them through props, slots or callbacks. A Feature takes its dependencies as inputs.
 
-## Kernel
+## Entities
 
-Each `kernel/<entity>/` owns a repository-like entity boundary: contract, port, CRUD/query operations,
-entity invariants, providers and entity views such as pickers or badges. It can contain semantic
-subpaths when the entity has distinct responsibilities. A Kernel never imports another Kernel.
-Cross-entity coordination belongs in a Feature; entity ownership alone does not make a workflow
-part of Kernel. Entity views use their owner's contracts and remain independent of feature policy.
+An **Entity** is a repository-like domain for one business entity: its contract, port, CRUD and query
+machinery, providers, Data Sources and entity views (`views/`: pickers, badges, formatters). Name the
+folder after the entity, for example `entities/candidate/`.
+
+An Entity never imports another Entity; it refers to another entity only by its id. Logic that spans
+two Entities lives in a Feature.
 
 ## Data Sources
 
-Keep data source implementations with the entity or capability that owns their contract:
+A **Data Source** implements a port of an Entity or a Feature. It lives in one of two subpaths:
 
-- `kernel/<entity>/api/` and `features/<capability>/api/` implement real data access.
-- `kernel/<entity>/simulated/` and `features/<capability>/simulated/` implement fake sources.
+- `remote/` holds the server-backed source. `remote/index.ts` is the browser entry. `remote/server.ts`
+  starts with `import "server-only"` and holds server readers.
+- `simulated/` holds the in-memory source, seeds and fake runtimes.
 
-Only Composition and tests consume these source subpaths; other code in the owning domain also
-receives the selected source as an input. Imports between implementation files inside one source
-remain internal. The sources may depend on their own domain's contracts and on permitted lower layers. Other
-production consumers receive a selected implementation through inputs; the domain root index never
-re-exports sources to bypass this restriction. Sources normalize transport DTOs into owner-defined contracts. Simulated sources satisfy the same
-contract and required lifetime as real sources. Use `simulated/` instead of `mock*` source folders. There is no
-separate top-level simulated layer or `integrations/simulated/` tier.
+A `remote/` or `simulated/` folder is a Data Source at any depth of a feature or entity domain, for
+example `entities/candidate/cv/remote/`. Only Composition and tests import a Data Source. Features and
+entity views use the Entity root, and that root `index` never re-exports its own `remote/` or
+`simulated/`.
+Folders named `mock*` or `*prototype*` are errors; put fakes in `simulated/`. Put no production UI in a
+folder named "prototype".
+
+Other code in the owning domain also receives the selected source as an input. Imports between
+implementation files inside one source remain internal. Sources normalize transport DTOs into
+owner-defined contracts. Simulated sources satisfy the same contract and required lifetime as real
+sources. There is no separate top-level simulated layer or `integrations/simulated/` tier.
+
+## Modules
+
+A Module carries no product terms: another product could use it unchanged. Examples are form
+scaffolding, a navigation guard, async pacing helpers and a theme.
 
 ## Integrations
 
-An Integration binds a third-party system or library: an SDK runtime, telemetry client, document
-renderer or external client setup. Domain-specific CRUD, access decisions and fake entity stores
-belong to their Feature or Kernel owner. For example, SDK server-runtime construction stays with
-its SDK Integration, while session reads and request gates stay with the access feature's API source.
+An Integration is an adapter to a third-party system: an SDK wrapper, client setup or a document
+renderer. The app's own API and its fakes are Data Sources, not Integrations.
 
 ## Server
 
-`server/` sits outside the layers; `effect-backend-structure` governs Effect server internals.
-Only `kernel/*/api/`, `features/*/api/` and `app/api/` may import `server/`, through server public
-entrypoints. `app/api/` handlers import only `server/`. Integration adapters bind their external
-SDKs without reaching into local server internals. Keep credentials, privileged operations and
-authoritative access checks in trusted server execution. Separate browser-safe and server-only
-entrypoints within allowed source subpaths; a folder name alone does not enforce that boundary.
+`server/` sits outside the layers, and `effect-backend-structure` governs it. Only `remote/` Data
+Sources and API handlers import `server/`, and only through server public entrypoints. An API handler
+is any file under an `api/` folder of the route layer, after route groups and dynamic segments
+(`app/api/`, `app/(shop)/api/`, `routes/api/`). API handlers import only `server/`.
+
+Route files import code only from `composition/`. Style and asset imports, such as `./globals.css` or
+`../styles.css?url`, are not code imports.
+
+Keep credentials, privileged operations and authoritative access checks in trusted server execution.
+A folder name alone does not enforce the boundary between browser-safe and server-only entrypoints.
+Integration adapters bind external SDKs without reaching into local server internals.
 
 ## UI
 
-`ui/` holds visual primitives and design-system components. In a monorepo, only the shared UI package
-(for example `packages/ui`) holds them, and an app-local `ui/` folder is an error. A monorepo has
-`pnpm-workspace.yaml` or `package.json` `workspaces` at or above the package root. In a single-package
-repository, `src/ui/` is the lowest layer. Entity views stay in Kernel; other product presentation
-stays with its Feature, while agnostic capabilities stay in Modules.
+`ui/` holds primitives and shadcn components. In a monorepo, only the shared UI package (for example
+`packages/ui`) holds them, and an app-local `ui/` folder is an error. A monorepo has a
+`pnpm-workspace.yaml` or a `package.json` with `workspaces` at or above the package root. In a
+single-package repository, `src/ui/` is the lowest layer. Other presentation stays with its owner, in a
+Feature or an Entity.
 
 ## Shared Packages
 
 A capability or primitive with real consumers in more than one application belongs to a shared package.
-Code that two Surfaces of one app use stays in the app's Feature, Kernel or Module owner. Keep
-app-specific widgets and workflows in the app that owns them. Within a shared package, apply the same
-domain-worthiness test; shared code is still organized by responsibility. Package-tier naming follows
-the project's package architecture rather than creating app-local layers automatically.
+Code that two Shells of one app use stays in a Feature, Entity or Module of that app. Keep
+app-specific widgets and workflows with the app that owns them. Inside a shared package, apply the same
+domain-worthiness test; shared code is still organized by responsibility.
 
 ## Domains and Public Entrypoints
 
-A domain is the first folder under a layer, for example `features/checkout/`, `kernel/order/`,
-`modules/navigation/` or `integrations/payments/`. Composition's routing pages and shells also expose
-folder indexes. Cross-domain imports target a deliberate public entrypoint: a domain or public
-semantic subpath's `index.ts` or `index.tsx`; `ui/` is exempt. Within one domain, semantic subpaths
-may import each other, subject to the source restrictions and acyclic dependencies.
+A domain is the first folder under a layer, for example `features/checkout/`, `entities/order/`,
+`modules/navigation/` or `integrations/payments/`. A domain may have subpaths, such as
+`entities/order/refunds/`. The domain `index.ts` or `index.tsx`, or a subpath `index.ts` or
+`index.tsx`, is the only cross-domain entrypoint; `remote/server.ts` is the server entry. Imports
+inside a domain are free. `ui/` is exempt, because shadcn keeps one file per component.
 
-An index file only re-exports. Put executable implementation in a named file, including provider
-construction and page composition. Production code never imports its own folder's index, whether
-through `./index`, a directory import or an alias; tests may import it to exercise the public contract.
-Export only the contracts, views, operations and types the owner intentionally offers. Cross-domain
-deep imports and cycles are errors. Lazy loading, re-export chains and aliases preserve these
-boundaries. Use one domain name with subpaths rather than repeating the domain as a name prefix.
+An `index` file only re-exports: implementation lives in named files beside it. Production code never
+imports its own folder's `./index` or `.`; tests may, because they exercise the public entry. This
+concerns code index files only: `./index.css` and other asset files are not entries.
+
+Name one domain folder with subpaths instead of sibling folders that repeat a prefix: use
+`entities/candidate/cv/`, not `entities/candidate-cv/` beside `entities/candidate/`.
+
+Make each entrypoint a **deliberate public entrypoint**. Export only the contracts, views, operations,
+and types that the domain intentionally offers. Cross-domain deep imports and cycles are errors. Lazy
+loading, re-export chains and path aliases keep these boundaries; they do not hide a cycle.
 
 ## Invariant Owner Classifier
 
 Start with the **invariant owner**: the smallest stable domain responsible for the behavior, its rules,
-and the changes that must remain coherent. A route name, visual region, file type or reuse count alone
+and the changes that must remain coherent. A route name, visual region, file type, or reuse count alone
 does not establish ownership.
 
-1. Read the Layers table from top to bottom and distinguish application assembly, capability policy,
-   entity contracts, agnostic mechanics and third-party bindings.
-2. Code with real consumers across applications follows Shared Packages.
+Classify in this order:
+
+1. Read the [Layers](#layers) table from top to bottom. The first layer whose "Owns" cell describes
+   the responsibility owns it.
+2. Code with real consumers in more than one application goes to [Shared Packages](#shared-packages).
 3. A detail with no independent invariant stays with its current owner.
 
-Prefer the narrowest honest owner. Longer data or service lifetime is a separate decision from UI
-mounting scope; it does not by itself promote a feature into Modules or a global provider.
+Prefer the narrowest honest owner. Move code to a broader owner only when that owner truly governs it.
+
+Longer data or service lifetime is separate from UI mounting scope; it does not by itself promote
+a feature into Modules or a global provider. Packages without a route layer still need architectural
+review even when the lint plugin does not check them.
 
 ## Domain-Worthiness Classifier
 
-Before creating a feature, kernel, module, integration, package or nested domain, **scan the siblings**.
-Look for the same invariant owner, product language, workflow, change cadence and consumers. Extend
-or rename an existing owner when it already covers the responsibility.
+Before creating a feature, entity, module, integration, package, or nested domain, **scan the
+siblings**. Look for the same invariant owner, product language, workflow, change cadence, and
+consumers. Extend or rename an existing owner when it already covers the responsibility.
 
 A new domain is worthy when it gives a coherent responsibility a stable name and at least one real
-boundary: independent policy, lifecycle, state, workflow, consumer contract or reuse scope. File count
-is not the classifier. Keep implementation with its current owner when a proposed split is only
-navigational. Reject cosmetic micro-feature or micro-module splits named after a panel, button, page
-fragment or temporary layout. Keep a one-file folder folded into its owner until the folder expresses
-a deliberate public or semantic boundary.
+boundary, such as independent policy, lifecycle, state, workflow, consumer contract, or reuse scope.
+Several tightly related files may form one worthy domain; one substantial public boundary may also be
+enough. File count is not the classifier.
+
+Keep implementation with its current owner when the proposed split is only navigational. In particular,
+reject a cosmetic micro-feature, micro-entity or micro-module named after a panel, button, page
+fragment, file type, or temporary layout. Keep a one-file folder folded into its owner until that
+folder expresses a deliberate public or semantic boundary. This prevents directory depth from
+masquerading as architecture.
 
 ## Recursive Semantic Internals
 
-Apply ownership recursively at every directory and package depth. Within a domain or shared package,
-group by semantic responsibility before adding technical folders. Introduce `components/`, `hooks/`,
-`model/` or `operations/` only where related internals benefit from that secondary grouping.
-For example, a billing feature may contain `invoices/` and `payment-methods/`. Each semantic subpath
-follows the same ownership, public-boundary and acyclic-dependency rules. Kernel `views/` is a valid
-entity-owned presentation boundary; a flat technical bucket is not a substitute for semantic ownership.
+The ownership rule is recursive at every directory and package depth. Within a domain or shared package,
+group semantic subdomains before adding technical folders. Introduce local folders such as `state/`,
+`models/`, or `presentation/` only when several related internals benefit from that secondary
+grouping. `remote/`, `simulated/` and `views/` are reserved subpaths with the meanings above.
+
+For example, a billing feature may contain semantic `invoices/` and `payment-methods/` subdomains. Each
+subdomain follows the same invariant-owner, sibling-scan, public-boundary, and acyclic-dependency rules.
+A flat technical bucket remains a poor substitute for semantic ownership even when nested.
 
 ## Lint Rules
 
-This table is the authority for the `frontend-layers` contract. HI distributes the plugin as the
-`react-frontend-layers` lint asset in the `react` Pack. Check the installed plugin's actual rules before
-claiming enforcement: older releases may implement the previous model. Report missing coverage and
-check those boundaries manually until the local plugin or upstream release supports them.
+The `frontend-layers` lint plugin implements this table. HI installs it as the `react-frontend-layers`
+lint asset of the `react` Pack. This table is the authority; the plugin follows it. Every violation is
+an error. A Module's no-product-terms test is a review rule; lint checks only its imports.
 
 | Rule | Error when |
 | --- | --- |
-| `layer-order` | An import targets a higher layer, or a file outside `kernel/*/api/`, `features/*/api/` and `app/api/` imports `server/`. |
-| `route-imports` | A route-layer file imports a folder other than `composition/`, or an `app/api/` handler imports a folder other than `server/`. |
+| `layer-order` | An import targets a higher layer, or a file outside a `remote/` Data Source of `entities/` or `features/` and outside an API handler imports `server/`. |
+| `route-imports` | A route-layer file code-imports a folder other than `composition/`, or an API handler imports a folder other than `server/`. Style and asset imports are allowed. |
 | `no-peer-feature` | A file in `features/<a>/` imports `features/<b>/`. |
-| `public-entrypoint` | A cross-domain import bypasses a domain or public subpath index; `ui/` is exempt. |
-| `no-prototype-folder` | A production folder uses `*prototype*` or `mock*` to stand in for a domain owner or a `simulated/` source. |
-| `known-top-level` | A top-level folder under the layer root is not `app`, `routes`, `composition`, `features`, `kernel`, `modules`, `integrations`, `ui` or `server`. |
+| `no-peer-entity` | A file in `entities/<a>/` imports `entities/<b>/`. |
+| `public-entrypoint` | A cross-domain import targets a file other than a domain or subpath `index.ts` or `index.tsx`, or `remote/server.ts`; `ui/` is exempt. |
+| `data-source-imports` | A file outside `composition/` that is not a test or story file imports another domain's `remote/` or `simulated/` folder at any depth, or a domain root `index` re-exports its own. |
+| `index-reexports-only` | An `index.ts` or `index.tsx` holds a statement other than an import or a re-export. |
+| `no-self-index-import` | A file that is not a test or story file imports its own folder's code `index` or `.`. |
+| `layout-placement` | A layout file under `composition/` exists outside `composition/routing/shells/<name>/`. |
+| `composition-shape` | A first-level folder of `composition/` is not `providers`, `proxy` or `routing`. |
+| `no-prefix-siblings` | Two domains of one layer share the name part before their first `-` (`candidate-cv` beside `candidate-database`), or one domain's name is another domain's name plus `-` (`candidate-cv` beside `candidate`). |
+| `no-prototype-folder` | A folder named `*prototype*` or `mock*` exists. |
+| `known-top-level` | A top-level folder under the layer root is not `app`, `routes`, `composition`, `features`, `entities`, `modules`, `integrations`, `ui` or `server`. |
 | `ui-placement` | An app-local `ui/` folder exists in a monorepo. |
 
-The plugin update must also cover peer-Kernel imports, Composition/test-only source imports (including
-re-export bypasses), re-export-only indexes, production self-index imports and layout placement.
-These are required checks, not claims that a released plugin already provides rule IDs for them.
+Check the installed plugin's actual rules before claiming enforcement: older releases may implement
+the previous model. Report missing coverage and check those boundaries manually until the local plugin
+or upstream release supports them.

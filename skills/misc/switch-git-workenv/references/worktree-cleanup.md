@@ -8,7 +8,7 @@ not a request to execute cleanup.
 
 ## Inspect the selected repository
 
-Read and follow [Readonly](../../../agnostic/generic/readonly/SKILL.md) during
+Read and follow [Readonly](../../readonly/SKILL.md) during
 inspection. Determine the repository, its primary checkout, the current execution
 directory, and linked worktrees from `git worktree list --porcelain`. Limit the
 inventory to that repository. Discover host-managed worktree identities and

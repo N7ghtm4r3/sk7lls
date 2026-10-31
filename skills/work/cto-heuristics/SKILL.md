@@ -19,7 +19,7 @@ same language as the proposal the user approved.
 ## Read-only analysis and proposals
 
 Before reviewing a PR or preparing a heuristic proposal, read and follow
-[Readonly](../../agnostic/generic/readonly/SKILL.md) for that phase. Keep findings
+[Readonly](../readonly/SKILL.md) for that phase. Keep findings
 and proposals in the conversation. Review and proposal requests authorize
 inspection only: preserve local and external state, including the catalog.
 

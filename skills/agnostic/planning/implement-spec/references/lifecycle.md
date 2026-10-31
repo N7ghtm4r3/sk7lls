@@ -138,7 +138,9 @@ Create an item file only for debt that must survive the run.
 - A wave may contain one worker when dependencies or owned paths leave one task unblocked.
 - Worker routing must be available before implementation begins; otherwise repair it or report the blocker.
 - Treat every `tdd_target` as required RED-first behavior, never optional guidance.
-- Treat `tdd_status`, `red_command`, `expected_red_failure`, `green_command`, `reason_not_testable`, `red_evidence`, and `green_evidence` as the task completion contract.
+- Treat `tdd_status`, `red_command`, `expected_red_failure`, `green_command`, `reason_not_testable`, `red_evidence`, `green_evidence`, `test_form`, `invariant_refs`, and `sensitivity_evidence` as the task completion contract.
+- At each Task Gate, run `git diff --quiet` on every file named by a recorded Mutant in `sensitivity_evidence`, and block the task while a Mutant remains.
+- For `sensitivity_evidence: parent_required`, the parent runs the Sensitivity Proof itself per [tdd/sensitivity.md](../../tdd/sensitivity.md) and records it before the Task Gate passes.
 - Treat `codebase_design_notes` as required design context for code-structure changes. Verify the implemented interface, seam, adapter strategy, and test surface match it, or update the notes with the real decision.
 - For behavior-changing tasks, do not mark a task complete until real RED and GREEN evidence is recorded in `PLAN.md`.
 - Accept missing RED/GREEN evidence only when the task has an explicit `reason_not_testable` or `tdd_status: not_applicable`.
@@ -155,7 +157,7 @@ Create an item file only for debt that must survive the run.
 - Never leave sloppy debt, TODO placeholders, temporary compromises, or "later" implementation notes for in-goal work.
 - When unclear debt affects the current implementation and the spec, plan and backlog leave it open, apply the section 5 `$requirements-phase` handoff.
 - In `provider-task` mode, load `write-backlog`'s
-  [delivery-status.md](../../../requirements/write-backlog/references/delivery-status.md) branch
+  [delivery-status.md](../../write-backlog/references/delivery-status.md) branch
   for lifecycle facts. When work starts, becomes blocked, gains a pull request,
   merges, or receives staging or production evidence, immediately call
   `write-backlog` with only the directly observed fact and require exact
@@ -180,8 +182,15 @@ now. Otherwise continue implementation and perform this check immediately after
 the first meaningful in-scope commit is pushed. An empty visibility commit is
 never a qualifying change.
 
+Write the provisional body with `$pr` on every create or reuse: Summary from
+`PLAN.md`, Evidence and Review `Pending:`, Merge Danger from the spec and the
+diff so far, Authority links. Create with `gh pr create --draft --body-file`;
+for a reused draft, rewrite only its Managed Region with `gh pr edit
+--body-file`. Closeout replaces this body with the final one.
+
 The parent records the pushed commit, provider PR identity/URL, head and base,
-and exact provider readback in implementation notes. Search by recorded head
+exact provider readback and the read-back Managed Region sha256 in
+implementation notes. Search by recorded head
 and base before creation; on resume or an ambiguous creation response, read back
 that identity before retrying. A conflicting base, stack or existing non-draft
 PR requires reconciliation against accepted intent before mutation. Completion
@@ -201,7 +210,7 @@ handoff and finalization. Workers return evidence; the parent performs this upke
 - update `PLAN.md` status
 - append a concise execution log in `PLAN.md`
 - record touched files in `PLAN.md`
-- fill `red_evidence` and `green_evidence`, or the accepted non-testable reason, before marking behavior-changing work complete
+- fill `red_evidence`, `green_evidence` and `sensitivity_evidence`, or the accepted non-testable reason, before marking behavior-changing work complete
 - fill or reconcile `codebase_design_notes` when module shape, seam placement, adapters, or test surface changed
 - reconcile `## Skill Application Evidence`: verify each skill identity, allowed
   status, and how/where pointer against changed artifacts; for
@@ -321,7 +330,7 @@ Before reporting back:
 - preserve the current blocked or incomplete `SPEC.md` and `PLAN.md` statuses
   when any acceptance item, task, checkpoint, or final architecture closure is
   unmet or blocked
-- ensure the PR body, PR comment, or PR-ready handoff snippet includes the same UI evidence links when UI changed
+- when UI changed, ensure `IMPLEMENTATION-NOTES.md` holds the durable UI evidence links that closeout puts into the `$pr` Evidence section, or the PR-ready snippet when the run has no PR
 
 ## 13. Final report shape
 
@@ -348,6 +357,6 @@ proof is missing. A visible draft PR does not satisfy these gates.
 
 Once all proof matches the implemented snapshot, return the durable evidence
 pointers to delivery. Code Review is a subsequent gate; use
-[the delivery review transition](../../../../phases/delivery-phase/phases/review.md)
+[the delivery review transition](../../delivery-phase/phases/review.md)
 for the completed-pass budget and repair routing. Reviewers consume Verification
 proof; `implement-spec` retains ownership of verifier execution and maintenance.

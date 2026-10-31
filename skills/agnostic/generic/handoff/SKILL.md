@@ -15,6 +15,13 @@ The handoff must work for a receiving agent on a different machine or checkout.
 Keep the actual task and its constraints specific; portability does not mean
 replacing useful project context with a generic summary. Do not assume shared
 conversation history, local files, installed skills, or running processes.
+For delivery work, follow the authoritative
+[Delivery Handoff contract](../delivery-phase/references/phase-handoff.md#phase-exit-and-delivery-handoff).
+Resolve goal, bounds, Git identity and stable Context Pointers from durable
+artifacts; retain exact blockers and explicit unknowns. The receiving task always
+cold-routes from current authorities. The disposable Delivery Context Packet is
+never persisted. This contract is separate from the scaffold CLI Post-Command
+Handoff.
 
 ## Preserve the continuation contract
 

@@ -5,7 +5,7 @@ Use this reference only after the user explicitly closes the grill.
 ## Inputs
 
 `<wiki-root>` and the canonical article tree come from the resolved
-[wiki contract](../../../../phases/docs-ingest-phase/references/wiki-contract.md)
+[wiki contract](../../docs-ingest-phase/references/wiki-contract.md)
 (`docs-ingest-phase/references/wiki-contract.md`).
 
 Use the grill artifacts as source:
@@ -59,6 +59,12 @@ Publish each accepted domain context's glossary at:
 
 Synthesize it from the active grill glossary after `$domain-modeling`'s final consistency pass. The grill log remains the decision trail.
 
+Point `$domain-modeling` at the published pages through the repository-root `GLOSSARY-MAP.md` in the [map format](../../domain-modeling/GLOSSARY-FORMAT.md#single-vs-multi-context-repos): create it if absent, then add or update one `## Contexts` line per published context:
+
+`- [<Context>](./<wiki-root>/content/docs/project/domains/<context>-glossary.mdx) — <scope>`
+
+Done when every `domains/*-glossary.mdx` page has exactly one `## Contexts` line in `GLOSSARY-MAP.md`.
+
 Usually keep out of wiki:
 
 - retry constants
@@ -101,11 +107,11 @@ Summarize stable meaning, glossary, and axioms; link back to source docs when us
 
 After wiki changes:
 
-- apply the [discovery rules](../../../../phases/docs-ingest-phase/references/fumadocs-routing.md#discovery)
+- apply the [discovery rules](../../docs-ingest-phase/references/fumadocs-routing.md#discovery)
   (`docs-ingest-phase/references/fumadocs-routing.md#discovery`) to every
   routed page written
 - append one `grill` entry to `<wiki-root>/log.md` by the
-  [log rule](../../../../phases/docs-ingest-phase/references/wiki-ingest.md#log)
+  [log rule](../../docs-ingest-phase/references/wiki-ingest.md#log)
   (`docs-ingest-phase/references/wiki-ingest.md#log`)
 - preserve existing frontmatter
 - update `updated`

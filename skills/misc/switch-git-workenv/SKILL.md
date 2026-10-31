@@ -17,7 +17,7 @@ That mode inventories multiple candidates instead of selecting one setup target;
 its checks and removal procedure replace the single-target setup and removal flow
 below. Setup, publication, and single-target removal do not implicitly run cleanup.
 
-Read and follow [readonly](../../agnostic/generic/readonly/SKILL.md) for this phase; the later worktree and publication phases use the authorization in the user's request. Read the repository root, current branch and worktree, `git status`, local and remote branch names, upstream configuration, and `git worktree list --porcelain`. Use task context and the user's request to identify the intended branch and worktree path. Do not fetch, checkout, switch, stash, reset, prune, or create anything during inspection.
+Read and follow [readonly](../readonly/SKILL.md) for this phase; the later worktree and publication phases use the authorization in the user's request. Read the repository root, current branch and worktree, `git status`, local and remote branch names, upstream configuration, and `git worktree list --porcelain`. Use task context and the user's request to identify the intended branch and worktree path. Do not fetch, checkout, switch, stash, reset, prune, or create anything during inspection.
 
 Before any mutation, tell the user the **exact target branch**, **absolute worktree path**, and whether that worktree already exists or must be created. If either target is ambiguous, ask for the missing choice and keep inspecting anything independent of it. A branch name or path from the user takes precedence over a convention; do not silently choose another target.
 
