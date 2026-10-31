@@ -18,7 +18,7 @@ Architect the pipeline around repository evidence and the user's operating const
 
 ### 1. Establish the contract
 
-Confirm whether the request is architecture, configuration implementation, or both. State the CI/CD surfaces in scope and preserve the editing boundary: change only pipeline configuration and directly relevant documentation. Read-only discovery may inspect application, test, build, and infrastructure files; implementation must not modify production code, tests, manifests, lockfiles, build scripts, task runners, or application configuration.
+Confirm whether the request is architecture, configuration implementation, or both. State the CI/CD surfaces in scope and preserve the editing boundary: persist changes only to pipeline configuration and directly relevant documentation. Read-only discovery may inspect application, test, build, and infrastructure files. Temporary release-version substitutions in the CI checkout follow the versioning defaults below; all other implementation must preserve production code, tests, manifests, lockfiles, build scripts, task runners, and application configuration.
 
 Separate repository work from external action. Pipeline design approval does not authorize publishing, deploying, changing repository or organization settings, modifying runners or protected environments, or changing registries, cloud resources, or secret stores. Obtain authorization immediately before each such action.
 
@@ -54,7 +54,7 @@ Present a compact design brief with stages, dependencies, triggers, execution bo
 
 Before release or publication, decide:
 
-- the authoritative version source and stable/prerelease grammar;
+- the authoritative version source and stable/prerelease grammar, applying the versioning defaults below when versioning is requested;
 - the durable event that expresses release intent;
 - the source of release notes and the missing-notes behavior;
 - whether retries resume an existing attempt or create a new identity;
@@ -101,11 +101,24 @@ Done when the final report accounts for every changed file, check, justified cus
 
 This skill changes CI/CD configuration and its documentation only. Production code includes application source, services, libraries, runtime entry points, migrations, and shipped assets. Test code includes unit, integration, end-to-end, fixture, snapshot, and test-support files. These files may be read to understand commands and boundaries, but their contents remain unchanged.
 
-Generated package metadata, manifests, lockfiles, build scripts, task runners, and application configuration are not pipeline configuration. Do not mutate them merely to make a pipeline pass or to synchronize a derived value. A repository write that persists release metadata is a separate architectural and authorization decision.
+Generated package metadata, manifests, lockfiles, build scripts, task runners, and application configuration are not pipeline configuration. Pipeline steps may temporarily substitute release versions in the disposable CI checkout when supported tool overrides cannot supply consistent publication metadata. Limit substitutions to version fields, apply them before build and publication, and leave the repository unchanged. Other mutations merely to make a pipeline pass are outside scope. A repository write that persists release metadata is a separate architectural and authorization decision.
 
 ## Release and publication theory
 
-Release identity is durable state, not an incidental string. Derive versions from the authoritative release state for the relevant version line and channel; a global run counter is valid only when gaps, failed-run consumption, and cross-version continuation are accepted. Preserve published history and never assume deleting a run, tag, artifact, or release resets another system.
+### Versioning defaults
+
+When pipeline versioning is requested, preserve explicit user choices and established repository conventions. Otherwise use these defaults:
+
+- Keep the stable base version in the repository and derive the effective release version inside the workflow. Publish the base unchanged on `main` or `master`; on `develop`, append `-rc.<run-number>`. RC is the fallback channel, not a restriction: use another suffix or branch mapping when requested or already established.
+- Use the provider's workflow run number (`GITHUB_RUN_NUMBER` on GitHub Actions), accepting gaps, numbers consumed by failed runs, and continuation across base-version changes. Reuse that number on retries; exclude the attempt number. If the provider lacks a retry-stable run number, resolve an equivalent identity before implementation.
+- Apply each module's effective version consistently to its project and publication coordinates, internal dependency metadata, release tags, notes, and recovery checks. Prepare all affected modules in each independent checkout; modules retain their own base versions.
+- Prefer supported version overrides, then minimal inline substitutions where needed. Keep short blocks local, even across two workflows; introduce a resolver job, script, or reusable component only when it removes meaningful complexity or creates a needed execution boundary. Commit only pipeline configuration and documentation, never the derived versions.
+
+State the selected mapping and numbering assumptions in the design brief; the defaults do not require a separate interview when the request already authorizes this versioning scheme. Verify stable and prerelease outputs, retry identity, project/publication/dependency consistency, and repository preservation.
+
+### Publication identity
+
+Release identity is durable state, not an incidental string. Preserve published history and never assume deleting a run, tag, artifact, or release resets another system.
 
 Publication is an idempotent state transition. Define how an existing release is detected, how drafts or partial attempts resume, how duplicate uploads are avoided, and how one successful destination is reconciled when another fails. Prefer build once, sign once, record a digest, and promote the same immutable artifact. Inspect final packaged metadata and fail before publication when required release notes are absent or empty.
 
