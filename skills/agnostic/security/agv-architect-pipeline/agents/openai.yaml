@@ -1,0 +1,4 @@
+interface:
+  display_name: "AGV Architect Pipeline"
+  short_description: "Native Gradle, Axion and Vanniktech release pipelines"
+  default_prompt: "Use $agv-architect-pipeline to design or implement a GitHub Actions pipeline using Gradle, Axion, Vanniktech, and GitHub CLI, with security criteria from $audit-cicd-security and design and implementation reviews through $simplify."
