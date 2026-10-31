@@ -36,7 +36,9 @@ Record:
 - deployment or promotion entry points and their environment assumptions;
 - missing facts, conflicts, or provider decisions that affect the design.
 
-Done when every in-scope pipeline responsibility has an evidence-backed owner, input, output, and known uncertainty.
+Before proposing custom logic, inspect the official documentation for the selected provider and project tools at the versions in use. Identify which responsibilities existing workflows, provider primitives, official integrations, and supported tool commands already cover. Check examples against the required behavior, permissions, and artifact flow rather than assuming an official example satisfies the contract.
+
+Done when every in-scope pipeline responsibility has an evidence-backed owner, input, output, available implementation capability, and known uncertainty.
 
 ### 3. Model the pipeline
 
@@ -68,6 +70,17 @@ Done when agreed decisions and assumptions are recorded, and no unresolved criti
 
 ### 5. Implement the smallest coherent change
 
+Prefer native composition:
+
+- Adapt existing repository workflows and established tooling first. Replace them only when a concrete requirement or verified defect makes them unsuitable; explain the reason.
+- Express dependencies, conditions, parallelism, concurrency, permissions, artifact handoffs, and failure handling through provider primitives and supported integrations.
+- Delegate build, test, signing, publication, release, and deployment behavior to supported project-tool commands or official integrations instead of recreating their internals.
+- Introduce custom logic only for a documented capability gap. State the unmet requirement and why the available components cannot satisfy it, then keep the code limited to that responsibility.
+
+Keep control flow visible in the pipeline graph and custom code limited to necessary glue. Evaluate complexity across the entire implementation: moving logic into inline shell or hiding it behind an action does not simplify it. Extract reusable workflows or components when they remove actual duplication or establish a meaningful execution or permission boundary; keep single-purpose behavior local when extraction only adds indirection. Native or official status does not replace verification of behavior and security controls.
+
+Scope error tolerance to the recoverable operation. After an error, verify the required destination state before continuing; successful error suppression alone proves neither recovery nor idempotency. Keep unrelated build, test, and validation failures blocking.
+
 Use existing repository commands and pinned tool versions. Keep provider syntax at the orchestration edge and make stages, dependencies, permissions, artifact handoffs, approvals, and environment identities explicit. Apply least privilege and short-lived identity where supported. Never place secret values in configuration, logs, arguments, caches, artifacts, workspaces, images, or generated files.
 
 Distinguish one-time publication or environment bootstrap from repeatable updates. Document external setup, required variables by name, local equivalents, approval points, and recovery instructions without duplicating existing documentation. If a capability is absent, report it rather than editing unrelated project files or weakening a gate.
@@ -78,9 +91,11 @@ Done when the diff contains only the agreed CI/CD configuration and documentatio
 
 Run native syntax or static checks for changed configuration and the closest safe local equivalents for affected repository commands. Do not claim remote triggers, secret-dependent behavior, deployment, publication, or external settings were verified unless they actually were. Review the final diff for unsafe event contexts, excessive permissions, secret exposure, mutable dependencies, trust-inverted caches or artifacts, inconsistent paths, and scope expansion.
 
+Review every custom block and abstraction against the discovered capabilities. Replace duplicated native behavior with the supported component, retain only justified gaps, and check that simplification preserves failure semantics, permissions, and artifact identity. Include remaining capability gaps and their rationale in the handoff.
+
 Report the architecture, files changed, checks and outcomes, unverified remote behavior, external configuration still required, and recovery notes. Verify from the final diff that no production or test file changed; remove only accidental edits made during this task while preserving unrelated user changes.
 
-Done when the final report accounts for every changed file, check, unresolved uncertainty, and required external action.
+Done when the final report accounts for every changed file, check, justified custom capability, unresolved uncertainty, and required external action.
 
 ## Editing boundary
 
