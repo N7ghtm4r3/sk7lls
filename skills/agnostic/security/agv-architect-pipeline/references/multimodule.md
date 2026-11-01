@@ -25,7 +25,7 @@ Apply the main workflow's build barrier to the complete release set, not separat
 
 Inspect native publication task dependencies. If a module must consume another module from the remote registry, model that dependency and its availability gate instead of pretending every publication is independent. Gradle project dependencies may allow independent publication, but verify the generated metadata and task graph before asserting it.
 
-Make every job use the agreed revision and versions. A matrix's single reusable-workflow output is not a dependable map of all module results; choose a supported explicit aggregation or minimal read-only reporting over the known publication units. Reconcile each module's tag and Central outcome using the [publication-state guidance](native-capabilities.md#publication-and-github-release-state). An unchanged module is safe to skip only when its required publication is accounted for; a prior tag with a failed or unknown upload remains a recovery case.
+Make every job use the agreed revision and versions. A matrix's single reusable-workflow output is not a dependable map of all module results; choose a supported explicit aggregation or minimal read-only reporting over the known publication units. Distinguish a publication intentionally skipped because it is unchanged from a failure, a missing result, or an incomplete prior attempt.
 
 Create an aggregate GitHub release only after all required publications are confirmed. Recovery must distinguish individual Central outcomes from a failed aggregate release or documentation deployment.
 
@@ -33,6 +33,6 @@ Done when parallelism follows actual independence, the build barrier covers the 
 
 ## Additional validation cases
 
-Check a single changed module, a changed dependency, a shared build-file change, and no module changes. Cover shared versions and independently differing/equal versions as applicable, nested project paths, tag namespace collisions, an unchanged RC promoted to stable, an unchanged module chosen as aggregate identity, and partial parallel publication followed by a rerun or a new commit that leaves the failed module unchanged. Include a versioning migration where Central already contains prereleases missing from Git history; the chat preview must expose the discrepancy before any realignment.
+Check a single changed module, a changed dependency, a shared build-file change, and no module changes. Cover shared versions and independently differing/equal versions as applicable, nested project paths, tag namespace collisions, an unchanged RC promoted to stable, an unchanged module chosen as aggregate identity, and partial parallel publication followed by a rerun. Include a versioning migration where Central already contains prereleases missing from Git history; the chat preview must expose the discrepancy before any realignment.
 
 Done when the chosen model explains each applicable case without forced unrelated version increments, duplicate publication, or production-code changes.

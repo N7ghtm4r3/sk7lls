@@ -19,7 +19,7 @@ Use fully qualified Gradle paths. `:build` selects the root project's task; `:li
 
 ## Required build artifacts
 
-Before changing caches or excluding slow/failing tasks, match the task graph to the artifacts consumers actually require. Use task-level timing to distinguish compilation, native linking, and registry waiting. Preserve the agreed cache and credential boundaries while addressing unnecessary work.
+Before changing caches or excluding slow/failing tasks, match the task graph to the artifacts consumers actually require. Use task-level timing to distinguish compilation from native linking. Preserve the agreed cache and credential boundaries while addressing unnecessary work.
 
 - For Kotlin Multiplatform Maven libraries, native targets produce `.klib` dependencies. Explicit `binaries.framework` declarations add final binaries for direct Swift/Objective-C consumption, often with debug and release linking. They are not required merely to publish the native Maven variants. Removing unused framework declarations preserves those targets but removes standalone framework production and its linking coverage. Verify whether consumers need that deliverable. See [Kotlin native binaries](https://kotlinlang.org/docs/multiplatform/multiplatform-build-native-binaries.html).
 - For JVM libraries, `java-library` does not cancel the executable packaging added by the Spring Boot plugin. A failing `bootJar` can indicate application packaging applied to a library. Propose the appropriate native plugin configuration, preserving required BOM/dependency management, rather than automatically excluding `bootJar`. See [Spring Boot packaging](https://docs.spring.io/spring-boot/gradle-plugin/packaging.html).
@@ -60,8 +60,6 @@ gh api "repos/$GITHUB_REPOSITORY/commits/refs/tags/$TAG" --jq .sha
 ```
 
 Here `TAG` is the tag name without `refs/tags/`, including any module namespace. Validate or encode refs as required by the endpoint and verify a real namespaced tag. Resolve the commit rather than comparing a Git ref's object SHA, which may identify an annotated tag object. This check proves tag-to-commit identity only: it does not establish whether Maven coordinates are already published or whether a rerun is safe.
-
-A tag from an earlier commit can belong to a failed publication. Before classifying it as an unchanged module to skip, reconcile the required Maven coordinates and any existing Central deployment. Distinguish already published, uploaded but not yet published, confirmed absent, and unknown; resume only through a verified native operation or report the manual recovery needed. A green job with a skipped upload is not proof of destination success.
 
 Create GitHub releases with [`gh release create`](https://cli.github.com/manual/gh_release_create) and `--verify-tag` when Axion owns tags. Set prerelease/latest behavior explicitly to match the release policy. Use its supported note-generation or notes-file options; keep formatting separate from release mutation. A `gh release view` result describes GitHub state, not Central state. Authentication, network, and server errors must not be treated as absence or successful recovery.
 

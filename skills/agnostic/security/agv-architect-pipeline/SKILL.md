@@ -37,8 +37,6 @@ The same boundary applies to generated or temporary helpers: keep necessary glue
 
 Establish whether the request is design, implementation, or both. Follow `architect-pipeline` discovery without executing repository-controlled code. Identify the wrapper and plugin versions, native task owners, required artifacts and consumers, publication coordinates, branch/tag history, versions already published to Central, internal dependencies, runners, existing workflows, and documentation commands if relevant.
 
-When investigating a reported failure, identify its run, attempt, job, commit, and workflow revision before comparing it with current code. Check live job and step states; pasted logs from an earlier run do not establish a regression in a later commit. Separate queue time, setup, task execution, and remote publication waiting when explaining duration.
-
 Classify the project by what is released, not directory count. A publication unit is a Gradle project released under one version; its platform variants do not make it multimodule:
 
 - **Single module:** one publication unit and one version authority. Use direct jobs and explicit task paths; no module matrix or aggregate release identity is needed.
@@ -92,12 +90,10 @@ Done when relevant checks pass or their limitations are recorded, and the diff c
 
 Apply `$audit-cicd-security` to the final configuration in read-only mode, including transitive build/plugin and documentation execution paths. Produce its required verdict, evidence-backed findings, transfer matrix, credential-to-storage trace, and patch proposals. Keep unknown remote protections or secret scopes explicitly unknown. Follow its approval rules for remediation, then repeat affected static checks and review any authorized fixes.
 
-State the attacker capabilities and accepted trust assumptions used for the verdict. Distinguish fork contributors, internal writers, and administrators; repository-level secrets or absent protected environments alone do not establish an exploitable path. Show which actor can reach which credential under the actual triggers and permissions. Where the user explicitly trusts internal writers, describe environment restrictions as additional protection unless another verified requirement makes them necessary; retain residual risk and any difference from the audit's baseline threat model.
-
 Pay particular attention to Gradle execution with publishing/signing credentials and write tokens, checkout credential persistence, Actions caches, Gradle user-home/build/configuration caches, and artifact transfers. Step-scoped secrets remain accessible to all build logic running in that step. A cache default or official action is not evidence that the trust path is safe; when safe reuse cannot be established, disable that reuse. Record any explicit security exception narrowly, including its residual risk; do not carry exceptions from another task.
 
 For architecture-only requests, apply these criteria to the proposed graph and report implementation-dependent checks as pending; do not invent file/line findings or claim an implemented pipeline was audited.
 
-Report the release shape, changed files, native commands, justified glue, completed simplification passes, security outcome, checks, external setup, and recovery procedure. State which behavior was inspected, statically checked, or actually exercised. For observed runs, distinguish a successful job, a skipped publication step, and a confirmed registry publication; keep in-progress or unverified outcomes explicit.
+Report the release shape, changed files, native commands, justified glue, completed simplification passes, security outcome, checks, external setup, and recovery procedure. State which behavior was inspected, statically checked, or actually exercised.
 
 Done when the requested design or implementation is reviewable, every scoped change is accounted for, and no unverified deployment or security property is presented as established.
