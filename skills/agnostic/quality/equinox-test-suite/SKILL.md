@@ -60,6 +60,16 @@ Inspect the installed plugin source/API when target lifecycle matters. Do not in
 
 Discovery is complete when the selected scope, real lifecycle, target capabilities, and permitted test locations are identified, with missing capabilities recorded as blockers.
 
+## Generate compact synthetic fixtures
+
+- Reuse Kotlin factories in the existing test source sets. Construct the smallest synthetic data graph that proves the selected contract, including excluded records when relevant.
+- Keep contents and relationships deterministic. Scope generated identities by run, target, and case to prevent collisions; record a reproducible seed when randomized inputs are part of the test.
+- Generate large or repetitive payloads at runtime from bounded descriptions. Commit small sample files when their actual encoding or format is part of the contract. Keep generated payloads and runtime artifacts in ignored test output or temporary locations.
+- Include target-side data availability in fixture readiness: verify relevant contents, structure, and metadata through supported interfaces after staging. Host-side creation alone does not establish device readiness.
+- Review diagnostic artifacts separately before sharing: synthetic fixture contents do not remove runtime paths, identities, or credentials from logs and screenshots.
+
+Introduce or migrate to a JSON matrix only when requested by the user; reuse an existing relevant matrix within the selected scope. When neither applies, use ordinary Kotlin fixtures without a matrix-selection question. When a JSON matrix is selected, read [declarative fixture matrices](references/fixture-matrices.md).
+
 ## Implement backend route tests
 
 Exercise the complete boundary:
@@ -94,7 +104,6 @@ Parikshan host test
 - Use `e2eTest(config = ...)` and the suite's shared timeout.
 - Interact through public semantics and assert visible state after meaningful transitions.
 - Prefer API fixtures only for prerequisites; keep the behavior under test in the UI.
-- Generate unique actor and domain data per run and target so parallel execution cannot collide.
 - Prove visible and excluded records for ownership/tenant isolation.
 - Keep relaunch and persistence in dedicated journeys instead of using relaunch as routine cleanup.
 - Preserve a failure of an established or defined desired contract when it exposes a product defect. Product work requires its own explicit authorization outside the testing slice.
@@ -128,6 +137,8 @@ tasks.withType<E2ETestTask>().configureEach {
 Do not add a parallel backend launcher when these tasks already exist.
 
 ## Keep Gradle clean
+
+Declare required test dependencies through the existing version catalog, preserving its ordering and naming conventions. Keep fixture loading and payload generation in test code.
 
 Allow only:
 
