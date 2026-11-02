@@ -58,8 +58,8 @@ preserve that choice and give its actual screens their own page templates.
 ## Ownership and source selection
 
 An access capability owns role policy, authentication outcomes and product-aware access presentation,
-regardless of which role originally named the folder. Its `api/` source owns session reads and request
+regardless of which role originally named the folder. Its `remote/` Data Source owns session reads and request
 gating against trusted services. `composition/routing/access/` assembles that gate; Composition alone
 selects its source and supplies it through the access contract. Entity reads stay with the appropriate
-Kernel API source, and third-party runtime construction stays with its Integration. Split mixed
+Entity `remote/` source, and third-party runtime construction stays with its Integration. Split mixed
 bridges by those responsibilities. Follow the canonical source-import and server-entrypoint rules.
