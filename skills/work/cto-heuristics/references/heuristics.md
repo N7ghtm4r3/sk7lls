@@ -77,6 +77,11 @@ conventions. Centralize recurring presentation and interaction rules in reusable
 UI abstractions, while keeping context-specific decisions with their owners.
 Apply those abstractions consistently across the affected existing interfaces.
 
+- **Before extracting:** Check the underlying component library for an existing
+  component that already provides the capability. A shared abstraction composes
+  that component (layout, sizing, defaults) rather than rebuilding it from
+  lower-level primitives.
+
 **Applies when:** Adding or revising UI, extracting shared components, or finding
 repeated styling and custom implementations of capabilities already provided by
 the project.
