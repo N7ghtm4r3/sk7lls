@@ -101,3 +101,32 @@ contract.
 or extend the established selection primitive for focus, keyboard interaction,
 and selected state, while leaving each screen responsible for its content and
 selection policy.
+
+## H004 - Authority Comes From the Trusted Source
+
+**Behavior:** A contract that decides rights resolves the principal and its
+authority itself, from verified context. The rights in scope are identity,
+roles, scope, ownership and visibility. It never takes them as input from the
+caller. Callers receive the decision and pass it on instead of reconstructing
+it.
+
+Simulations of such a contract (mocks, stubs, prototypes) keep that shape. They
+replace only the source behind the contract, and they do not move the decision
+to a less trusted side or widen its inputs. Going live then swaps the source
+without changing callers.
+
+**Applies when:** Designing or simulating access checks, permission lookups,
+command handlers that record an actor, or data sources that restrict what a
+caller sees.
+
+**Reasoning:** An authority-bearing input turns every caller into a potential
+confused deputy, and types do not catch a value from the wrong origin. A
+simulation built on a weaker shape gets copied as the pattern. Later it must be
+found and rebuilt instead of swapped.
+
+**Limits:**
+
+- Explicit, authorized delegation may take a target principal; the actor still
+  comes from the trusted context.
+- Pure policy functions over an already-resolved decision are fine.
+- General untrusted-input handling and client/server placement belong to H001.
