@@ -70,37 +70,51 @@ storage is sufficient when reload persistence is not required; durable storage i
 necessary only when the contract requires it. Unsaved drafts may remain local
 unless recovery is explicitly required.
 
-## H003 - Reuse Established UI Contracts
+## H003 - Reuse Established Contracts
 
-**Behavior:** Build interfaces using the project's established components and
-conventions. Centralize recurring presentation and interaction rules in reusable
-UI abstractions, while keeping context-specific decisions with their owners.
-Apply those abstractions consistently across the affected existing interfaces.
+**Behavior:** Build on the project's established contracts instead of
+re-creating them: UI components and conventions, data and transport types,
+query and filter shapes, helpers, formatting, state handling and test support.
+Before writing a new one, look for an existing owner in the codebase, the
+underlying library or SDK, and generated clients. Centralize recurring rules in
+one reusable owner, keep context-specific decisions with their consumers, and
+apply the shared owner consistently across the affected existing code.
 
-- **Before extracting:** Check the underlying component library for an existing
-  component that already provides the capability. A shared abstraction composes
-  that component (layout, sizing, defaults) rather than rebuilding it from
-  lower-level primitives.
+- **Before extracting:** Check the underlying library for an existing
+  capability. A shared abstraction composes it (layout, sizing, defaults,
+  narrowing) rather than rebuilding it from lower-level parts.
+- **When a boundary blocks reuse:** If a project rule prevents importing the
+  original (for example an isolation rule between applications), keep exactly
+  one local copy in a neutral place that every consumer may import. Cite its
+  source and state what replaces it. Never keep one copy per consumer.
+- **When a second copy appears:** Consolidate it into the existing owner
+  instead of adding another.
 
-**Applies when:** Adding or revising UI, extracting shared components, or finding
-repeated styling and custom implementations of capabilities already provided by
-the project.
+**Applies when:** Adding or revising UI, data contracts, request or response
+types, helpers, or state handling; extracting shared code; or finding repeated
+definitions or custom implementations of something the project or its
+dependencies already provide.
 
-**Reasoning:** Reusing established contracts preserves consistency in appearance,
-behavior, and accessibility. An abstraction provides value when its consumers
-share those guarantees; moving code or renaming components alone does not achieve
-this.
+**Reasoning:** Reusing established contracts keeps behavior, appearance,
+accessibility and data shapes consistent, and makes a later change (a new
+backend field, a generated client, a design update) land in one place. Parallel
+copies drift apart silently, and each one becomes the example for the next. An
+abstraction adds value when its consumers share its guarantees; moving or
+renaming code alone does not.
 
-**Limits:** Follow the project's chosen architecture without imposing a particular
-component taxonomy or directory structure. Keep isolated compositions local.
-Introduce or extend abstractions when existing components cannot express the
-required behavior, and avoid forcing superficially similar elements into one
-contract.
+**Limits:** Follow the project's chosen architecture and boundary rules; a
+shared owner must sit where all consumers may import it. Keep isolated
+compositions local. Similar shape is not a shared contract: definitions from
+different sources or with different semantics (two backends with different
+filter languages) stay separate. A deliberate, documented provisional copy is
+acceptable when it is the only one and has a replacement trigger.
 
-**Example:** Multiple screens implement selection controls independently. Reuse
-or extend the established selection primitive for focus, keyboard interaction,
-and selected state, while leaving each screen responsible for its content and
-selection policy.
+**Example:** Two domains each declare the same search and filter types copied
+from one backend. Move them into one neutral shared contract imported by both,
+cite the backend source, and replace that single file once the generated client
+is available. A UI equivalent: several screens implement selection controls
+independently; reuse or extend the established selection primitive, leaving
+each screen its content and selection policy.
 
 ## H004 - Authority Comes From the Trusted Source
 
