@@ -130,3 +130,39 @@ found and rebuilt instead of swapped.
   comes from the trusted context.
 - Pure policy functions over an already-resolved decision are fine.
 - General untrusted-input handling and client/server placement belong to H001.
+
+## H005 - Conform to the Adopted Structure
+
+**Behavior:** When a project has adopted a structure model (layers, domain
+folders, page and shell folders, reserved subpaths), place every new or moved
+file according to that model, including its rules on folder contents and
+grouping, not only its dependency rules. Review each placement against the
+documented model: which owner and layer the file belongs to, whether its
+folder may hold it, and whether semantic subdomains come before technical
+folders. A passing structural linter proves only the rules it implements, so
+check the remaining rules explicitly. When existing code already diverges,
+follow the model for new code instead of copying the drift, and record the
+drift separately.
+
+**Applies when:** Planning file paths, adding pages, features, entities or
+shared components, moving code, or reviewing a change in a project with a
+documented structure model.
+
+**Reasoning:** A consistent tree makes ownership discoverable and lets the
+next contributor place code without guessing. Every misplaced file becomes the
+example the next change copies, so structure decays one plausible exception at
+a time, and a green linter makes that decay invisible.
+
+**Limits:** The model's intent wins over its example tree: keep
+project-native names where they express the same responsibility. A local
+convention adopted on purpose is fine when it is recorded. Fixing existing
+drift belongs to a planned migration, not to every unrelated change. Encode in
+tooling the rules that are mechanical, and keep judgment-based ones (whether a
+subdomain is meaningful) in review.
+
+**Example:** A layered frontend states that a page folder holds only its
+entry, route and template, and that a domain groups subdomains before
+technical folders. A change that adds tab components beside the template, or
+`components/<topic>/` folders next to flat `operations/`, passes an import
+linter but breaks the adopted tree. The review flags it, and the fix moves the
+files.
