@@ -40,10 +40,9 @@ source or access needed before proceeding.
 
 ## Deepen
 
-When context gaps remain, invoke `$requirements-grill` with explicit
-`mode: source-inquiry`, following its
-[source-inquiry route](../requirements-grill/phases/router.md#source-inquiry).
-Supply:
+When context gaps remain, follow this skill's
+[Source Inquiry](references/source-inquiry.md). It adapts dependency-ordered
+questioning to source retrieval within Sgranola. Supply:
 
 - the topic and supplied source scope;
 - the reconstructed context and its evidence anchors;
@@ -64,9 +63,10 @@ product decision remains open for the user's discussion.
 
 ## Propose
 
-For default delivery or an explicit brainstorm request, invoke `$brainstorm`
-with explicit `mode: chat-only`, using its
-[delivery contract](../brainstorm/SKILL.md#delivery). Supply the bounded topic,
+For default delivery or an explicit brainstorm request, use the Frame and
+Turn sections of [Brainstorm](../brainstorm/SKILL.md) as a read-only proposal
+rubric. Sgranola owns this in-chat synthesis; consulting that reference does
+not start the original skill's durable workflow. Use the bounded topic,
 operators, evidence, stated preferences, historical decisions, rejected
 alternatives and their reasons, contradictions, and remaining unknowns.
 
@@ -76,9 +76,13 @@ choices are evidence about the conversation; the user can revise them.
 Proposed defaults remain proposals until the user steers.
 
 For this proposal path, completion requires the source inquiry to be
-unnecessary, complete, or
-explicitly limited, and the brainstorm to contain its shape, alternatives,
+unnecessary, complete, or explicitly limited, and the proposal to contain
+its shape, alternatives,
 evidence, open forks, view, and invitation to react. Stop there. The user's
 next direction chooses further discussion, more research, requirements
 discovery, or another path; it does not follow automatically from the
 generated proposal.
+
+Sgranola's inquiry and proposal contracts live in this skill. Original skills
+are read-only references; invoking their full workflows is a separate next
+step chosen by the user, under their existing contracts.

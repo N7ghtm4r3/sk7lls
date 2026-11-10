@@ -6,15 +6,6 @@ never required. The router reads and selects; it writes nothing. Gates write
 every durable change through
 [the artifact contract](../references/artifact-output.md).
 
-## Source Inquiry
-
-Before reading Precision Inputs, inspect the invocation mode. For explicit
-`mode: source-inquiry`, load only
-[Source Inquiry](../references/source-inquiry.md), execute it, and return
-the context to the caller. This route is separate from requirements
-discovery: its completion does not settle requirements or enter a durable
-gate. For every other invocation, follow the requirements graph below.
-
 ## Precision Inputs
 
 Read, before route precedence:

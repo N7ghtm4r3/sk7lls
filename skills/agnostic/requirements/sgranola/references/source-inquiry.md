@@ -1,8 +1,9 @@
 # Source Inquiry
 
-Entry: the router selected explicit `mode: source-inquiry`. The caller
-supplies a topic, source scope, existing evidence, and the agent's context
-gaps. The inquiry's respondent is the source collection. Return findings
+Entry: Sgranola's Deepen step supplies a topic, source scope, existing
+evidence, and the agent's context gaps. This is Sgranola's local adaptation
+of dependency-ordered questioning; the original requirements workflow stays
+separate. The inquiry's respondent is the source collection. Return findings
 in chat; keep its working questions and evidence in context without creating
 grill status, logs, wiki pages, or other durable artifacts.
 

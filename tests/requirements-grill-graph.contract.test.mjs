@@ -54,14 +54,13 @@ const step = (text, n) => {
   return end === -1 ? rest : rest.slice(0, end + 3);
 };
 
-test("requirements-grill keeps four durable gates and a source-inquiry reference", () => {
+test("requirements-grill is a flat graph: bootstrap, router, four gates, two references", () => {
   assert.deepEqual(
     listDir(`${skillRoot}/phases`),
     ["router", ...gates].map((name) => `${name}.md`).sort(),
   );
   assert.deepEqual(listDir(`${skillRoot}/references`), [
     "artifact-output.md",
-    "source-inquiry.md",
     "wiki-output.md",
   ]);
   assert.equal(exists(`${skillRoot}/AUTHORING-HANDOFF.md`), true);
@@ -418,7 +417,6 @@ const anchorsOf = (path) => {
 test("every relative Markdown link and anchor in the grill and its neighbours resolves", () => {
   const files = [
     "skills/agnostic/requirements/brainstorm/SKILL.md",
-    ...walk("skills/agnostic/requirements/sgranola"),
     "skills/agnostic/requirements/flow-lenses/SKILL.md",
     ...walk(skillRoot),
     "skills/phases/requirements-phase/SKILL.md",
@@ -487,13 +485,12 @@ test("create-architecture runs flow-lenses, routes L3 decisions, and returns gap
   }
 });
 
-test("brainstorm composition stays in the proposal entrypoints", () => {
+test("no skill outside brainstorm calls $brainstorm as a gap scan", () => {
   const gapScanCall =
     /(?:invoke|complete|re-run|run|composes?)[^.\n]{0,60}`\$brainstorm`|`\$brainstorm`[^.\n]{0,20}(?:to completion|on the accepted|against)|\*\*Calls:\*\*[^*\n]*\$brainstorm|\(with [^)]*\$brainstorm/u;
   const offenders = walk("skills")
     .filter((file) => file.endsWith(".md"))
-    .filter((file) => !["brainstorm", "sgranola"].some((name) =>
-      file.startsWith(`skills/agnostic/requirements/${name}/`)))
+    .filter((file) => !file.startsWith("skills/agnostic/requirements/brainstorm/"))
     .filter((file) => gapScanCall.test(read(file)));
   assert.deepEqual(offenders, []);
 });
