@@ -1,6 +1,6 @@
 ---
 name: requirements-grill
-description: Requirements grilling in Altitude-routed rounds (L1 Outcome, L2 Shape, L3 Modules) with durable grill log and status, glossary and axiom decisions, and wiki synthesis after closure. Use when the user wants requirements discovery, a long design interview, branch-by-branch decision closure down to module level, canonical terminology, a compaction-safe grill, or wiki synthesis from closed grill decisions; or when a Brainstorm Brief or a compile gap is handed to the grill.
+description: Requirements grilling in Altitude-routed rounds (L1 Outcome, L2 Shape, L3 Modules) with durable grill log and status, glossary and axiom decisions, and wiki synthesis after closure. Use when the user wants requirements discovery, a long design interview, branch-by-branch decision closure down to module level, canonical terminology, a compaction-safe grill, or wiki synthesis from closed grill decisions; when a Brainstorm Brief or a compile gap is handed to the grill; or when a caller explicitly requests source-inquiry to collect context from conversations.
 ---
 
 # Requirements Grill
@@ -10,11 +10,17 @@ each round to one Altitude, and closes when every branch is settled at its
 Target Altitude or parked. The closed grill feeds `create-architecture`, then
 `create-spec`.
 
+An explicit `mode: source-inquiry` instead collects factual context for its
+caller through queries. The router selects that mode before the durable
+requirements graph below.
+
 ## Bootstrap
 
 1. Load [the grill router](phases/router.md) on every invocation and resume,
    including direct entry into any gate.
-2. Recompute the route from the precision inputs, the grill status file and
+2. For explicit `mode: source-inquiry`, follow the router's Source Inquiry
+   route and return its findings to the caller. Otherwise recompute the
+   route from the precision inputs, the grill status file and
    log, and the current message; the transcript is never required.
 3. Load exactly the one gate the router selects, or return its single
    terminal, checkpoint, or blocked outcome.

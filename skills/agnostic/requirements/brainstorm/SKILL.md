@@ -1,12 +1,25 @@
 ---
 name: brainstorm
-description: Brainstorm a bounded system with the user as a proposal loop that converges on one shape and a Brainstorm Brief. Use when the user asks to brainstorm a system, shape, or architecture.
+description: Brainstorm a bounded system with the user as a proposal loop that converges on one shape and a Brainstorm Brief. Use when the user asks to brainstorm a system, shape, or architecture, or when sgranola requests a chat-only proposal from collected context.
 ---
 
 # Brainstorm
 
 Brainstorm proposes; the user steers. Each turn moves one proposal toward a
 shape the user accepts. Question rounds belong to `$requirements-grill`.
+
+## Delivery
+
+Default delivery maintains the durable Brainstorm Brief below. With explicit
+`mode: chat-only`, keep the Brief and every update in the conversation; the
+file and metadata instructions below apply only to default delivery. This
+mode needs no wiki root and writes no durable artifacts, including visual
+files: use an inline view or the Markdown fallback from `$show-me`.
+
+Use the same Frame and six-item Turn in both modes. For a chat-only proposal
+requested by `sgranola`, return the proposal to that caller for presentation
+to the user. Completion checks the in-chat Brief. Further turns and the
+requirements handoff await the user's direction.
 
 ## Frame
 
