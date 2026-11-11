@@ -1,5 +1,5 @@
 ---
-name: mock-philophy
+name: mock-philosophy
 description: Build or review functional frontend mocks with explicit state machines, replaceable simulated actors, coherent local data and frontend domain boundaries. Use when delivering frontend behavior before backend integration, across products and frameworks.
 ---
 
