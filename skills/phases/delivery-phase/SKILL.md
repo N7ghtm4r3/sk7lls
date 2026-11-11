@@ -36,7 +36,7 @@ Within accepted bounds, full delivery grants its selected inner steps the author
 - [phases/debug.md](phases/debug.md): investigate runtime-evidence failures.
 - [phases/human-steering.md](phases/human-steering.md): return a scope or authority boundary for human steering.
 - [phases/docs-ingest.md](phases/docs-ingest.md): ingest docs-affecting changes or record a no-op.
-- [phases/closeout.md](phases/closeout.md): finish tracker, PR, validation, and final report state.
+- [phases/closeout.md](phases/closeout.md): finish tracker, PR, validation, and final report state; watch the open PR until it reports.
 
 ## Router Rules
 
@@ -59,6 +59,8 @@ Within accepted bounds, full delivery grants its selected inner steps the author
 - [references/phase-handoff.md](references/phase-handoff.md) owns durable delivery
   state and compact Delivery Handoff; [phases/review.md](phases/review.md) alone
   owns delivery review transitions and the two-completed-pass policy.
+- Write every message the user reads, including relayed subagent reports,
+  through `$wait-what`.
 - Failed-task and repair evidence selects
   [references/failure-continuity.md](references/failure-continuity.md).
 

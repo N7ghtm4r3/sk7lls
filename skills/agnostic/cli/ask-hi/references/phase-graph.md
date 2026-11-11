@@ -20,7 +20,19 @@ Phases are the lifecycle entrypoints. Each phase composes skills and ends by han
 | Reconstruct wiki knowledge for an existing project | `$docs-onboarding` | model-invoked |
 | Readonly investigation across independent surfaces | `$parallel-research` | model-invoked |
 
-An explicit-only entry starts only when the human types it. When an agent finds one is next, it names the command and stops.
+## Confirm to continue
+
+This is the one rule for how an explicit-only phase starts. Other skills link here instead of restating it.
+
+A human starts an explicit-only phase in one of three ways:
+
+1. **Typed command.** The human types `$<phase>`, directly or in a `$goalify` goal text.
+2. **Named proposal.** A phase ends and an explicit-only phase is next. The agent names that phase and its scope (goal, input artifacts, where it stops) and asks to continue. A human yes to that named proposal starts the phase. A bare yes to a vague or unnamed proposal starts nothing: the agent names the phase and scope, then asks again.
+3. **Full Delivery inner step.** A Full Delivery the human started already approves its own inner steps: `$review-phase` at `review_due`, and the return to `$requirements-phase` for a missing, stale or changed Architecture/SPEC pair, backlog projection or plan, including a scope change. The agent continues without asking again.
+
+After a start by 2 or 3, the agent reads `.agents/skills/<phase>/SKILL.md` with a file read and follows it. The Skill tool refuses a skill with `disable-model-invocation: true`, so the file read is the way in. On Codex, `allow_implicit_invocation: false` stops only the agent choosing the skill from its description; it does not block this file read, so the rule is the same on both harnesses.
+
+In every other case the agent ends its turn with the named proposal.
 
 ## Handoffs
 
@@ -30,7 +42,7 @@ $business-finder | $functional-finder → $finder-phase ⇄ $prototype-phase
 $brainstorm (proposal loop, one $show-me view per turn; no branch, commit, worktree or implementation agent) ─ Brainstorm Brief ─→ $requirements-grill
 $requirements-phase → $requirements-grill → $create-architecture → $create-spec → $write-backlog → $create-plan
         └─ result ─→ $delivery-phase
-$design-phase → (grill, brand, design system, compose, motion plan, variant rounds ⇄ quality gate, verdict, promote, backlog) ─ brief ─→ human → $delivery-phase
+$design-phase → (grill, brand, design system, optional compose, motion plan, variant rounds ⇄ quality gate, verdict, promote, backlog) ─ brief ─→ human → $delivery-phase
 $resolve-debt-phase (accepted) → $create-spec ─ brief ─→ human → $delivery-phase
 $delivery-phase (Plan Complete entry gate; missing or stale plan → $requirements-phase) → $implement-spec → $verify-behavior → $review-phase
         → repair | $debugging-phase | debt capture → $docs-ingest-phase → closeout ($write-backlog status)
@@ -48,7 +60,7 @@ $goalify → active goal → $delivery-phase (full delivery when the goal asks f
 | `$prototype-phase` | `$prototype`, `$show-me` | committed `PROTOTYPE-VERDICT.md` returned to the Finder gate |
 | `$design-phase` | `$requirements-grill`, `$brandkit`, `$shadcn`, `$expo-tailwind-setup`, `$imagegen-frontend-web`, `$imagegen-frontend-mobile`, `$find-animation-opportunities`, `$prototype-variants`, `$design-taste-frontend`, `$image-to-code`, `$emil-design-eng`, `$animate`, `$animate-expo`, `$mobile-native`, `$break-ui`, `$review-animations`, `$repo-asset-management` | delivery brief; the human invokes `$delivery-phase` |
 | `$delivery-phase` | `$implement-spec` (with `$tdd`, `$simplify`, `$verify-behavior`, `$create-verification-skill`, `$update-verification-skill`), `$review-phase`, `$debugging-phase`, `$docs-ingest-phase`, `$write-backlog`, `$repo-asset-management` | closeout: commit, push, CI, backlog status readback |
-| `$review-phase` | `scripts/review.mjs` (two Axis Runs with Engine Fallback), one Adjudicator subagent, `$show-me` | one committed Pass Report and one return route |
+| `$review-phase` | `scripts/review.mjs`, one fresh reviewer subagent, `$show-me` | one committed Pass Report and one return route |
 | `$debugging-phase` | `$verify-behavior` (reproduce), `$debug-agent`, `$show-me`, `$parallel-research` | cited cause and bounded fix, or evidence returned to delivery |
 | `$bug-discovery-phase` | ClawPatch CLI | ranked findings; stops before mutation |
 | `$bug-resolution-phase` | `$debugging-phase`, `$docs-ingest-phase` | resolved, triaged or blocked findings |

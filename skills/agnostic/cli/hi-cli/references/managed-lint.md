@@ -119,12 +119,13 @@ model, read `$frontend-domain-structure` `references/structure.md`; after a
 Baseline that changes the model, its `references/migration.md` maps old paths
 to new ones.
 
-A consumer formatter rewrites copied plugins, and `hi update` then reports
-them as local edits. `hi update` therefore merges `**/tools/oxlint/**` into
-the `ignorePatterns` of an existing `.oxfmtrc.json`. A repository without
+A consumer formatter rewrites copied plugins and Built `oxlint.config.ts`
+files, and `hi update` then reports them as local edits. `hi update` therefore
+merges `**/tools/oxlint/**` and `**/oxlint.config.ts` into the
+`ignorePatterns` of an existing `.oxfmtrc.json`. A repository without
 `.oxfmtrc.json` (Prettier, Biome, or no formatter config) gets a report row
-that names the pattern to add to its own formatter ignore; `hi update` creates
-no formatter file.
+that names each pattern to add to its own formatter ignore; `hi update`
+creates no formatter file.
 
 The runner is `node .agents/scripts/managed-lint-runner.mjs`. Pass large file
 sets with `--files-from <path>` (one repository-relative path per line) instead
@@ -155,12 +156,34 @@ of a scope still needs coverage. Shared settings, policy, routing, and
 toolchain inputs trigger their dependent owners even outside owned source.
 Existing Python tooling keeps its own routing while honoring shared exclusions.
 
+## Run Effect rules on tsrs
+
+To keep the `effect-tsgo-recommended` Oxlint rules but run them on tsrs instead
+of `oxlint-tsgolint`, set settings `lint.typeAwareBackend` to `"tsrs"` (default
+`"tsgolint"`) and run `hi update`:
+
+```json
+{ "lint": { "typeAwareBackend": "tsrs" } }
+```
+
+Each Lint Route of a scope that selects `effect-tsgo-recommended` then carries
+`tool.typeAwareBackend: "tsrs"`, and the runner starts
+`effect-tsgo --tsrs-lint oxlint ...`; other scopes keep their route. It needs
+CLI 6.10.0 or later and the scope's `@effect/tsgo` 0.67.0 or later. A missing or
+older `@effect/tsgo` is a tool failure whose message names the fix. Upstream
+marks `--tsrs-lint` experimental; to return to tsgolint, remove the key and run
+`hi update`. Complete this when those routes in `selection.json` carry
+`typeAwareBackend: "tsrs"` and managed lint on one of those scopes reports
+`passed` or `findings`, not `failed`.
+
 ## Decline a Lint Asset
 
 When a project owns a capability that a Pack's lint asset would also install,
 decline that one asset instead of removing the Pack or reverting update output.
-For example, Effect diagnostics that run on tsrs instead of the
-`effect-tsgo-recommended` Oxlint backend. List its id in settings
+For example, a type check that already reports Effect diagnostics
+(`effect-tsgo tsrs --noEmit`) makes the `effect-tsgo-recommended` Oxlint rules
+a second copy; to keep those rules on tsrs instead, follow
+[Run Effect rules on tsrs](#run-effect-rules-on-tsrs). List its id in settings
 `lint.disabledAssets`; the ids are the `lint-<id>` Registry Items named in
 `.devpunks/installed.json` and `selection.json`:
 

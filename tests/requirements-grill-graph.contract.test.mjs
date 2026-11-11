@@ -268,12 +268,19 @@ test("ground finds facts through subagents, never asks, and imports the Brief wi
   assert.match(grounding, /`opensrc`/u);
 });
 
+test("every grill question reaches the user as plain chat, never through a structured question tool", () => {
+  const rule = section(skill(), "Plain-Chat Questions");
+  assert.match(rule, /plain chat message/u);
+  assert.match(rule, /`AskUserQuestion`,\s+`request_user_input`, and every other structured question tool are forbidden\s+in every gate, always/u);
+});
+
 test("round runs $grilling unchanged through $wait-what with a $show-me view and $wayfinder for one stuck unknown", () => {
   const text = gate("round");
   assert.match(section(text, "Actor-Like Gate Boundary"), /`\$grilling` is the\s+per-round interview primitive, unchanged/u);
   const ask = step(section(text, "Bounded Action"), 4);
   assert.match(ask, /Run `\$grilling` over exactly the frontier questions/u);
   assert.match(ask, /through `\$wait-what` with one `\$show-me` view/u);
+  assert.match(ask, /as a \[plain chat message\]\(\.\.\/SKILL\.md#plain-chat-questions\)/u);
   assert.match(ask, /At L3,\s+the view is an interface sketch or a module tree/u);
   const stuck = step(section(text, "Bounded Action"), 2);
   assert.match(stuck, /invoke `\$wayfinder` with the unknown/u);
@@ -370,7 +377,7 @@ test("artifact-output defines the four altitude fields", () => {
   assert.match(text, /^- Altitude: L1 \| L2 \| L3$/mu);
   assert.match(
     text,
-    /^\| Question id \| Branch \| Altitude \| Prerequisites \| Question \| State \|$/mu,
+    /^\| Question id \| Name \| Branch \| Altitude \| Prerequisites \| Question \| State \|$/mu,
   );
   assert.match(text, /^- Brief import: <brief path> sha256 <hash> R<N> \| none$/mu);
   assert.match(text, /^## Legacy Status$/mu);
