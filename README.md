@@ -17,6 +17,12 @@ npx skills add https://github.com/wearedevpunks/skills/tree/main/skills/misc/sec
 
 `hi-cli` is the entrypoint for `hi`/`hint` usage, setup-stage guidance, `hi update`, GitHub-backed `hi report`, explicit `hi upgrade`, and the post-command `.devpunks/` artifact flow. `secrets-cli` is the required operator skill for the `secrets` executable. Other Devpunks skills are intended to be scaffolded or vendored by the CLI rather than manually installed one by one.
 
+## Contextual skill authoring
+
+Invoke the [sk7lls skill](skills/misc/sk7lls/SKILL.md) with `$sk7lls add <request>` to propose a new skill from the conversation and current context, or from a path supplied in the request. This is an agent invocation, not a shell command. It uses `readonly` and `writing-for-agents` internally; both skills must be available to the agent.
+
+The proposal stays in chat. Ask for a dry run to inspect its behavior without changing state. After approval of the content and destinations, the workflow saves the skill in the local agent skill directory and the `sk7lls` library, commits the approved files, and pushes directly to the agreed branch. Existing symlink installations can share the library copy.
+
 ## Structure
 
 - `skills/agnostic/*` holds cross-stack packs like planning, research, frontend, docs, quality, and subagents
