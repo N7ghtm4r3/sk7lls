@@ -1,6 +1,6 @@
 interface:
   display_name: "Sk7lls"
-  short_description: "Draft, dry-run, install, and publish approved skills"
-  default_prompt: "Use $sk7lls add to propose a skill from my request and current context, then install it locally and push it to the skills library after approval."
+  short_description: "Create or fix skills from context and chat evidence"
+  default_prompt: "Use $sk7lls add to create a skill or $sk7lls fix to correct one from the evidence in our chat, then install and publish the approved changes."
 policy:
   allow_implicit_invocation: false

@@ -19,9 +19,14 @@ npx skills add https://github.com/wearedevpunks/skills/tree/main/skills/misc/sec
 
 ## Contextual skill authoring
 
-Invoke the [sk7lls skill](skills/misc/sk7lls/SKILL.md) with `$sk7lls add <request>` to propose a new skill from the conversation and current context, or from a path supplied in the request. This is an agent invocation, not a shell command. It uses `readonly` and `writing-for-agents` internally; both skills must be available to the agent.
+Invoke the [sk7lls skill](skills/misc/sk7lls/SKILL.md) in chat:
 
-The proposal stays in chat. Ask for a dry run to inspect its behavior without changing state. After approval of the content and destinations, the workflow saves the skill in the local agent skill directory and the `sk7lls` library, commits the approved files, and pushes directly to the agreed branch. Existing symlink installations can share the library copy.
+- `$sk7lls add <request>` proposes a new skill from the conversation and current context, or from a supplied context path.
+- `$sk7lls fix [skill name or path] [request]` proposes a correction to an existing skill using evidence collected or identified in chat by the user and the agent. The target can be omitted when the conversation identifies it unambiguously. The proposal connects the evidence to an exact diff; unsupported fixes result in no change.
+
+These are agent invocations, not shell commands. Both operations use `readonly` and `writing-for-agents` internally; both dependencies must be available to the agent.
+
+The proposal stays in chat. Ask for a dry run to inspect its behavior without changing state; for `fix`, it replays the reported failure and checks a relevant unaffected case. After approval of the content and destinations, the workflow saves or updates the skill in the local agent skill directory and the `sk7lls` library, commits the approved changes, and pushes directly to the agreed branch. Existing symlink installations can share the library copy.
 
 ## Structure
 
