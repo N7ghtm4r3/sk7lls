@@ -1,6 +1,6 @@
 ---
 name: media-identity-integration
-description: "Create, customize, preview, and integrate app identity icons across platform targets, or run explicitly requested Brand Captures with seeded demo data, interactive galleries, and authorized repository asset saves. Use for launcher/app/window icons, favicons, and curated app captures."
+description: "Create, customize, preview, and integrate app identity icons, or run explicitly requested Brand Captures: seeded app captures, store artwork from approved assets, and store videos produced with cinetic. Use for launcher/app/window icons, favicons, and curated store media across requested targets."
 ---
 
 # Media Identity Integration
@@ -12,13 +12,13 @@ Manage app identity through Icons and Brand Captures. Reuse the app's known iden
 Resolve the workflow from the latest request and conversation. When the intent is clear, continue directly with that workflow and reuse earlier decisions. When the skill is invoked alone or the intent remains ambiguous, offer this short menu in the user's language:
 
 1. **Icons** — create, customize, preview, export, or integrate app icons.
-2. **Brand Captures** — seed demo data, tour selected targets, and curate app captures through interactive galleries.
+2. **Brand Captures** — collect and curate app captures, develop store artwork from approved assets, or produce store videos.
 
-An explicit capture request or selection of Brand Captures activates that workflow. Generic branding work does not activate captures automatically. Do not repeat the menu during revisions of the same work. Ask only for unresolved inputs within the selected workflow. Selecting a workflow does not authorize every later repository write.
+An explicit request for captures, store artwork, or store videos activates the corresponding Brand Captures phase. Selecting Brand Captures without a production request starts with capture collection. Generic branding work does not activate these phases automatically. Do not repeat the menu during revisions of the same work. Ask only for unresolved inputs within the selected workflow. Selecting a workflow does not authorize every later repository write.
 
 ## Brand Captures
 
-Read [Brand Captures](references/brand-captures.md) and follow its capture, seeding, gallery, and asset-save workflow. Its repository-readonly boundary and limited disposable-runtime exception apply independently of the icon integration permissions below. Execute only the requested workflow.
+Read [Brand Captures](references/brand-captures.md) to select capture collection, store artwork, or store video production and load only the reference needed by that phase. All phases share its repository-readonly boundary, limited disposable-runtime exception, and authorized asset-save rules, independently of the icon integration permissions below. Execute only the requested phase; later phases can reuse approved inputs from an earlier session.
 
 ## Icons
 
