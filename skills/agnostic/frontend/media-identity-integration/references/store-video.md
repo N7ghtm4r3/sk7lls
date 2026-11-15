@@ -18,11 +18,29 @@ Use [cinetic in video execution mode](cinetic-usage.md#video-execution-mode): re
 
 Create its film project outside the repository. Supply the prior assets, message, and direction through its supported brief and brand inputs. Use its direction, scene, motion, audio where applicable, rendering, and review capabilities to produce a complete reviewable draft.
 
+At its music and effects selection steps, follow the [sound audition gallery](#audition-sound-candidates) below before finalizing unresolved audio choices.
+
 Demonstrate supported product behavior truthfully. Approved screenshots can be composited and animated as images; they are not evidence that a fabricated interaction occurred. Where the destination or story requires real interaction footage, acquire or request that evidence using the capture phase's isolation and target boundaries. Do not infer additional features from an attractive animation.
 
 Keep original assets intact and maintain links from video scenes to their source material. Store-specific constraints and the supplied identity govern adaptations of cinetic's defaults. If its supported workflow cannot produce the required result within the agreed scope, report that concrete limitation instead of claiming a compliant render.
 
 Completion: a whole playable draft exists and the applicable cinetic checks have real, reported results.
+
+## Audition sound candidates
+
+Offer a playable gallery for unresolved music and effect choices during video creation, and for the affected sounds during revisions. Reuse approved choices and honor an explicit request to choose on the user's behalf. Skip this step for a silent deliverable.
+
+Use cinetic's audio sourcing, licensing, and listening workflow to prepare a small shortlist, normally two or three candidates per relevant role, such as confirmation, typing, or transition. Include music only when its choice is unresolved. Keep candidates, previews, and selection records in the external film workspace.
+
+Show the real audio in an interactive gallery through the host's rendering protocol. Group candidates by role, with localized labels, stable IDs, duration, source and license links, and play/replay controls. Use comparable audition levels, user-initiated playback, and one active player at a time. Preview the actual take or excerpt under consideration; record its source, trim, and processing so the selected sound can be reproduced.
+
+For repeated effects such as typing, include a short representative sequence. When footage is available, let the user compare shortlisted effects on the same short scene with the current music, identifying isolated versus mixed previews. Keep the picture and mix settings consistent between alternatives. Follow cinetic for analysis and synchronization; distinguish measured findings from the user's taste.
+
+Render the gallery before reporting it shown. If interactive audio is unavailable, state the limitation and offer individually playable clips. A filename list or silent mockup does not provide an audition. Accept choices by stable ID, requests for more alternatives, or omission of an optional effect. Use explicit chat instructions or selection feedback exposed by the host; playback and unreported clicks are not approval.
+
+Carry settled choices into cinetic's supported audio inputs, preserving them through later automatic selection or refinement. Reopen only affected choices when feedback or a concrete technical issue requires it. Selection settles the sound candidate; the resulting mix remains part of video review.
+
+Completion: the relevant choices are settled by explicit selection, retained approval, or delegated choice, and the selected sources are traceable. If the user is reviewing candidates, continue independent work while leaving those choices pending.
 
 ## Review and produce target exports
 
