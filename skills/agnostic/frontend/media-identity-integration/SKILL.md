@@ -18,7 +18,7 @@ An explicit request for captures, store artwork, or store videos activates the c
 
 ## Brand Captures
 
-Read [Brand Captures](references/brand-captures.md) to select capture collection, store artwork, or store video production and load only the reference needed by that phase. All phases share its repository-readonly boundary, limited disposable-runtime exception, and authorized asset-save rules, independently of the icon integration permissions below. Execute only the requested phase; later phases can reuse approved inputs from an earlier session.
+Read [Brand Captures](references/brand-captures.md) to select capture collection, store artwork, or store video production and load only the reference needed by that phase. Resolve its readonly locale reconnaissance and user locale selection before any capture or production brief, including direct entry into a later phase; reuse applicable findings and explicit choices already made. All phases share its repository-readonly boundary, limited disposable-runtime exception, localized review, and authorized asset-save rules, independently of the icon integration permissions below. Execute only the requested phase; later phases can reuse approved inputs from an earlier session.
 
 ## Icons
 

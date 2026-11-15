@@ -1,14 +1,14 @@
 # Store video
 
-This is the optional final production phase of Brand Captures. Start only for an explicit video request. Reuse the shared [state boundary](brand-captures.md#preserve-the-project-and-isolate-runtime-changes), [production brief](brand-captures.md#prepare-a-production-brief), and [asset-save rules](brand-captures.md#save-only-the-authorized-assets).
+This is the optional final production phase of Brand Captures. Start only for an explicit video request. Reuse the shared [state boundary](brand-captures.md#preserve-the-project-and-isolate-runtime-changes), [locale reconnaissance and selection](brand-captures.md#discover-and-select-locales), [production brief](brand-captures.md#prepare-a-production-brief), and [asset-save rules](brand-captures.md#save-only-the-authorized-assets).
 
 ## Assemble the approved handoff
 
-Gather the approved captures, store compositions, visual-direction record, copy, logo, palette, typography, and any authorized footage available from the earlier phases. Keep source IDs, targets, release version, and approval status traceable. Reuse prior work without requiring the earlier phases to run again or their assets to be committed.
+Gather the approved captures, store compositions, visual-direction record, copy, logo, palette, typography, and any authorized footage available from the earlier phases. Keep source IDs, locales, targets, release version, and approval status traceable. Reuse prior work without requiring the earlier phases to run again or their assets to be committed.
 
 Preserve the approved visual direction. If artwork or another input does not exist, identify whether it is needed for this video and resolve the gap; do not silently treat unreviewed material as approved or require unrelated static exports.
 
-Extend the production brief with the intended message, supported actions to demonstrate, requested stores and target profiles, duration and aspect constraints, audio expectations, and required video or companion deliverables. Verify current official requirements for those destinations before selecting a rendering or delivery profile.
+Extend the production brief with the intended message, supported actions to demonstrate, selected locales, requested stores and target profiles, duration and aspect constraints, audio expectations, and required video or companion deliverables. Match captured UI, promotional copy, and any narration or subtitles to each selected locale. Verify current official requirements for those destinations before selecting a rendering or delivery profile.
 
 Completion: cinetic has a concrete brief, accessible inputs, the approved identity, and the actual output constraints.
 
@@ -26,13 +26,13 @@ Completion: a whole playable draft exists and the applicable cinetic checks have
 
 ## Review and produce target exports
 
-Show playable drafts using the host's media support, organized by target with labels for the destination, version, locale, and output profile. Include poster thumbnails or a contact sheet when helpful, but do not substitute them for playback of the actual video. Report an unavailable playback capability rather than claiming the video was shown.
+Show playable drafts using the host's media support, organized by locale and target with labels for the destination, version, and output profile. Include poster thumbnails or a contact sheet when helpful, but do not substitute them for playback of the actual video. Report an unavailable playback capability rather than claiming the video was shown.
 
 Iterate the video in response to user feedback. Prior approval of static artwork fixes the supplied direction; the video's story, sequence, rhythm, and sound still need their own review. Preserve the direction unless the user changes it, and propagate shared corrections consistently.
 
-Once the video direction is accepted, render the requested target variants and show the final playable exports together for review and selection. Adapt each variant to its destination requirements rather than assuming one master file is accepted everywhere. Mark unavailable targets and incomplete variants explicitly.
+Once the video direction is accepted, render the requested locale and target variants and show the final playable exports together for review and selection, including localized text, narration, and subtitles when present. Adapt each variant to its destination requirements rather than assuming one master file is accepted everywhere. Mark unavailable combinations and incomplete variants explicitly.
 
-Completion: the user has reviewed the actual final outputs and settled the selection for the requested targets.
+Completion: the user has reviewed the actual localized final outputs and explicitly approved the selection for the covered locales and targets. One approval can cover the entire displayed selection; reuse valid approval for unchanged assets. Approval of the direction does not approve unseen localized exports.
 
 ## Verify and deliver
 
@@ -40,6 +40,6 @@ Run cinetic's applicable finishing and quality checks, then verify the real expo
 
 Retain the licensing and provenance records required by cinetic for fonts, footage, and sound in the external production workspace and keep them accessible with delivery. Do not infer permission to add source media, rendering code, dependencies, or records to the repository.
 
-Prepare an exact file map under `<capture-root>/prod/<version>/<target>/video/`, with agreed variant subdirectories and companion exports if requested. Apply the shared save rules: selection approval and repository-write authorization are separate, and valid prior authorization is reused.
+Prepare an exact file map using the final video layout in the shared save rules, with agreed variant subdirectories and companion exports if requested. Apply the shared save rules: selection approval and repository-write authorization are separate, and valid prior authorization is reused.
 
 Report which videos were rendered, reviewed, approved, saved, and verified for their destinations. Store upload or publication is a separate explicit action; producing the video does not authorize it.
