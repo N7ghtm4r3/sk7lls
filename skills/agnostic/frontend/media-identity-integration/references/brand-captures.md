@@ -10,7 +10,7 @@ Run the requested phase of Brand Captures. Keep the workflow reusable: derive ap
 
 These are phases of one workflow, not additional top-level menu choices. A capture-only request ends with captures. Enter a later phase directly when its inputs are already available and approved; do not repeat earlier production or require inputs to have been saved in the repository.
 
-The state boundary, locale reconnaissance and selection, and asset-save section below apply to every phase. Load the production brief only for store artwork or video.
+The state boundary, locale reconnaissance and selection, release resolution, and asset-save section below apply to every phase. Load the production brief only for store artwork or video.
 
 ## Preserve the project and isolate runtime changes
 
@@ -32,13 +32,17 @@ Present the discovered locales and any target-specific gaps in the conversation,
 
 Completion: the selected locales and target combinations are explicit, their source support is traceable, and unresolved combinations are identified. This ends the bounded readonly reconnaissance; subsequent work follows the shared runtime and save boundaries. Record the agreed locale codes, such as `it` or `en`, in the phase's external working record when that phase begins.
 
+## Resolve the release
+
+Use the agreed app release as `<version>` for captures, store artwork, and videos. Resolve it in the capture or production brief, reusing a prior decision. If it is unresolved, inspect the project's version information read-only and ask only when it remains ambiguous.
+
+Record each target's actual source build version separately from the agreed release. Check that the captured UI or source assets represent that release; confirm a differing source-to-release mapping instead of silently relabeling it.
+
 ## Prepare a production brief
 
 For store artwork or video, reuse the available approved inputs: capture selections, style decisions, copy, logo, palette, typography, and store exports. Resolve approval from the conversation or an explicit selection record; finding a file in a folder does not establish approval. Keep source IDs and paths traceable to the locale, target, and app version they depict.
 
 Resolve the requested target set using the scope rules below and carry forward the selected locales. Record the destination store or publishing channel, device or viewport variants, requested locale and target combinations, deliverable types, and exact versus maximum counts. Reuse prior choices and ask only for missing decisions that affect the result.
-
-Use the agreed app release as `<version>`. If it is unresolved, inspect the project's version information read-only and ask when it remains ambiguous. Check that the source assets depict that release; do not relabel older UI as a new version without confirmation.
 
 Inspect the current official requirements for each requested store and deliverable before designing or rendering. Record the source and relevant format, size, content, duration, encoding, and audio constraints as applicable. Requirements vary by channel and device class; do not substitute one universal store preset or transfer an export between targets without validation.
 
@@ -56,7 +60,7 @@ Support the project's actual platforms rather than a fixed mobile-only list: And
 
 Carry forward the selected locales and resolve the purpose, themes, device or viewport sizes, representative feature states, and exclusions from the conversation. Clarify an ambiguous requested quantity: exact count or maximum, per locale and target or overall. State reasonable defaults for unspecified presentation choices; do not invent a mandatory count.
 
-Keep a session record outside the repository with the agreed brief, locale and target coverage, capture IDs, source paths, and current selection. This record is working context, not a repository deliverable.
+Keep a session record outside the repository with the agreed brief, release, per-target source build versions, locale and target coverage, capture IDs, source paths, and current selection. This record is working context, not a repository deliverable.
 
 When representative behaviors or useful focus details need discovery, use the product-inventory and screenshot references through [cinetic reference mode](cinetic-usage.md#reference-mode). This consultation guides what to capture; it does not start a film or replace the real app tour.
 
@@ -100,12 +104,12 @@ Resolve one approved brand root, proposing `brand/` unless the user selected ano
 
 | Asset | Final approved destination | Explicitly requested draft destination |
 | --- | --- | --- |
-| Native capture | `captures/<target>/` | Keep unselected captures in the external workspace. |
+| Native capture | `captures/<version>/<target>/` | Keep unselected captures in the external workspace. |
 | Store screenshot | `artworks/<version>/<target>/stills/screenshots/` | `artworks/drafts/<version>/<target>/stills/screenshots/` |
 | Banner | `artworks/<version>/<target>/stills/banners/` | `artworks/drafts/<version>/<target>/stills/banners/` |
 | Video | `artworks/<version>/<target>/videos/` | `artworks/drafts/<version>/<target>/videos/` |
 
-Resolve `<version>` through the production brief. Add optional variant or state subdirectories beneath the relevant media directory (`screenshots`, `banners`, or `videos`); add store, format, or device distinctions only when needed and resolve their exact ordering in the reviewed file map. For example, a final screenshot can use `brand/it/artworks/1.0.0/ios/stills/screenshots/light/01-history.png`. Preserve source captures and earlier releases; a replacement must be explicitly covered by the authorization. This layout defines destinations, not permission to produce additional asset types.
+Use the [resolved release](#resolve-the-release) as `<version>`. Add optional variant or state subdirectories beneath the relevant media directory (`screenshots`, `banners`, or `videos`); add store, format, or device distinctions only when needed and resolve their exact ordering in the reviewed file map. For example, a native capture can use `brand/it/captures/1.0.0/ios/01-history.png`, and a final screenshot can use `brand/it/artworks/1.0.0/ios/stills/screenshots/light/01-history.png`. Preserve source captures and earlier releases; a replacement must be explicitly covered by the authorization. This layout defines destinations, not permission to produce additional asset types.
 
 Draft persistence is an optional checkpoint during composition or review, available only when the user explicitly asks to save intermediate states or candidate versions. Identify each retained state or candidate with a stable filename or subdirectory. Saving a draft does not approve final delivery or complete the current phase. A later final save follows the final-export review and authorization rules.
 
