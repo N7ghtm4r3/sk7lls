@@ -1,0 +1,6 @@
+interface:
+  display_name: "UX/UI Guide Assistant"
+  short_description: "Interactive UI proposals faithful to your app"
+  default_prompt: "Use $uxui-guide-assistant to inspect the requested section and relevant approved proposals in readonly, iterate on an interactive preview using synthetic data, and save one self-contained HTML file only after I confirm its final version and destination."
+policy:
+  allow_implicit_invocation: false
