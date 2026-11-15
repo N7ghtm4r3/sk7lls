@@ -1,6 +1,6 @@
 ---
 name: media-identity-integration
-description: "Create, customize, preview, and integrate app identity icons, or run explicitly requested Brand Captures: seeded app captures, store artwork from approved assets, and store videos produced with cinetic. Use for launcher/app/window icons, favicons, and curated store media across requested targets."
+description: "Create, customize, preview, and integrate app identity icons, or run explicitly requested Brand Captures: seeded app captures, store screenshots and banners from approved assets, and store videos produced with cinetic. Use for launcher/app/window icons, favicons, and curated store media across requested targets."
 ---
 
 # Media Identity Integration
@@ -12,9 +12,9 @@ Manage app identity through Icons and Brand Captures. Reuse the app's known iden
 Resolve the workflow from the latest request and conversation. When the intent is clear, continue directly with that workflow and reuse earlier decisions. When the skill is invoked alone or the intent remains ambiguous, offer this short menu in the user's language:
 
 1. **Icons** — create, customize, preview, export, or integrate app icons.
-2. **Brand Captures** — collect and curate app captures, develop store artwork from approved assets, or produce store videos.
+2. **Brand Captures** — collect and curate app captures, develop store screenshots or banners from approved assets, or produce store videos.
 
-An explicit request for captures, store artwork, or store videos activates the corresponding Brand Captures phase. Selecting Brand Captures without a production request starts with capture collection. Generic branding work does not activate these phases automatically. Do not repeat the menu during revisions of the same work. Ask only for unresolved inputs within the selected workflow. Selecting a workflow does not authorize every later repository write.
+An explicit request for captures, store artwork (screenshots or banners), or store videos activates the corresponding Brand Captures phase. Selecting Brand Captures without a production request starts with capture collection. Generic branding work does not activate these phases automatically. Do not repeat the menu during revisions of the same work. Ask only for unresolved inputs within the selected workflow. Selecting a workflow does not authorize every later repository write.
 
 ## Brand Captures
 

@@ -5,7 +5,7 @@ Run the requested phase of Brand Captures. Keep the workflow reusable: derive ap
 ## Choose the phase
 
 - **Capture collection:** for an explicit capture request or selection of Brand Captures alone, follow the capture brief, seeding, tour, and gallery steps below.
-- **Store artwork:** when requested, use approved captures to develop one representative composition, approve its style, and then produce the requested series. Follow [Store artwork](store-assets.md).
+- **Store artwork:** for requested screenshots or banners, use the [shared stills workflow](store-assets.md) with sources appropriate to the selected type. Its type-selection rules govern which production runs and the sequence when both types are requested.
 - **Store video:** when requested, ingest the approved material and execute cinetic's video workflow under the shared boundaries here. Follow [Store video](store-video.md).
 
 These are phases of one workflow, not additional top-level menu choices. A capture-only request ends with captures. Enter a later phase directly when its inputs are already available and approved; do not repeat earlier production or require inputs to have been saved in the repository.
@@ -34,7 +34,7 @@ Completion: the selected locales and target combinations are explicit, their sou
 
 ## Prepare a production brief
 
-For store artwork or video, reuse the approved capture selection, style decisions, copy, logo, palette, typography, and any approved store exports. Resolve approval from the conversation or an explicit selection record; finding a file in a folder does not establish approval. Keep source IDs and paths traceable to the locale, target, and app version they depict.
+For store artwork or video, reuse the available approved inputs: capture selections, style decisions, copy, logo, palette, typography, and store exports. Resolve approval from the conversation or an explicit selection record; finding a file in a folder does not establish approval. Keep source IDs and paths traceable to the locale, target, and app version they depict.
 
 Resolve the requested target set using the scope rules below and carry forward the selected locales. Record the destination store or publishing channel, device or viewport variants, requested locale and target combinations, deliverable types, and exact versus maximum counts. Reuse prior choices and ask only for missing decisions that affect the result.
 
