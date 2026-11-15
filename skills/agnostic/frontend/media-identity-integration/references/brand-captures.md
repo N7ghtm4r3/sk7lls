@@ -10,7 +10,7 @@ Run the requested phase of Brand Captures. Keep the workflow reusable: derive ap
 
 These are phases of one workflow, not additional top-level menu choices. A capture-only request ends with captures. Enter a later phase directly when its inputs are already available and approved; do not repeat earlier production or require inputs to have been saved in the repository.
 
-The state boundary, locale reconnaissance and selection, release resolution, and asset-save section below apply to every phase. Load the production brief only for store artwork or video.
+The state boundary, locale reconnaissance and selection, release resolution, [destination requirements check](#verify-destination-requirements), and asset-save section below apply to every phase. Load the production brief only for store artwork or video.
 
 ## Preserve the project and isolate runtime changes
 
@@ -38,13 +38,25 @@ Use the agreed app release as `<version>` for captures, store artwork, and video
 
 Record each target's actual source build version separately from the agreed release. Check that the captured UI or source assets represent that release; confirm a differing source-to-release mapping instead of silently relabeling it.
 
+## Verify destination requirements
+
+On the first Brand Captures invocation in each session, resolve the requested media types, stores or publishing channels, and exact placements from the conversation and project. Perform this internal, read-only check before capture, composition, or video production; sequential research is sufficient. Ask only for missing decisions that change the deliverable. For capture collection without a publishing destination, retain native capture requirements and leave store compatibility unverified.
+
+Consult current official documentation for each requested destination and media type. Record an output profile per applicable store or channel, placement, target, and device class, with the source URL and check date. Distinguish mandatory rules from recommendations and record availability conditions. Include the relevant dimensions, aspect ratio, safe areas, crop behavior, format, color and alpha, file size, counts, content restrictions, and video delivery method, duration, encoding, frame rate, and audio constraints. Research only the requested media types.
+
+Map each requested artifact to an actual supported placement. Shared creative direction does not establish export compatibility: reuse a file across destinations only after checking it against every applicable profile. If official sources are unavailable, conflicting, or do not establish a suitable placement, report the affected profile and resolve the gap before producing that deliverable.
+
+Reuse verified profiles during iterations of the same work. Recheck affected profiles when scope changes or evidence indicates changed requirements; verify current official sources again at the first invocation of a new session. Keep the findings in the phase's external working record and surface only decisions, differences, or blockers relevant to the user.
+
+Completion: every requested output profile has current official evidence and applicable constraints sufficient to guide production and final file validation. Start only production covered by resolved profiles, explicitly accounting for blocked combinations. Captures without a publishing destination remain native source material.
+
 ## Prepare a production brief
 
 For store artwork or video, reuse the available approved inputs: capture selections, style decisions, copy, logo, palette, typography, and store exports. Resolve approval from the conversation or an explicit selection record; finding a file in a folder does not establish approval. Keep source IDs and paths traceable to the locale, target, and app version they depict.
 
 Resolve the requested target set using the scope rules below and carry forward the selected locales. Record the destination store or publishing channel, device or viewport variants, requested locale and target combinations, deliverable types, and exact versus maximum counts. Reuse prior choices and ask only for missing decisions that affect the result.
 
-Inspect the current official requirements for each requested store and deliverable before designing or rendering. Record the source and relevant format, size, content, duration, encoding, and audio constraints as applicable. Requirements vary by channel and device class; do not substitute one universal store preset or transfer an export between targets without validation.
+Apply the [verified destination profiles](#verify-destination-requirements) to the brief and map each planned export to its profile. Resolve any uncovered destination or placement through that check before designing or rendering.
 
 Keep this brief and the asset-to-target map in the disposable production workspace. Supplied brand choices, the approved direction, truthful product representation, and destination requirements constrain the creative workflow. Identify missing sources or incompatible requirements instead of inventing product behavior.
 
@@ -84,7 +96,7 @@ Capture real pixels using the platform's supported capture facilities. For still
 
 Give each candidate a stable locale- and target-qualified ID, a short screen or state label, and its actual dimensions. Keep IDs stable when candidates are excluded or added; append new IDs instead of renumbering the existing set. Store all candidates outside the repository.
 
-When capture assets are intended for a particular store or publishing channel, check its current official format and size requirements for the requested device classes. Distinguish a collected candidate from a deliverable verified for those requirements.
+For captures intended for a store or publishing channel, apply the [verified destination profiles](#verify-destination-requirements) when choosing capture dimensions and framing. Distinguish a collected candidate from a deliverable verified for those requirements.
 
 ## Show and revise interactive galleries
 
@@ -119,7 +131,7 @@ Before writing, map every selected asset ID to an exact filename and destination
 
 Once authorized, copy only the selected assets to the approved paths for their asset type and review status. Keep seed data, helpers, production source projects, dependency trees, raw audio, licensing records, gallery HTML, archives, logs, working manifests, and reports outside the repository unless the user separately requests and authorizes those deliverables. Keep required external records accessible with the delivery. Do not modify app code, theme, configuration, or build wiring as part of an asset save.
 
-Verify the saved images open and videos play, preserve the reviewed export properties, match the selected IDs and counts per locale and target, and satisfy the channel requirements actually checked. For drafts, report pending review or format checks without claiming final-export readiness. Compare the final repository changes with the approved file map while preserving pre-existing work. Commit, push, store upload, and publication require the user's separate instructions.
+Verify the saved images open and videos play, preserve the reviewed export properties, match the selected IDs and counts per locale and target, and satisfy their verified destination profiles where applicable. For drafts, report pending review or format checks without claiming final-export readiness. Compare the final repository changes with the approved file map while preserving pre-existing work. Commit, push, store upload, and publication require the user's separate instructions.
 
 If saving is not authorized, retain the selection and return accessible preview artifacts outside the repository. Release only runtime resources started for this session, while keeping the returned artifacts accessible.
 
