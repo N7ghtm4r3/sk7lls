@@ -22,6 +22,13 @@ grill status, logs, wiki pages, or other durable artifacts.
    Granola material and contextual sources. Search with concrete terms, names,
    examples, and observed paraphrases; read the surrounding passages and
    transcripts when available.
+   Each round also sends its open questions to the natural-language query
+   tool, which reaches content that titles, summaries, and keyword search
+   miss. Host guidance that ranks it as a last resort orders it after search
+   and reads; it still runs. Its budget can be scarce and shared across
+   sessions, so combine the round's questions into one query, most material
+   first. A retryable failure, such as a rate limit or timeout, keeps that
+   path open: finish the other retrieval, then retry once before returning.
    Follow related conversations only within the topic and source scope.
    This route performs retrieval, not messages to participants or source
    edits. When tooling exposes only an answer without its underlying passage,
@@ -49,6 +56,8 @@ Return to the caller:
 - which gaps were answered, including follow-up findings;
 - unresolved questions and contradictions, their effect on the answer or
   proposal, and the source or access limitation behind each;
+- every query that failed or did not run, with its reason, and an offer to
+  rerun it;
 - any choices that require the user's direction.
 
 Completion is evidence coverage of the caller's gaps, not requirements

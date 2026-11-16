@@ -55,8 +55,10 @@ understanding before answering the user. Query results
 can open further dependent questions; let the inquiry follow them.
 
 Merge the returned findings, source limitations, contradictions, and remaining
-unknowns into the context. If query tools are unavailable, use readable
-attachments and carry the unsearchable gaps forward explicitly. The context
+unknowns into the context. If query tools are unavailable or still fail
+after the inquiry's retry, use readable attachments and carry the unsearched
+gaps forward explicitly; a failed query is a reported limitation, never a
+checked source. The context
 is ready when every material gap has supporting evidence or is explicitly
 unresolved after the available relevant sources have been checked. A new
 product decision remains open for the user's discussion.
