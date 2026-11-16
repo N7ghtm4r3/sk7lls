@@ -4,7 +4,7 @@ Keep cinetic as the single source of its creative guidance and video workflow. T
 
 ## Resolve the source
 
-Resolve `cinetic` through the host's available skill catalog first. Otherwise inspect an installed sibling named `cinetic`; in this categorized source checkout, [cinetic's canonical source](../../../video/cinetic/SKILL.md) is the fallback. Resolve symlinks and interpret relative references against the actual source file. Use the discovered root for its supporting files rather than a machine-specific absolute path.
+Resolve `cinetic` through the host's available skill catalog first. Otherwise inspect the [installed sibling `cinetic`](../../cinetic/SKILL.md); in the categorized source checkout, its canonical source is `skills/agnostic/video/cinetic/SKILL.md`. Resolve symlinks and interpret relative references against the actual source file. Use the discovered root for its supporting files rather than a machine-specific absolute path.
 
 Confirm the required source and referenced sections are readable. If they are missing, report the dependency and the affected phase; do not silently install a substitute, invent its content, or claim the dependency was used. Capture work that does not need that guidance can still proceed within its own scope.
 
