@@ -1,6 +1,6 @@
 ---
 name: cto-heuristics
-description: Review a PR against collected CTO judgment heuristics in read-only mode and rank confirmed findings P0-P3. Use extract to derive a heuristic from context, check whether the collection already covers it, and propose additions or refinements for approval before saving.
+description: Review a PR against collected CTO judgment heuristics in read-only mode and rank confirmed findings P0-P3; by default the latest changes, with full the whole PR. Use extract to derive a heuristic from context, check whether the collection already covers it, and propose additions or refinements for approval before saving.
 ---
 
 # CTO Heuristics
@@ -60,8 +60,28 @@ never inserts an entry or edits the collection.
 ## Review a PR on request
 
 Resolve the requested PR and revision from the user's reference and available
-context. Read its description, diff, relevant discussion, and surrounding code,
-contracts, callers, and tests needed to understand the change. Use read-only
+context, then pick the **review scope**:
+
+- **Increment (default):** the current work round, meaning uncommitted changes
+  plus commits since the last review in this conversation, or the commits or
+  files the user names. With no earlier review, the PR's latest push.
+- **Full** (`$cto-heuristics full [PR]`, or an explicit request to check the
+  whole PR): every file the PR changes against its base, whatever earlier
+  reviews covered. Read each changed file whole, not only its changed lines:
+  code the PR copies or builds on is evidence too. When a heuristic asks for an
+  existing owner, list what every candidate source actually offers: the
+  dependencies the project uses, its shared packages, and its own components
+  and helpers. Compare every file against those lists instead of recalling
+  what exists. Report problems the PR did not introduce as **inherited**,
+  separate from the PR's findings and without a priority.
+
+A full review is complete when every changed file has been checked against
+every applicable heuristic. State the scope and the reviewed revision range in
+the report.
+
+Read the PR description, the diff within the scope, relevant discussion, and
+surrounding code, contracts, callers, and tests needed to understand the
+change. Use read-only
 sources; fetching, checking out a branch, or running checks with side effects
 requires separate authorization. State any evidence or access limitation.
 
