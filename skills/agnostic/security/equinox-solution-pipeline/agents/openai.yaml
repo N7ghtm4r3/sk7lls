@@ -1,0 +1,4 @@
+interface:
+  display_name: "Equinox Solution Pipeline"
+  short_description: "Equinox app releases across mobile, desktop and web"
+  default_prompt: "Use $equinox-solution-pipeline to design, implement, or review the established Equinox Compose Multiplatform release flow, using $agv-architect-pipeline as its base reference and Vercel for Web publication."
