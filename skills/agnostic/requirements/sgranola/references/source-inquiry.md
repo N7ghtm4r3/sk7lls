@@ -1,20 +1,29 @@
 # Source Inquiry
 
-Entry: Sgranola's Deepen step supplies a topic, source scope, existing
-evidence, and the agent's context gaps. This is Sgranola's local adaptation
-of dependency-ordered questioning; the original requirements workflow stays
-separate. The inquiry's respondent is the source collection. Return findings
-in chat; keep its working questions and evidence in context without creating
-grill status, logs, wiki pages, or other durable artifacts.
+Entry: Sgranola's Deepen step runs this inquiry on every invocation and
+supplies a topic, source scope, existing evidence, and the agent's known
+context gaps. The inquiry is an internal grilling: read
+[grilling](../../grilling/SKILL.md) as a read-only rubric and apply its
+design tree, frontier, and rounds with the source collection as respondent.
+The agent asks every question and answers it from the sources; the user
+receives no question round. A decision the sources leave to the user stays
+an open question for the caller. The original requirements workflow stays
+separate. Return findings in chat; keep the tree and its evidence in context
+without creating grill status, logs, wiki pages, or other durable artifacts.
 
 ## Query Rounds
 
-1. **Map the gaps.** Turn each ambiguity, contradiction, or missing fact
-   into a question whose answer could change the caller's understanding.
-   Record the evidence already available, what remains unknown, and any
-   prerequisite question. Questions seek what was said, intended, exemplified,
-   decided, rejected, or left open in the source conversations. New choices
-   for the user remain unresolved decisions.
+1. **Build the design tree.** Branch the topic from the reconstructed
+   context: problem, operators, examples, constraints, proposals, decisions,
+   rejected alternatives, and open points. Under each branch, turn every
+   ambiguity, contradiction, missing fact, and summary-derived claim into a
+   question whose answer could change the caller's understanding. A
+   summary-derived claim (a figure, an attribution, a decision, a cause)
+   stays a question until its original passage confirms it. Record the
+   evidence already available, what remains unknown, and any prerequisite
+   question. Questions seek what was said, intended, exemplified, decided,
+   rejected, or left open in the source conversations. New choices for the
+   user remain unresolved decisions.
 2. **Select the frontier.** Query every material question whose prerequisites
    are supported. Keep dependent questions for a later round. A hypothesis
    may guide a search; seek evidence that could support or contradict it.
@@ -34,7 +43,8 @@ grill status, logs, wiki pages, or other durable artifacts.
    edits. When tooling exposes only an answer without its underlying passage,
    retain that answer's attribution and mark the supporting passage unverified.
 4. **Reconcile and expand.** Attach findings to the questions they answer,
-   with their anchors and source type. Preserve conflicting accounts and
+   with their anchors, source type, and confidence: stated, inferred, or
+   unresolved. Preserve conflicting accounts and
    distinguish a later explicit revision from a merely later mention.
    Recompute the frontier, including follow-ups exposed by the answers.
    Mark a gap unresolved when relevant available sources are exhausted,
@@ -43,8 +53,9 @@ grill status, logs, wiki pages, or other durable artifacts.
 Repeat while an unanswered material question has a new relevant retrieval
 path. A query with no matches, a repeated unsupported answer, or agreement
 between summaries does not prove a fact or settle a choice. The inquiry ends
-when every material gap is supported or explicitly unresolved and no
-unresolved gap retains a useful retrieval path. An unavailable tool limits
+when the frontier is empty: every branch of the tree visited, every material
+question supported or explicitly unresolved, and no unresolved gap retains a
+useful retrieval path. An unavailable tool limits
 the inquiry; it does not block findings already supported by the supplied
 readable material.
 
@@ -52,13 +63,18 @@ readable material.
 
 Return to the caller:
 
+- the design tree: each question with its answer, anchor, source type, and
+  confidence, or the reason it stays unresolved;
 - the enriched understanding, with source anchors for factual claims;
 - which gaps were answered, including follow-up findings;
 - unresolved questions and contradictions, their effect on the answer or
   proposal, and the source or access limitation behind each;
 - every query that failed or did not run, with its reason, and an offer to
   rerun it;
-- any choices that require the user's direction.
+- the open questions: each decision the sources leave to the user, and each
+  question only the user can settle, written as a question with its evidence
+  and a recommended answer. They are the input for the brainstorm's forks or
+  for a later grilling with the user.
 
 Completion is evidence coverage of the caller's gaps, not requirements
 closure. The caller decides how to present or use this context. This route

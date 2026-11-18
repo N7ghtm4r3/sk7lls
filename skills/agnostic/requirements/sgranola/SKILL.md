@@ -1,6 +1,6 @@
 ---
 name: sgranola
-description: Read Granola material and query context gaps to develop an idea. Use sgranola go deep to check whether a detail was discussed, represented faithfully, or supported by the current task's sources; return findings in chat.
+description: Read Granola material and grill its sources internally to develop an idea. Use sgranola go deep to check whether a detail was discussed, represented faithfully, or supported by the current task's sources; return findings in chat.
 ---
 
 # Sgranola
@@ -40,14 +40,15 @@ source or access needed before proceeding.
 
 ## Deepen
 
-When context gaps remain, follow this skill's
-[Source Inquiry](references/source-inquiry.md). It adapts dependency-ordered
-questioning to source retrieval within Sgranola. Supply:
+Every run, Go Deep included, deepens the context through this skill's
+[Source Inquiry](references/source-inquiry.md): an internal grilling of the
+sources. A complete Read does not replace it. Supply:
 
 - the topic and supplied source scope;
 - the reconstructed context and its evidence anchors;
-- each ambiguity, contradiction, or missing fact that could change the
-  answer or proposal, and why it matters.
+- each ambiguity, contradiction, missing fact, or summary-derived claim
+  already noticed that could change the answer or proposal, and why it
+  matters; the inquiry's design tree finds the rest.
 
 This is an internal inquiry: the agent formulates questions and executes
 queries against Granola and the scoped material. It resolves its own
@@ -70,7 +71,8 @@ Turn sections of [Brainstorm](../brainstorm/SKILL.md) as a read-only proposal
 rubric. Sgranola owns this in-chat synthesis; consulting that reference does
 not start the original skill's durable workflow. Use the bounded topic,
 operators, evidence, stated preferences, historical decisions, rejected
-alternatives and their reasons, contradictions, and remaining unknowns.
+alternatives and their reasons, contradictions, and remaining unknowns. The
+inquiry's open questions become the proposal's forks, each with a default.
 
 Present its complete proposal turn in chat. Carry source anchors into the
 proposal and place uncertainties beside the claims they affect. Historical
@@ -78,12 +80,13 @@ choices are evidence about the conversation; the user can revise them.
 Proposed defaults remain proposals until the user steers.
 
 For this proposal path, completion requires the source inquiry to be
-unnecessary, complete, or explicitly limited, and the proposal to contain
-its shape, alternatives,
+complete or explicitly limited, and the proposal to contain its shape,
+alternatives,
 evidence, open forks, view, and invitation to react. Stop there. The user's
 next direction chooses further discussion, more research, requirements
 discovery, or another path; it does not follow automatically from the
-generated proposal.
+generated proposal. When the user chooses a brainstorm or a grilling
+together, the inquiry's open questions are its starting input.
 
 Sgranola's inquiry and proposal contracts live in this skill. Original skills
 are read-only references; invoking their full workflows is a separate next
