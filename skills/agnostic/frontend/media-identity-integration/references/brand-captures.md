@@ -22,6 +22,8 @@ This is repository-readonly operation with a specific runtime exception; it is n
 
 Preserve other running sessions and pre-existing changes. Do not patch the app to add showcase UI, seed hooks, or capture support. If a required environment cannot be isolated without changing protected state, report the specific blocker and request a bounded exception or use an already authorized alternative. Global tool installation, project configuration changes, and changes to real data are outside the phase request.
 
+Track the absolute paths and runtime identifiers of resources created for the session in its external working record, distinguishing them from pre-existing resources. This inventory supports [optional final cleanup](#optional-final-cleanup), including requests made after setup.
+
 ## Discover and select locales
 
 Before preparing a capture or production brief, resolve and read the `readonly` skill through the host's catalog or installed skills; in a categorized source checkout, locate its directory by name. Apply its constraints to this reconnaissance as a dependent inspection phase. Inspect existing files without launching the app, generating translations, or writing records. Reuse applicable findings already established for the requested targets and release.
@@ -148,3 +150,15 @@ Verify the saved images open and videos play, preserve the reviewed export prope
 If saving is not authorized, retain the selection and return accessible preview artifacts outside the repository. Release only runtime resources started for this session, while keeping the returned artifacts accessible.
 
 Report requested versus completed locale and target coverage, counts, the saved paths or preview locations, and checks actually completed. Distinguish captured, composed, rendered, saved as draft, approved, saved as final, and format-verified assets; do not claim missing coverage, repository persistence, or store publication.
+
+## Optional final cleanup
+
+Run this step only on an explicit cleanup request, reusing any applicable request already made in the session. It applies to capture collection, store artwork, and store video. Perform it after review and delivery, or when the user ends the workflow, once no pending requested phase needs the resources. Cleanup authorizes removing session-created disposable resources; it does not authorize saving assets in a new destination.
+
+Use the session inventory to select temporary emulator/simulator instances and their data, isolated fixtures, helpers, logs, caches, build output, production dependencies, and intermediate media that are no longer needed. Preserve pre-existing SDKs, tools, devices, caches, and unrelated sessions.
+
+Before deleting, verify that delivered files remain accessible: retain selected exports or previews, approved source captures needed for reuse, explicitly retained drafts, and required provenance or licensing records. If they share a temporary directory with disposable items, keep their paths and containing directories and remove only the disposable entries.
+
+Stop any remaining processes owned by the session before removing their data. Resolve each deletion path, including symlink targets, and verify ownership and containment within the inventoried disposable locations. Leave resources with uncertain ownership or retention needs in place and report them.
+
+Completion: verify and report the session processes stopped, resources removed, artifacts retained with their locations, and any cleanup that remains incomplete. Do not claim complete cleanup when resources remain unverified.
