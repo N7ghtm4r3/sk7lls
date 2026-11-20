@@ -16,6 +16,12 @@ Resolve the workflow from the latest request and conversation. When the intent i
 
 An explicit request for captures, store artwork (screenshots or banners), or store videos activates the corresponding Brand Captures phase. Selecting Brand Captures without a production request starts with capture collection. Generic branding work does not activate these phases automatically. Do not repeat the menu during revisions of the same work. Ask only for unresolved inputs within the selected workflow. Selecting a workflow does not authorize every later repository write.
 
+## Brand root and shared icon
+
+Resolve one brand root when saving identity assets, proposing `brand/` unless the user selected another location. Keep the reusable shared icon directly at `<brand-root>/icon.png`, independent of locale, release, and target.
+
+For an authorized icon import or explicit icon save, include this copy in the exact file map and disclose replacements. Derive it from the retained selected artwork and keep it in sync with target exports, without preview-only treatments. Preserve the current scope and stricter user file lists. Brand Captures can reuse an approved copy; they do not implicitly authorize saving it.
+
 ## Brand Captures
 
 Read [Brand Captures](references/brand-captures.md) to select capture collection, store artwork, or store video production and load only the reference needed by that phase. Resolve its readonly locale reconnaissance and user locale selection before any capture or production brief, including direct entry into a later phase; reuse applicable findings and explicit choices already made. All phases share its repository-readonly boundary, limited disposable-runtime exception, localized review, and authorized asset-save rules, independently of the icon integration permissions below. Execute only the requested phase; later phases can reuse approved inputs from an earlier session.
@@ -66,6 +72,7 @@ Before writing, resolve a finite list of exact destination files and the permitt
 
 | Category | Permitted change for an icon import |
 | --- | --- |
+| Shared brand icon | Save or update the global copy defined in [Brand root and shared icon](#brand-root-and-shared-icon). |
 | Target icon assets | Add or replace the selected artwork in the formats each target consumes. |
 | Resource descriptors | Update only icon filenames, appearance slots, drawable references, or equivalent icon metadata. |
 | Build or app configuration | Add only the icon paths and resource support needed by the existing toolchain. Reuse current dependency aliases and versions. |
@@ -85,6 +92,7 @@ Prepare exports in a temporary location before copying them to their mapped dest
 - Inspect real dimensions, color space, alpha, container entries, and appearance metadata, not just extensions or filenames. Verify selected colors in solid regions while allowing expected antialiasing at edges.
 - Check that each native export retains the selected shape and intended clear space. Inspect actual ICO/ICNS representations and adaptive/themed variants where applicable.
 - Resolve every resource reference and verify that the owning target packages it. Run the smallest relevant resource-processing, compilation, or asset-catalog checks supported by the environment.
+- Verify the saved shared icon opens and matches the selected artwork revision used for the target exports. Report any omission required by the user's scope.
 - Compare the final diff with the allowed files and hunks. Do not repair unrelated build failures as part of the import.
 
 Report the imported targets, important placement choices, and checks actually completed. Distinguish resource compilation from a full application build and package creation from runtime visual verification. For preview or kit-only work, return the preview or external artifacts without claiming integration occurred.

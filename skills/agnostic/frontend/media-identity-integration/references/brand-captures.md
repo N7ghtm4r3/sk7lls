@@ -112,7 +112,7 @@ Before final persistence, show the final selected set and count for each locale 
 
 ## Save only the authorized assets
 
-Resolve one approved brand root, proposing `brand/` unless the user selected another location. Use the agreed locale code directly beneath it. The following destinations are relative to `<brand-root>/<locale>/`:
+Use the [shared brand root](../SKILL.md#brand-root-and-shared-icon). Place these localized deliverables beneath the agreed locale code. The following destinations are relative to `<brand-root>/<locale>/`:
 
 | Asset | Final approved destination | Explicitly requested draft destination |
 | --- | --- | --- |
