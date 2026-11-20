@@ -128,6 +128,8 @@ Before final persistence, show the final selected set and count for each locale 
 
 Use the [shared brand root](../SKILL.md#brand-root-and-shared-icon). Place these localized deliverables beneath the agreed locale code. The following destinations are relative to `<brand-root>/<locale>/`:
 
+Name every localized deliverable `<locale>-<asset-id>.<ext>`, using the exact directory locale once as the prefix and a stable asset ID without the locale. Apply this convention to native captures, screenshots, banners, videos, requested localized companion files, and drafts. The shared `icon.png` remains locale-independent.
+
 | Asset | Final approved destination | Explicitly requested draft destination |
 | --- | --- | --- |
 | Native capture | `captures/<version>/<target>/` | Keep unselected captures in the external workspace. |
@@ -135,7 +137,11 @@ Use the [shared brand root](../SKILL.md#brand-root-and-shared-icon). Place these
 | Banner | `artworks/<version>/<target>/stills/banners/` | `artworks/drafts/<version>/<target>/stills/banners/` |
 | Video | `artworks/<version>/<target>/videos/` | `artworks/drafts/<version>/<target>/videos/` |
 
-Use the [resolved release](#resolve-the-release) as `<version>`. Add optional variant or state subdirectories beneath the relevant media directory (`screenshots`, `banners`, or `videos`); add store, format, or device distinctions only when needed and resolve their exact ordering in the reviewed file map. For example, a native capture can use `brand/it/captures/1.0.0/ios/01-history.png`, and a final screenshot can use `brand/it/artworks/1.0.0/ios/stills/screenshots/light/01-history.png`. Preserve source captures and earlier releases; a replacement must be explicitly covered by the authorization. This layout defines destinations, not permission to produce additional asset types.
+Use the [resolved release](#resolve-the-release) as `<version>`. For phone and tablet outputs, native captures use `captures/<version>/<target>/<device>/`, and screenshot artwork uses `artworks/<version>/<target>/stills/screenshots/<variant>/<device>/`; omit `<variant>/` when no variant is selected. Use `mobile` for smartphones and the agreed tablet category, such as `tablet-7`, `tablet-10`, or `ipad`. Include the device directory even when only one device category is selected.
+
+For banners and videos, add a device directory only when the export profile is device-specific. Resolve any other variant, state, store, or format subdirectories in the reviewed file map.
+
+For example, a native capture can use `brand/it/captures/1.0.0/ios/mobile/it-ios-01-history.png`, and a final screenshot can use `brand/it/artworks/1.0.0/ios/stills/screenshots/light/mobile/it-01-history.png`. Preserve source captures and earlier releases; renames, moves, and replacements of existing assets must be explicitly covered by the approved file map. This layout defines destinations, not permission to produce additional asset types.
 
 Draft persistence is an optional checkpoint during composition or review, available only when the user explicitly asks to save intermediate states or candidate versions. Identify each retained state or candidate with a stable filename or subdirectory. Saving a draft does not approve final delivery or complete the current phase. A later final save follows the final-export review and authorization rules.
 
@@ -145,7 +151,7 @@ Before writing, map every selected asset ID to an exact filename and destination
 
 Once authorized, copy only the selected assets to the approved paths for their asset type and review status. Keep seed data, helpers, production source projects, dependency trees, raw audio, licensing records, gallery HTML, archives, logs, working manifests, and reports outside the repository unless the user separately requests and authorizes those deliverables. Keep required external records accessible with the delivery. Do not modify app code, theme, configuration, or build wiring as part of an asset save.
 
-Verify the saved images open and videos play, preserve the reviewed export properties, match the selected IDs and counts per locale and target, and satisfy their verified destination profiles where applicable. For drafts, report pending review or format checks without claiming final-export readiness. Compare the final repository changes with the approved file map while preserving pre-existing work. Commit, push, store upload, and publication require the user's separate instructions.
+Verify the saved images open and videos play, preserve the reviewed export properties, match the selected IDs, locale prefixes, device directories, and counts per locale and target, and satisfy their verified destination profiles where applicable. For drafts, report pending review or format checks without claiming final-export readiness. Compare the final repository changes with the approved file map while preserving pre-existing work. Commit, push, store upload, and publication require the user's separate instructions.
 
 If saving is not authorized, retain the selection and return accessible preview artifacts outside the repository. Release only runtime resources started for this session, while keeping the returned artifacts accessible.
 
