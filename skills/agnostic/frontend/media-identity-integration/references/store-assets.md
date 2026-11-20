@@ -12,10 +12,12 @@ Use the following type-specific inputs and review criteria within the same workf
 
 | Type | Source material | Composition | Verification focus |
 | --- | --- | --- | --- |
-| Screenshots | Approved real app captures matching the locale and target, plus identity assets. | Present a screen or capability with supporting promotional copy. | Faithful, readable UI; accurate copy; meaningful content remains visible. |
+| Screenshots | Approved real app captures matching the locale, target, and selected device category, plus identity assets. | Present a screen or capability with supporting promotional copy. | Faithful, readable UI; accurate copy; meaningful content remains visible. |
 | Banners | Approved identity assets, the agreed message, and available authorized imagery. App captures are optional. | Communicate the message within the requested banner placement and format. | Hierarchy, text and branding legibility, cropping, and any channel safe-area constraints. |
 
 For banners, resolve the publishing channel or placement, dimensions or aspect ratio, message, and any required branding or call to action in the production brief. Check the destination's current requirements through the shared brief. A banner composition without app UI can proceed from its identity and message inputs without collecting screenshots.
+
+For screenshots, inherit the [required and optional selection](brand-captures.md#select-required-and-optional-store-screenshots) established before capture collection. Check approved-source coverage against that selection before choosing the sample. On direct entry with existing images, resolve the selection first, reuse matching approved captures, and acquire and review only missing captures through the capture workflow before composition. Report unavailable combinations explicitly.
 
 Completion: the current type, requested output profiles, source requirements, and any sequence for an explicitly requested second type are resolved.
 

@@ -50,13 +50,25 @@ Reuse verified profiles during iterations of the same work. Recheck affected pro
 
 Completion: every requested output profile has current official evidence and applicable constraints sufficient to guide production and final file validation. Start only production covered by resolved profiles, explicitly accounting for blocked combinations. Captures without a publishing destination remain native source material.
 
+## Select required and optional store screenshots
+
+For captures intended for store screenshots, complete this step after destination verification and before the capture brief, seeding, or tour. Artwork production inherits the result; direct entry with existing captures still requires this selection and a source-coverage check before composition. Skip this step for native captures without a store destination and for requests limited to banners or videos.
+
+Use the verified official sources and read-only evidence of the app's supported devices to identify the applicable screenshot categories for each requested store, including tablet and foldable categories where relevant. Discover categories beyond those already named by the user or represented in available captures. Resolve conditional requirements against actual app support; report unresolved conditions instead of classifying them as optional.
+
+Show a concise matrix with only the store, screenshot or device category, and mandatory or optional status. Treat store recommendations as optional, with a short note when useful. Keep dimensions, formats, counts, and other technical constraints in the verified output profiles.
+
+Include applicable mandatory categories in the capture scope. When optional categories are available and the choice is unresolved, ask which the user wants to add; reuse explicit choices covering the current stores and categories. Optional categories enter the scope only on explicit request; asking for all targets does not select every optional store screenshot. If the user deliberately excludes a mandatory category, report the resulting incomplete store coverage. Carry the selected categories into capture planning, review, and the approved-source handoff to artwork production.
+
+Completion: the matrix has been shown, applicable mandatory categories and any explicitly requested optional categories are mapped to verified profiles, and exclusions or unresolved combinations are identified before capture planning begins.
+
 ## Prepare a production brief
 
 For store artwork or video, reuse the available approved inputs: capture selections, style decisions, copy, logo, palette, typography, and store exports. Resolve approval from the conversation or an explicit selection record; finding a file in a folder does not establish approval. Keep source IDs and paths traceable to the locale, target, and app version they depict.
 
 Resolve the requested target set using the scope rules below and carry forward the selected locales. Record the destination store or publishing channel, device or viewport variants, requested locale and target combinations, deliverable types, and exact versus maximum counts. Reuse prior choices and ask only for missing decisions that affect the result.
 
-Apply the [verified destination profiles](#verify-destination-requirements) to the brief and map each planned export to its profile. Resolve any uncovered destination or placement through that check before designing or rendering.
+Apply the [verified destination profiles](#verify-destination-requirements) to the brief and map each planned export to its profile. For screenshot artwork, inherit the [selected store screenshot categories](#select-required-and-optional-store-screenshots) and their approved captures. Resolve any uncovered destination or placement through that check before designing or rendering.
 
 Keep this brief and the asset-to-target map in the disposable production workspace. Supplied brand choices, the approved direction, truthful product representation, and destination requirements constrain the creative workflow. Identify missing sources or incompatible requirements instead of inventing product behavior.
 
@@ -65,12 +77,12 @@ Keep this brief and the asset-to-target map in the disposable production workspa
 Inspect the actual project targets and reconcile them with the user's request and prior decisions:
 
 - A specific target request covers only that target and its agreed device or viewport variants.
-- An explicit request for all targets covers every target present in the project, including the supported device classes and operating systems in that scope. Do not reduce it to the targets convenient to run locally.
+- An explicit request for all targets covers every target present in the project, including the supported device classes and operating systems in that scope. For store screenshots, determine the capture categories through the [required and optional selection](#select-required-and-optional-store-screenshots). Do not reduce coverage to the targets convenient to run locally.
 - Reuse an already agreed target list. If no target scope can be resolved, ask for it before starting the tour.
 
 Support the project's actual platforms rather than a fixed mobile-only list: Android; iOS and iPadOS where supported; desktop on the requested macOS, Windows, and Linux targets; web; and any other implemented target explicitly included. Adapt the capture method to each environment. Shared UI code does not make a capture from one target evidence for another. Report unavailable targets as not captured, with the missing capability.
 
-Carry forward the selected locales and resolve the purpose, themes, device or viewport sizes, representative feature states, and exclusions from the conversation. Clarify an ambiguous requested quantity: exact count or maximum, per locale and target or overall. State reasonable defaults for unspecified presentation choices; do not invent a mandatory count.
+Carry forward the selected locales and resolve the purpose, themes, device or viewport sizes, representative feature states, and exclusions from the conversation. For store screenshots, derive the required captures and device or viewport sizes from the selected screenshot categories and their verified profiles. Clarify an ambiguous requested quantity: exact count or maximum, per locale and target or overall. State reasonable defaults for unspecified presentation choices; do not invent a mandatory count.
 
 Keep a session record outside the repository with the agreed brief, release, per-target source build versions, locale and target coverage, capture IDs, source paths, and current selection. This record is working context, not a repository deliverable.
 
@@ -94,7 +106,7 @@ For every agreed locale and target combination, prepare its isolated runtime, se
 
 Capture real pixels using the platform's supported capture facilities. For still images, preserve native resolution and lossless originals. Keep device or window framing, overlays, and presentation treatments outside the originals unless explicitly requested. Do not generate replacement UI.
 
-Give each candidate a stable locale- and target-qualified ID, a short screen or state label, and its actual dimensions. Keep IDs stable when candidates are excluded or added; append new IDs instead of renumbering the existing set. Store all candidates outside the repository.
+Give each candidate a stable locale- and target-qualified ID, a short screen or state label, its actual device or viewport category, and dimensions. Keep IDs stable when candidates are excluded or added; append new IDs instead of renumbering the existing set. Store all candidates outside the repository.
 
 For captures intended for a store or publishing channel, apply the [verified destination profiles](#verify-destination-requirements) when choosing capture dimensions and framing. Distinguish a collected candidate from a deliverable verified for those requirements.
 
