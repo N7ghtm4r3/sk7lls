@@ -215,9 +215,9 @@ To inspect stack configuration:
 pulumi config
 ```
 
-## Use the repository template
+## Use the bundled template
 
-After completing base Pulumi configuration, use the `aws-infra-template` repository as a structural reference for the infrastructure project.
+After completing base Pulumi configuration, use the bundled [`aws-infra-template`](../assets/aws-infra-template/README.md) as a structural reference for the infrastructure project.
 
 Retrieve these directories from the template:
 
@@ -1255,7 +1255,7 @@ pulumi new aws-typescript
 pulumi stack change-secrets-provider \
   "awskms://alias/[slug]?region=[region]"
 
-# after base configuration, copy from aws-infra-template
+# after base configuration, copy from assets/aws-infra-template
 # the components and lib directories into the provider directory, such as infra/aws
 
 # also copy non-sensitive template configuration

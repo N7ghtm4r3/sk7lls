@@ -1,0 +1,25 @@
+config:
+  aws:region: "[aws-region]"
+  domains:dnsZone: "[staging-domain]"
+  vpc:addresses: "[vpc-cidr]"
+  vpc:maxAzs: "2"
+  vpc:natGateways: "0"
+  vpc:subnets:
+    - cidrMask: 18
+      name: Public
+      subnetType: Public
+    - cidrMask: 18
+      name: Private
+      subnetType: Isolated
+  db:instanceClass: db.t4g.micro
+  db:allocatedStorage: "20"
+  db:engineVersion: "18.3"
+  db:databaseName: "[db-name]"
+  db:username: "[db-user]"
+  backend:dns: "api.[staging-domain]"
+  backend:useSampleImage: "true"
+  backend:replicas: "1"
+  backend:cpu: "256"
+  backend:memory: "512"
+  backend:debug: "true"
+  webapp:dns: "fe.[staging-domain]"

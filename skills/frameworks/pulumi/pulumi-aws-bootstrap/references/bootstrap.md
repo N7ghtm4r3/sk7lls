@@ -36,7 +36,7 @@ For an existing project or stack, inspect `Pulumi.yaml`, `Pulumi.*.yaml`, `pulum
 
 ## Integrate a shared template
 
-After `pulumi new`, copy only the reusable infrastructure source required by the project, commonly:
+After `pulumi new`, copy only the reusable infrastructure source required by the project from the repository's shared template, or from the bundled [`aws-infra-template`](../assets/aws-infra-template/README.md) when none exists, commonly:
 
 ```text
 infra/aws/
