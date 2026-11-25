@@ -1,6 +1,6 @@
 ---
 name: pulumi-aws-bootstrap
-description: "Bootstrap or adapt Pulumi on AWS with S3 state and KMS secrets; set up projects/stacks, the first ECR/ECS image cycle, GitHub Actions OIDC, managed-node credentials, private database access through SSM, or deployment workflows."
+description: "Bootstrap or adapt Pulumi on AWS with S3 state and KMS secrets; set up projects/stacks, the first ECR/ECS release, GitHub Actions OIDC, managed-node credentials, private database access through SSM, or deployment workflows."
 ---
 
 # Pulumi AWS Bootstrap
@@ -32,10 +32,12 @@ The selected branch determines discovery, validation, and completion. For access
 3. Implement the smallest requested scope.
    - Follow the selected reference in order.
    - Match repository conventions and reuse existing components or workflows.
+   - Reach for a standard primitive first: the Pulumi or AWS CLI, an official action, or a native AWS feature such as ECS deployment rollback. Write a script, wrapper, or flag only for a gap no primitive covers, and name that gap.
    - Completion: requested files or access configuration are complete, with no scaffold TODOs and valid scope-specific paths and commands; otherwise report the exact unmet prerequisite.
 
 4. Validate the selected operation.
    - For infrastructure changes, run available format/type checks pertinent to the changed files and `pulumi preview` for the intended stack when credentials and backend access are available. Explain preview changes and unresolved placeholders before `pulumi up`.
+   - For infrastructure or workflow changes, run a simplicity check: every custom script, flag, and setting covers a named gap or has an effect visible in the preview or the workflow run. Replace or remove the rest before deployment.
    - For workflow-only changes, validate the changed workflow, branch/environment mappings, IAM trust/permission configuration, and repository conventions. Run infrastructure checks or preview only when infrastructure is also changed or the user explicitly requests that validation.
    - For existing-node or database access, verify the selected identity and target, required permissions, readiness/network path, and the requested session or connection result. Do not run project format/type checks, `pulumi preview`, or bootstrap commands merely to establish access.
    - Completion: the checks relevant to the requested operation pass, or each blocker is reported with the exact command and reason. Separate inspected prerequisites from an access result actually verified at runtime.
@@ -58,7 +60,11 @@ The selected branch determines discovery, validation, and completion. For access
 - Retrieve database passwords from Secrets Manager directly into the system clipboard when practical, and do not place them in shell history, logs, or documentation.
 - Keep operating-system credentials, private-database credentials, and any locally installed PostgreSQL server credentials distinct. Do not mistake pgAdmin's auto-registered local `PostgreSQL <version>` server or its `postgres` user for the managed database.
 - Keep generated signing/session secrets stable after bootstrap unless rotation is intentional.
-- Do not disable the sample image until the referenced real image tag exists in the registry.
+- Pulumi provisions the infrastructure; the release pipeline deploys application versions. Keep the image tag in Pulumi config only for a single service with rare releases.
+- Keep one-time bootstrap (state bucket, KMS key, first database user) as operator steps. Pipelines run only what every deploy needs.
+- Derive service lists and change paths from the workspace graph or manifests that already exist.
+- Keep AWS-generated credentials, such as the RDS-managed master password, out of Pulumi state. Containers read secrets through Secrets Manager references in `secrets`, not `environment`.
+- When a pipeline role can create IAM roles, require a permissions boundary on every role it creates and deny edits or removal of that boundary.
 - Prefer GitHub OIDC and short-lived AWS credentials over access keys in GitHub Secrets.
 - Restrict the OIDC trust policy to the intended repository and refs.
 - Treat `AdministratorAccess` as a temporary, explicit bootstrap choice; prefer least privilege.

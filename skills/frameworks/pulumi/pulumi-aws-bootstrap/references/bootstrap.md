@@ -12,6 +12,8 @@ Verify, rather than silently create:
 - The KMS key or alias exists and is usable.
 - The intended stack and `infra/aws` project do not already exist.
 
+Create a missing state bucket or KMS key once, as an operator step with the AWS CLI. Pipelines and the Pulumi program only use them.
+
 If credentials need interactive setup, let the user run `aws configure` or use the repository's established profile/SSO flow. Do not request access keys in chat.
 
 ## Initialize a new project
@@ -49,6 +51,8 @@ infra/aws/
 
 Adapt `index.ts`; the generated sample is not the finished infrastructure. It should read stack configuration, instantiate the required components, connect requested resources, and export useful outputs.
 
+Size the VPC with free address space for another subnet tier or Availability Zone: for a /16 with two tiers in two zones, use /20 subnets. Changing subnets after deployment replaces them, together with the RDS subnet group and services on them.
+
 Do not copy template secrets. Copy only relevant non-sensitive settings, then replace template domains, resource names, and environment values with verified project values.
 
 ## Configure a stack
@@ -75,39 +79,16 @@ pulumi config set --secret backend:authSecret "$(openssl rand -base64 32)"
 
 Do not regenerate stable signing/session secrets on routine deploys. Verify stored keys without revealing decrypted values with `pulumi config`.
 
-## Break the ECR/ECS bootstrap cycle
+## First release
 
-When Pulumi creates the ECR repository that ECS must consume, deploy a sample image first if the project supports it:
+Pulumi creates the ECR repository and an ECS service that starts with zero tasks and ignores task-definition and desired-count changes. Nothing runs before the first release, so no sample image is needed.
 
-```bash
-pulumi config set backend:useSampleImage true
-pulumi preview
-pulumi up
-```
+1. Run `pulumi preview`, then `pulumi up` after approval.
+2. Complete the [one-time steps](../assets/aws-infra-template/README.md#one-time-steps-after-the-first-pulumi-up) in the template README, such as the application database user.
+3. Run the release from [Release model](github-actions-oidc.md#release-model).
+4. Verify that the service reaches a steady state and the health check passes.
 
-After ECR exists, build and push the real application image using the repository's actual Dockerfile and context:
-
-```bash
-ECR="$(pulumi stack output ecrRepositoryUrl)"
-TAG="$(git rev-parse --short HEAD)"
-
-aws ecr get-login-password --region "[aws-region]" \
-  | docker login --username AWS --password-stdin "${ECR%/*}"
-
-docker build -f "[backend-dockerfile-path]" -t "$ECR:$TAG" "[docker-context]"
-docker push "$ECR:$TAG"
-```
-
-Verify the exact tag exists in ECR. Only then switch to the real image:
-
-```bash
-pulumi config set backend:useSampleImage false
-pulumi config set commitHash "$TAG"
-pulumi preview
-pulumi up
-```
-
-`commitHash` is a version/tag convention, not a Pulumi requirement. Use the project's existing image-version key when different.
+After this, infrastructure changes go through `pulumi up` and application versions go through the release pipeline.
 
 For private database administration after deployment, follow the relevant section in the complete [Pulumi infrastructure setup routine](pulumi-infra-setup.md). Choose the connection path based on where the client runs: use SSM port forwarding from outside the VPC, or the private endpoint and real database port from an admin node that already has network access.
 

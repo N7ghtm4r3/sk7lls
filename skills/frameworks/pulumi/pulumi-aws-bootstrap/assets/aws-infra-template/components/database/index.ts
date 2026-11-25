@@ -1,70 +1,47 @@
 import * as aws from "@pulumi/aws";
 import * as awsx from "@pulumi/awsx";
 import * as pulumi from "@pulumi/pulumi";
-import * as random from "@pulumi/random";
 
 export type DatabaseConfig = {
   vpc: awsx.ec2.Vpc;
   instanceClass: string;
   allocatedStorage: number;
+  /** Major version only: RDS applies minor upgrades, so a pinned minor drifts. */
   engineVersion: string;
   databaseName: string;
   username: string;
 };
 
+/**
+ * RDS PostgreSQL in isolated subnets. RDS keeps the master password in Secrets Manager,
+ * so it never enters Pulumi state. The application uses its own user: `appSecret`
+ * starts empty and the operator fills it once (README, one-time steps).
+ */
 export class Database extends pulumi.ComponentResource {
   public readonly instance: aws.rds.Instance;
-  public readonly secret: aws.secretsmanager.Secret;
   public readonly securityGroup: aws.ec2.SecurityGroup;
+  public readonly appSecret: aws.secretsmanager.Secret;
+  public readonly masterSecretArn: pulumi.Output<string>;
 
   constructor(name: string, params: DatabaseConfig, opts?: pulumi.ComponentResourceOptions) {
     super(`${pulumi.getProject()}:components:Database`, name, {}, opts);
 
-    const password = new random.RandomPassword(
-      "db-password",
-      { length: 32, special: false },
-      { parent: this },
-    );
-
-    this.secret = new aws.secretsmanager.Secret(
-      "db-secret",
-      { name: `${pulumi.getProject()}/${pulumi.getStack()}/db-password` },
-      { parent: this },
-    );
-
-    const secretVersion = new aws.secretsmanager.SecretVersion(
-      "db-secret-version",
+    this.appSecret = new aws.secretsmanager.Secret(
+      "db-app-secret",
       {
-        secretId: this.secret.id,
-        secretString: pulumi.jsonStringify({
-          username: params.username,
-          password: password.result,
-        }),
+        name: `${pulumi.getProject()}/${pulumi.getStack()}/db-app`,
+        description:
+          "Application database user as JSON {username, password}; set once by the operator",
       },
       { parent: this },
     );
 
+    // No inline rules: each client adds its own ingress rule, and no egress is needed.
     this.securityGroup = new aws.ec2.SecurityGroup(
       "db-sg",
       {
         vpcId: params.vpc.vpcId,
-        description: "Security group for RDS PostgreSQL",
-        ingress: [
-          {
-            protocol: "tcp",
-            fromPort: 5432,
-            toPort: 5432,
-            cidrBlocks: ["10.0.0.0/8"],
-          },
-        ],
-        egress: [
-          {
-            protocol: "-1",
-            fromPort: 0,
-            toPort: 0,
-            cidrBlocks: ["0.0.0.0/0"],
-          },
-        ],
+        description: "RDS PostgreSQL; ingress only from client security groups",
       },
       { parent: this },
     );
@@ -80,24 +57,31 @@ export class Database extends pulumi.ComponentResource {
       {
         engine: "postgres",
         engineVersion: params.engineVersion,
+        autoMinorVersionUpgrade: true,
         instanceClass: params.instanceClass,
         allocatedStorage: params.allocatedStorage,
         dbName: params.databaseName,
         username: params.username,
-        password: password.result,
+        manageMasterUserPassword: true,
         dbSubnetGroupName: subnetGroup.name,
         vpcSecurityGroupIds: [this.securityGroup.id],
+        publiclyAccessible: false,
         skipFinalSnapshot: false,
         finalSnapshotIdentifier: `${pulumi.getProject()}-${pulumi.getStack()}-final`,
         storageEncrypted: true,
         multiAz: false,
       },
-      { parent: this, dependsOn: [secretVersion] },
+      { parent: this },
+    );
+
+    this.masterSecretArn = this.instance.masterUserSecrets.apply(
+      (secrets) => secrets[0].secretArn,
     );
 
     this.registerOutputs({
       instanceEndpoint: this.instance.endpoint,
-      secretArn: this.secret.arn,
+      masterSecretArn: this.masterSecretArn,
+      appSecretArn: this.appSecret.arn,
     });
   }
 }

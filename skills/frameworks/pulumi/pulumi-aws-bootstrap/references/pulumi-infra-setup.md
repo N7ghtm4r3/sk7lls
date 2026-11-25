@@ -133,55 +133,7 @@ You may inspect these values in `Pulumi.[stack].yaml`, but prefer `pulumi config
 
 ### Backend image configuration
 
-For a containerized backend, a configuration value may select a sample image or the real application image.
-
-During initial infrastructure bootstrap, you may temporarily use a sample image:
-
-```bash
-pulumi config set backend:useSampleImage true
-pulumi up
-```
-
-This verifies that the VPC, cluster, load balancer, DNS, and base resources are created correctly without depending on the application pipeline.
-
-When the project also creates ECR, this breaks the bootstrap cycle:
-
-```text
-Pulumi deve creare ECR -> Docker deve pushare su ECR -> ECS deve usare l'immagine da ECR
-```
-
-The first `pulumi up` may therefore use a sample image. Once ECR exists, build and push the real image.
-
-Example:
-
-```bash
-ECR=$(pulumi stack output ecrRepositoryUrl)
-TAG=$(git rev-parse --short HEAD)
-
-aws ecr get-login-password --region [aws-region] \
-  | docker login --username AWS --password-stdin "${ECR%/*}"
-
-docker build -f [backend-dockerfile-path] -t "$ECR:$TAG" [docker-context]
-docker push "$ECR:$TAG"
-```
-
-Only after pushing the real image, set:
-
-```bash
-pulumi config set backend:useSampleImage false
-pulumi config set commitHash "$TAG"
-pulumi up
-```
-
-Also supply the image tag to deploy. For a manual value:
-
-```bash
-pulumi config set commitHash "[tag-immagine]"
-```
-
-`commitHash` is a common convention: it often matches the short Git commit hash used as the Docker image tag. More generally, it identifies the application version to deploy.
-
-Keep `backend:useSampleImage` enabled until the image `"[ecr-repository-url]:[tag-immagine]"` exists in the registry. Disabling it earlier makes ECS fetch a nonexistent image and the service fails.
+The image tag is not stack configuration: the release pipeline deploys it. See [First release](bootstrap.md#first-release) and [Release model](github-actions-oidc.md#release-model).
 
 ## Configure stack secrets
 
@@ -721,7 +673,7 @@ jobs:
   pulumi-up:
     name: Pulumi Up
     runs-on: ubuntu-latest
-    needs: [setup, build-backend, build-frontend]
+    needs: [setup]
     steps:
       - uses: actions/checkout@v4
 
@@ -767,6 +719,8 @@ jobs:
 ```
 
 Backend and frontend build steps remain template-agnostic: each project replaces those blocks with its actual application-stack commands.
+
+Add the release job from [Release model](github-actions-oidc.md#release-model) after `pulumi-up`; `pulumi-up` takes no image tag.
 
 ## GitHub Actions - AWS OIDC Authentication
 
@@ -1215,29 +1169,7 @@ gh secret set [SECRET_NAME] --repo [github-org]/[github-repo]
 
 ### Commit hash example
 
-Some projects use a commit hash as the identifier of the application version to deploy.
-
-In this scenario, the GitHub Action may:
-
-- compute the current commit hash
-- build the application image
-- publish the image to a container registry using the commit hash as its tag
-- pass that value to Pulumi as configuration or a deployment variable
-
-Conceptual example:
-
-```bash
-COMMIT_HASH=$(git rev-parse --short HEAD)
-
-docker build -t my-app:$COMMIT_HASH .
-docker tag my-app:$COMMIT_HASH [registry-url]/my-app:$COMMIT_HASH
-docker push [registry-url]/my-app:$COMMIT_HASH
-
-pulumi config set commitHash "$COMMIT_HASH"
-pulumi up
-```
-
-A commit hash is optional; it is a common way to trace the deployed application version.
+Tag each application image with the commit SHA. The release pipeline renders and deploys that tag; see [Release model](github-actions-oidc.md#release-model).
 
 ## Recommended order
 

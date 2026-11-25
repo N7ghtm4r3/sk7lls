@@ -4,26 +4,24 @@ import * as pulumi from "@pulumi/pulumi";
 
 import { BackendBuckets } from "./buckets";
 import { BackendRegistry, type BackendRegistryConfig } from "./registry";
-import { BackendService } from "./service";
+import { type BackendDatabase, BackendService } from "./service";
 
 export { BackendBuckets as Buckets } from "./buckets";
 export {
   BackendRegistry as Registry,
   type BackendRegistryConfig as RegistryConfig,
 } from "./registry";
-export { BackendService as Service } from "./service";
+export { type BackendDatabase as Database, BackendService as Service } from "./service";
 
 export type BackendConfig = {
   cluster: aws.ecs.Cluster;
   vpc: awsx.ec2.Vpc;
-  databaseUrl: pulumi.Input<string>;
+  database: BackendDatabase;
   environment: Record<string, pulumi.Input<string>>;
+  secrets: Record<string, pulumi.Input<string>>;
   dns: string;
   dnsZone: string;
   webappUrl: pulumi.Input<string>;
-  useSampleImage: boolean;
-  commitHash?: string;
-  replicas: number;
   cpu: string;
   memory: string;
   registry?: BackendRegistryConfig;
@@ -51,15 +49,13 @@ export class Backend extends pulumi.ComponentResource {
         cluster: params.cluster,
         vpc: params.vpc,
         repositoryUrl: this.registry.repository.repositoryUrl,
-        databaseUrl: params.databaseUrl,
+        database: params.database,
         environment: params.environment,
+        secrets: params.secrets,
         appDataBucket: this.buckets.appData.bucket,
         appDataBucketArn: this.buckets.appData.arn,
         dns: params.dns,
         dnsZone: params.dnsZone,
-        useSampleImage: params.useSampleImage,
-        commitHash: params.commitHash,
-        replicas: params.replicas,
         cpu: params.cpu,
         memory: params.memory,
       },

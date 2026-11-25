@@ -38,6 +38,10 @@ Derive permissions from resources actually managed by the stack and jobs, such a
 
 Prefer least privilege. If broad bootstrap permissions are proposed, mark them temporary, obtain approval, and leave a concrete tightening step; do not silently attach `AdministratorAccess`.
 
+Grant the pipeline role only what every run needs. Bootstrap permissions, such as state-bucket configuration, stay with the operator.
+
+When the stack creates IAM roles, condition the pipeline role's `iam:CreateRole` and role-policy actions on `iam:PermissionsBoundary` equal to a boundary policy that caps every created role. Deny `iam:DeleteRolePermissionsBoundary`, `iam:PutRolePermissionsBoundary`, and version or delete actions on the boundary policy. Otherwise the pipeline can create a role with more permissions than its own.
+
 ## GitHub configuration model
 
 Prefer GitHub Environments when production approvals, environment-scoped secrets, or separate deployment history matter. Use stable names such as `AWS_ROLE_ARN` and `BACKEND_DNS` per environment.
@@ -50,13 +54,9 @@ Create or adapt a workflow under `.github/workflows/`. Match existing action and
 
 ```text
 resolve environment
-├── build backend
-├── build frontend
-└── other artifacts
-        ↓
-Pulumi preview / deploy
-        ↓
-post-deploy checks
+├── infrastructure: Pulumi preview (pull request) / up (protected push)
+└── release, per changed service:
+    build → push SHA tag → render → migrate (run-task) → deploy → post-deploy checks
 ```
 
 Required properties:
@@ -68,7 +68,8 @@ Required properties:
 - deploy only on the intended protected push or approved dispatch;
 - explicit branch-to-environment mapping;
 - real repository build commands instead of placeholders;
-- dependencies that prevent deploy before required artifacts exist.
+- dependencies that prevent deploy before required artifacts exist;
+- changed services selected through the build tool's affected query (Turborepo, Nx) plus infrastructure and Dockerfile paths.
 
 Example credential step:
 
@@ -82,9 +83,42 @@ Example credential step:
 
 Use action versions already governed by the repository, or verify current official versions before introducing new ones.
 
-## Container versioning
+## Release model
 
-For ECR deployments, use an immutable tag such as the Git commit SHA, push it before Pulumi references it, and pass the same tag into stack configuration. Do not switch away from a sample image until registry existence is verified.
+Pulumi creates the ECR repository, the task-definition family, and the ECS service with `desiredCount: 0` and `ignoreChanges: ["taskDefinition", "desiredCount"]`. The pipeline releases with the official ECS actions:
+
+```yaml
+- name: Render task definition
+  id: render
+  uses: aws-actions/amazon-ecs-render-task-definition@v1
+  with:
+    task-definition-family: [task-family]
+    container-name: [container-name]
+    image: [ecr-repository-url]:${{ github.sha }}
+
+- name: Migrate and deploy
+  uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+  with:
+    task-definition: ${{ steps.render.outputs.task-definition }}
+    cluster: [cluster-name]
+    service: [service-name]
+    desired-count: [replicas]
+    wait-for-service-stability: true
+    run-task: true
+    run-task-container-overrides: '[{"name": "[container-name]", "command": ["[migrate-command]"]}]'
+    run-task-subnets: [comma-separated-subnet-ids]
+    run-task-security-groups: [service-security-group-id]
+    run-task-assign-public-IP: ENABLED
+    wait-for-task-stopped: true
+```
+
+- Push the immutable commit-SHA tag before rendering.
+- The stand-alone task runs inside the VPC before the service update, and a non-zero exit code fails the step. A failed migration therefore never reaches the service. Omit the `run-task` inputs when a release has no migration. Set `run-task-assign-public-IP: ENABLED` only for public subnets without NAT, where the task needs a public IP to pull the image.
+- Run one-off data operations that need the private network, such as creating a service's database user, the same way: the deploy action with only `cluster` and the `run-task` inputs. Render a task definition that Pulumi fully owns from its exact `task-definition-arn`, so the task runs what Pulumi declared. Render a service's task definition from its `task-definition-family`, whose newest revision carries the latest release and infrastructure changes. Make data operations idempotent so every release can run them. Keep them in the pipeline rather than in `pulumi up` through `command.local.Command`: the preview cannot show their outcome, and the up would depend on the AWS CLI of whoever runs it.
+- Read every name, ARN, subnet, and security group the pipeline needs from stack outputs (`pulumi stack output --json`), never from values copied into the workflow.
+- Rollback comes from ECS: the deployment circuit breaker with `rollback: true`, or ECS native blue/green.
+- An infrastructure change to the task definition, such as a new environment variable, registers a new revision in the family. The next release renders from it. Release once when such a change must apply at once.
+- For a single service with rare releases, the tag may stay in Pulumi config: pass it with `pulumi up --config` and omit this release job.
 
 ## Validation gate
 
