@@ -83,7 +83,7 @@ Do not regenerate stable signing/session secrets on routine deploys. Verify stor
 
 Pulumi creates the ECR repository and an ECS service that starts with zero tasks and ignores task-definition and desired-count changes. Nothing runs before the first release, so no sample image is needed.
 
-1. Run `pulumi preview`, then `pulumi up` after approval.
+1. Run `pulumi preview`, then `pulumi up` after approval. An application image that connects to RDS carries the regional RDS CA bundle ([database-security.md](database-security.md#put-the-ca-bundle-in-the-image)).
 2. Complete the [one-time steps](../assets/aws-infra-template/README.md#one-time-steps-after-the-first-pulumi-up) in the template README, such as the application database user.
 3. Run the release from [Release model](github-actions-oidc.md#release-model).
 4. Verify that the service reaches a steady state and the health check passes.

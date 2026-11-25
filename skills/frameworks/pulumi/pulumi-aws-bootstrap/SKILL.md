@@ -12,6 +12,7 @@ Set up project-specific AWS infrastructure without copying credentials, overwrit
 - For local project and stack setup or the first container deployment, read [references/bootstrap.md](references/bootstrap.md).
 - For the complete operational routine, including managed-node credentials and private database access through SSM, read [references/pulumi-infra-setup.md](references/pulumi-infra-setup.md).
 - For GitHub Actions and AWS OIDC, read [references/github-actions-oidc.md](references/github-actions-oidc.md).
+- For any database role password or connection to RDS (app image, data task, admin client), read [references/database-security.md](references/database-security.md).
 - For end-to-end infrastructure delivery, read bootstrap and OIDC, then follow the applicable detailed branches in the operational routine. Read managed-node or database procedures only when that access is in scope.
 
 The selected branch determines discovery, validation, and completion. For access to an existing node or database, use its existing configuration and verify the requested access; project creation, backend/secrets-provider changes, infrastructure preview, and deployment are not prerequisites. A missing access prerequisite is a blocker to report, not permission to bootstrap infrastructure or broaden IAM access.
@@ -64,6 +65,8 @@ The selected branch determines discovery, validation, and completion. For access
 - Keep one-time bootstrap (state bucket, KMS key, first database user) as operator steps. Pipelines run only what every deploy needs.
 - Derive service lists and change paths from the workspace graph or manifests that already exist.
 - Keep AWS-generated credentials, such as the RDS-managed master password, out of Pulumi state. Containers read secrets through Secrets Manager references in `secrets`, not `environment`.
+- Send PostgreSQL only the SCRAM-SHA-256 verifier of a role password: psql `\password` interactively, a computed verifier in scripts. The plaintext stays in Secrets Manager.
+- Connect to RDS with `sslmode=verify-full` and the regional RDS CA bundle in the image. `require` skips verification in libpq and fails in the Node `pg` driver.
 - When a pipeline role can create IAM roles, require a permissions boundary on every role it creates and deny edits or removal of that boundary.
 - Prefer GitHub OIDC and short-lived AWS credentials over access keys in GitHub Secrets.
 - Restrict the OIDC trust policy to the intended repository and refs.

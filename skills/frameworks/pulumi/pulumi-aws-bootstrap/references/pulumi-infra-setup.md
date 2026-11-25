@@ -531,8 +531,11 @@ Port: value of LOCAL_DB_PORT, such as 55438
 Database: name configured by the project
 User: user configured by the project
 Password: value copied from Secrets Manager
-SSL mode: mode required by the stack, normally Require
+SSL mode: verify-full, with the RDS endpoint as host and 127.0.0.1 as host address (hostaddr)
+Root certificate: the regional RDS CA bundle
 ```
+
+The tunnel ends on `localhost`, so the hostname check needs the RDS endpoint as host. See [database-security.md](database-security.md#set-the-mode-per-client).
 
 Keep the tunnel terminal open for the entire connection. End the session with `Ctrl+C` afterward.
 
@@ -552,7 +555,8 @@ Password: password in the database secret
 Service: empty
 Role: empty
 
-SSL > SSL mode: mode required by the stack, normally Require
+SSL > SSL mode: verify-full
+SSL > Root certificate: the regional RDS CA bundle, from https://truststore.pki.rds.amazonaws.com/[region]/[region]-bundle.pem
 ```
 
 A local PostgreSQL installation may automatically register a pgAdmin server such as `PostgreSQL 18` and request the `postgres` password. That server is the node's local PostgreSQL, not RDS or the project's private database. Cancel that prompt and use `Servers > Register > Server` for the connection above unless local database administration is intentional.
