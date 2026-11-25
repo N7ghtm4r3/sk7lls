@@ -58,7 +58,8 @@ distinct. Preserve conflicting accounts and source limitations.
 
 Lead with the finding: what is supported, contradicted, not found in the
 checked sources, or still uncertain. Include the decisive passages and source
-anchors, the context that changes their meaning, and the coverage limits.
+anchors, the context that changes their meaning, and the inquiry's coverage
+ledger.
 When wording is inaccurate, propose the smallest correction the evidence
 supports. For a general context inquiry, give the relevant understanding and
 its remaining gaps instead of inventing a claim to judge.

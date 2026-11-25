@@ -35,34 +35,42 @@ meeting summaries, query-generated answers, and the agent's interpretations.
 
 Reading is complete when every scoped item is read or marked inaccessible,
 and the agent can name what is understood and which gaps could change the
-answer or proposal. If nothing substantive is accessible, request the minimum
-source or access needed before proceeding.
+answer or proposal. An item a tool response omitted, truncated, or left on a
+further page stays unread until it is fetched. If nothing substantive is
+accessible, request the minimum source or access needed before proceeding.
 
 ## Deepen
 
 Every run, Go Deep included, deepens the context through this skill's
 [Source Inquiry](references/source-inquiry.md): an internal grilling of the
-sources. A complete Read does not replace it. Supply:
+sources. A complete Read does not replace it.
 
-- the topic and supplied source scope;
+Dispatch the inquiry to a fresh subagent with the host's subagent tool, so
+its context holds the inquiry and none of the answer or proposal that
+follows. Use a fresh agent with the parent's retrieval tools; a fork that
+inherits this conversation carries the later steps with it. The brief is the
+subagent's only context. It contains:
+
+- the resolved path of `references/source-inquiry.md`, to read and follow
+  as the subagent's whole task;
+- the topic and supplied source scope, with links, identifiers, and pasted
+  or attached material reproduced verbatim;
 - the reconstructed context and its evidence anchors;
 - each ambiguity, contradiction, missing fact, or summary-derived claim
   already noticed that could change the answer or proposal, and why it
   matters; the inquiry's design tree finds the rest.
 
-This is an internal inquiry: the agent formulates questions and executes
-queries against Granola and the scoped material. It resolves its own
-understanding before answering the user. Query results
-can open further dependent questions; let the inquiry follow them.
+Wait for its return. Accept it only with a coverage ledger that has no open
+row; otherwise send the open rows back to the same subagent and wait again.
+When the host offers no subagent tool, run the inquiry inline and record
+that limit in the ledger.
 
 Merge the returned findings, source limitations, contradictions, and remaining
 unknowns into the context. If query tools are unavailable or still fail
 after the inquiry's retry, use readable attachments and carry the unsearched
 gaps forward explicitly; a failed query is a reported limitation, never a
-checked source. The context
-is ready when every material gap has supporting evidence or is explicitly
-unresolved after the available relevant sources have been checked. A new
-product decision remains open for the user's discussion.
+checked source. The context is ready when the accepted coverage ledger has
+no open row. A new product decision remains open for the user's discussion.
 
 ## Propose
 
@@ -81,8 +89,8 @@ Proposed defaults remain proposals until the user steers.
 
 For this proposal path, completion requires the source inquiry to be
 complete or explicitly limited, and the proposal to contain its shape,
-alternatives,
-evidence, open forks, view, and invitation to react. Stop there. The user's
+alternatives, evidence, open forks, view, coverage ledger, and invitation to
+react. Stop there. The user's
 next direction chooses further discussion, more research, requirements
 discovery, or another path; it does not follow automatically from the
 generated proposal. When the user chooses a brainstorm or a grilling
