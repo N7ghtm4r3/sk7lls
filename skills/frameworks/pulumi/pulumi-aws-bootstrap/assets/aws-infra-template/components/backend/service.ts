@@ -317,6 +317,8 @@ export class BackendService extends pulumi.ComponentResource {
             portMappings: [{ containerPort: CONTAINER_PORT, protocol: "tcp" }],
             environment: [
               { name: "PORT", value: String(CONTAINER_PORT) },
+              // Fargate's HOSTNAME does not resolve: listen on every interface.
+              { name: "HOSTNAME", value: "0.0.0.0" },
               { name: "DB_HOST", value: db.host },
               { name: "DB_PORT", value: String(db.port) },
               { name: "DB_NAME", value: db.name },

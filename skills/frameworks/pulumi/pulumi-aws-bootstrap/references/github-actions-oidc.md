@@ -97,6 +97,7 @@ Pulumi creates the ECR repository, the task-definition family, and the ECS servi
     image: [ecr-repository-url]:${{ github.sha }}
 
 - name: Migrate and deploy
+  id: deploy
   uses: aws-actions/amazon-ecs-deploy-task-definition@v2
   with:
     task-definition: ${{ steps.render.outputs.task-definition }}
@@ -104,6 +105,7 @@ Pulumi creates the ECR repository, the task-definition family, and the ECS servi
     service: [service-name]
     desired-count: [replicas]
     wait-for-service-stability: true
+    wait-for-minutes: 15
     run-task: true
     run-task-container-overrides: '[{"name": "[container-name]", "command": ["[migrate-command]"]}]'
     run-task-subnets: [comma-separated-subnet-ids]
@@ -117,7 +119,23 @@ Pulumi creates the ECR repository, the task-definition family, and the ECS servi
 - Run one-off data operations that need the private network, such as creating a service's database user, the same way: the deploy action with only `cluster` and the `run-task` inputs. Render a task definition that Pulumi fully owns from its exact `task-definition-arn`, so the task runs what Pulumi declared. Render a service's task definition from its `task-definition-family`, whose newest revision carries the latest release and infrastructure changes. Make data operations idempotent so every release can run them. Keep them in the pipeline rather than in `pulumi up` through `command.local.Command`: the preview cannot show their outcome, and the up would depend on the AWS CLI of whoever runs it. A task that sets a role password sends only its SCRAM verifier ([database-security.md](database-security.md)).
 - The deploy action registers a new revision on every run, also for a task definition that Pulumi owns. The copies are identical, cost nothing, and Pulumi tracks only its own revision: accept them rather than replacing the action with a shell `aws ecs run-task`.
 - Read every name, ARN, subnet, and security group the pipeline needs from stack outputs (`pulumi stack output --json`), never from values copied into the workflow.
-- Rollback comes from ECS: the deployment circuit breaker with `rollback: true`, or ECS native blue/green.
+- Rollback comes from ECS: the deployment circuit breaker with `rollback: true`, or ECS native blue/green. Both return to the previous revision. For a **first release** that is the Pulumi template, whose `initial` tag has no image: ECS retries the pull without end, and the deploy action waits until `wait-for-minutes`. Bound `wait-for-minutes` above a healthy rollout. Before the deploy, read the tag that runs; no action outputs it. After a failed first release, return the service to zero tasks:
+
+  ```yaml
+  - name: Read the running tag
+    id: running
+    run: |
+      arn=$(aws ecs describe-services --cluster [cluster-name] --services [service-name] \
+        --query 'services[0].taskDefinition' --output text)
+      image=$(aws ecs describe-task-definition --task-definition "$arn" \
+        --query 'taskDefinition.containerDefinitions[0].image' --output text)
+      echo "tag=${image##*:}" >> "$GITHUB_OUTPUT"
+
+  # after the deploy step
+  - name: Stop a failed first release
+    if: failure() && steps.deploy.outcome == 'failure' && steps.running.outputs.tag == 'initial'
+    run: aws ecs update-service --cluster [cluster-name] --service [service-name] --desired-count 0
+  ```
 - An infrastructure change to the task definition, such as a new environment variable, registers a new revision in the family. The next release renders from it. Release once when such a change must apply at once.
 - For a single service with rare releases, the tag may stay in Pulumi config: pass it with `pulumi up --config` and omit this release job.
 

@@ -83,7 +83,7 @@ Do not regenerate stable signing/session secrets on routine deploys. Verify stor
 
 Pulumi creates the ECR repository and an ECS service that starts with zero tasks and ignores task-definition and desired-count changes. Nothing runs before the first release, so no sample image is needed.
 
-1. Run `pulumi preview`, then `pulumi up` after approval. An application image that connects to RDS carries the regional RDS CA bundle ([database-security.md](database-security.md#put-the-ca-bundle-in-the-image)).
+1. Run `pulumi preview`, then `pulumi up` after approval. An application image that connects to RDS carries the regional RDS CA bundle ([database-security.md](database-security.md#put-the-ca-bundle-in-the-image)). The server listens on `0.0.0.0`: Fargate sets `HOSTNAME` to the task's own hostname, which does not resolve, so a server that listens on `HOSTNAME`, such as the Next.js standalone server, exits with `getaddrinfo ENOTFOUND`. Set `HOSTNAME=0.0.0.0` in the task definition `environment`. A local `docker run` can hide the failure, because there the container hostname resolves.
 2. Complete the [one-time steps](../assets/aws-infra-template/README.md#one-time-steps-after-the-first-pulumi-up) in the template README, such as the application database user.
 3. Run the release from [Release model](github-actions-oidc.md#release-model).
 4. Verify that the service reaches a steady state and the health check passes.
