@@ -52,6 +52,8 @@ Done when the proposed graph accounts for every trigger, privileged capability, 
 
 Present a compact design brief with stages, dependencies, triggers, execution boundaries, artifact flow, gates, failure and recovery behavior, and credential entry points. Ask only questions that materially change trust, cost, release identity, compatibility, availability, or recovery.
 
+Resolve deployment environment names before writing configuration. Reuse names explicitly chosen by the user or established in the repository/provider; names introduced by the current draft remain proposals. Otherwise default to `staging` and `prod` for staging and production, without added prefixes or suffixes. Show the exact branch/channel → environment → deployment destination mapping in chat. Ask the user before choosing different new names or renaming existing environments, unless already authorized; implementation waits only for unresolved choices. Keep the selected names consistent across workflows and setup documentation, distinct from workflow filenames and provider-specific deployment modes or release tracks.
+
 Before release or publication, decide:
 
 - the authoritative version source and stable/prerelease grammar, applying the versioning defaults below when versioning is requested;
