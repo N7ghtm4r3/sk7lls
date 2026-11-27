@@ -1,0 +1,4 @@
+interface:
+  display_name: "CI Report Triage"
+  short_description: "Rank open CI Reports and brainstorm the chosen one"
+  default_prompt: "Use $ci-report-triage to list the open CI Reports assigned to me, ranked by severity and age, suggest which to take, and start a brainstorm on the one I choose."
